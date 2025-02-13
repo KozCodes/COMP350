@@ -67,4 +67,11 @@ public class Course {
         return -1;
     }
 
+    protected String courseDaysToString() {
+        return null;
+    }
+
+    protected boolean hasConflict(Course) {
+        return false;
+    }
 }
