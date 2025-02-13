@@ -71,7 +71,7 @@ public class Course {
         return null;
     }
 
-    protected boolean hasConflict(Course) {
+    protected boolean hasConflict(Course course) {
         return false;
     }
 }
