@@ -17,7 +17,7 @@ public class Schedule {
 
     // overloaded constructor
     protected Schedule(String name) {
-
+        //TODO: make Schedule constructor
     }
 
     protected int getId() {
