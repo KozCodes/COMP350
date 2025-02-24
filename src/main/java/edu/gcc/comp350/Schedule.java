@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -12,12 +13,18 @@ public class Schedule {
 
     // constructor
     protected Schedule() {
-
+        this.id = Main.currentStudent.getSchedules().size();
+        this.classes = new ArrayList<>();
+        this.lastChangedCourses = new Stack<>();
+        this.name = "Schedule " + this.id;
     }
 
     // overloaded constructor
     protected Schedule(String name) {
-        //TODO: make Schedule constructor
+        this.id = Main.currentStudent.getSchedules().size();
+        this.classes = new ArrayList<>();
+        this.lastChangedCourses = new Stack<>();
+        this.name = name;
     }
 
     protected int getId() {
