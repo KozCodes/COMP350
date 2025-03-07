@@ -10,43 +10,51 @@ public class Student {
     private List<String> minors;
     private List<Schedule> schedules;
 
-    protected Student(String name, String major, List<String> minors) {
-
+    public Student(int id, String name, String major, List<String> minors) {
+        this.id = id;
+        this.name = name;
+        this.major = major;
+        this.minors = minors;
     }
 
     protected int getId() {
-        return -1;
+        return id;
     }
 
     protected String getName() {
-        return null;
+        return name;
     }
 
     protected void setName(String name) {
-
+        this.name = name;
     }
 
     protected String getMajor() {
-        return null;
+        return major;
     }
 
     protected List<String> getMinors() {
-        return null;
+        return minors;
     }
 
     protected List<Schedule> getSchedules() {
-        return null;
+        return schedules;
     }
 
     protected void addSchedule(Schedule schedule) {
-
+        schedules.add(schedule);
     }
 
     protected void deleteSchedule(Schedule schedule) {
-
+        schedules.remove(schedule);
     }
 
     protected Schedule getSchedule(int id) {
+        for (Schedule schedule : schedules) {
+            if (schedule.getId() == id) {
+                return schedule;
+            }
+        }
         return null;
     }
 }
