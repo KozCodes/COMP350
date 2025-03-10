@@ -24,7 +24,9 @@ public class Search {
 
 
         for (Course course : temp) {
+            if () {
 
+            }
         }
     }
 

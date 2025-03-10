@@ -1,6 +1,7 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Filter {
@@ -13,7 +14,14 @@ public class Filter {
     private String department;
 
     // empty constructor
-    protected Filter() {}
+    protected Filter() {
+        this.course = Main.Days.MWF;
+        this.startTime = new Time(0);
+        this.endTime = new Time(0);
+        this.courseSession = Main.Session.FALL;
+        this.courseCodes = new ArrayList<>();
+        this.department = "";
+    }
 
     // overloaded constructor
     protected Filter(Main.Days course,
@@ -21,54 +29,62 @@ public class Filter {
                      Time endTime,
                      Main.Session courseSession,
                      List<String> courseCodes,
-                     String department) {}
+                     String department) {
+
+        this.course = course;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.courseSession = courseSession;
+        this.courseCodes = courseCodes;
+        this.department = department;
+    }
 
     protected Main.Days getCourse() {
-        return null;
+        return course;
     }
 
     protected void setCourse(Main.Days course) {
-
+        this.course = course;
     }
 
     protected Time getStartTime() {
-        return null;
+        return startTime;
     }
 
     protected void setStartTime(Time startTime) {
-
+        this.startTime = startTime;
     }
 
     protected Time getEndTime() {
-        return null;
+        return endTime;
     }
 
     protected void setEndTime(Time endTime) {
-
+        this.endTime = endTime;
     }
 
     protected Main.Session getCourseSession() {
-        return null;
+        return courseSession;
     }
 
     protected void setCourseSession(Main.Session courseSession) {
-
+        this.courseSession = courseSession;
     }
 
     protected List<String> getCourseCodes() {
-        return null;
+        return courseCodes;
     }
 
     protected void setCourseCodes(List<String> courseCodes) {
-
+        this.courseCodes = courseCodes;
     }
 
     protected String getDepartment() {
-        return null;
+        return department;
     }
 
     public void setDepartment(String department) {
-
+        this.department = department;
     }
 
 
