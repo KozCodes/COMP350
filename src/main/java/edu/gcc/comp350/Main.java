@@ -36,7 +36,7 @@ public class Main {
 
     public static void connect() {
         // connection string
-        var url = "jdbc:sqlite:C:/Users/SODERLUNDJS22/comp350/Scrumbucket/Database/scrumbucketData.db";
+        var url = "jdbc:sqlite:Database/scrumbucketData.db";
 
         var sql = "SELECT id, professor, session, startTime, endTime, courseDays, courseDept, courseCode, referenceCode, description FROM courses";
 
