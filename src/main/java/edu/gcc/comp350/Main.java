@@ -25,9 +25,12 @@ public class Main {
     protected static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
+    protected static ConsoleIO consoleIO;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
+        // for MVP testing
+        consoleIO.run();
     }
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
