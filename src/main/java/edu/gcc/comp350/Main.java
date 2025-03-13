@@ -20,11 +20,11 @@ public class Main {
         LATESUMMER
     }
 
-    protected List<Course> courses;
-    protected List<Professor> professors;
-    protected Student currentStudent;
-    protected Search search;
-    protected Schedule currentSchedule;
+    protected static List<Course> courses;
+    protected static List<Professor> professors;
+    protected static Student currentStudent;
+    protected static Search search;
+    protected static Schedule currentSchedule;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
@@ -74,7 +74,5 @@ public class Main {
     private static void loadProfessors() {
 
     }
-
-
 
 }
