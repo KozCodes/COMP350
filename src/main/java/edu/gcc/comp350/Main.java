@@ -24,7 +24,7 @@ public class Main {
     protected Schedule currentSchedule;
 
     public static void main(String[] args) {
-        Student s = new Student(274819, "Jonah Kozora", "Computer Science", new ArrayList<>());
+
     }
 
     protected static void onLoad() {

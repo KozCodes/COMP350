@@ -1,5 +1,5 @@
 package edu.gcc.comp350;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
@@ -15,6 +15,7 @@ public class Student {
         this.name = name;
         this.major = major;
         this.minors = minors;
+        this.schedules = new ArrayList<>();
     }
 
     protected int getId() {
