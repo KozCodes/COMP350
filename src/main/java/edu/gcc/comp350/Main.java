@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -18,11 +19,12 @@ public class Main {
 
     protected List<Course> courses;
     protected List<Professor> professors;
-    protected Student currentStudent;
+    protected static Student currentStudent;
     protected Search search;
     protected Schedule currentSchedule;
 
     public static void main(String[] args) {
+        Student s = new Student(274819, "Jonah Kozora", "Computer Science", new ArrayList<>());
     }
 
     protected static void onLoad() {
