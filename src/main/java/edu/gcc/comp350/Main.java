@@ -25,7 +25,7 @@ public class Main {
     protected static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
-    protected static ConsoleIO consoleIO;
+    protected static ConsoleIO consoleIO = new ConsoleIO();
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
@@ -39,7 +39,7 @@ public class Main {
 
     public static void connect() {
         // connection string
-        var url = "jdbc:sqlite:COMP350/Database/scrumbucketData.db";
+        var url = "jdbc:sqlite:Database/scrumbucketData.db";
 
         var sql = "SELECT id, professor, session, startTime, endTime, courseDays, courseDept, courseCode, referenceCode, description FROM courses";
 

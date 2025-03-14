@@ -23,7 +23,7 @@ public class ConsoleIO {
             command = in.split(" ")[0];
             if (commands.contains(in)) {
 
-            } else if (commands.equals("help")) {
+            } else if (command.equals("help")) {
                 help();
             }
         }
