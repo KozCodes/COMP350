@@ -32,8 +32,12 @@ public class Filter {
                      String department) {
 
         this.course = course;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        if (startTime.compareTo(Time.valueOf("08:00:00")) >= 0 && startTime.compareTo(Time.valueOf("18:00:00")) < 0) {
+            this.startTime = startTime;
+        }
+        if (endTime.compareTo(Time.valueOf("08:50:00")) >= 0 && endTime.compareTo(Time.valueOf("21:00:00")) < 0) {
+            this.endTime = endTime;
+        }
         this.courseSession = courseSession;
         this.courseCodes = courseCodes;
         this.department = department;

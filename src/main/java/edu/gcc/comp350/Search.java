@@ -21,6 +21,9 @@ public class Search {
 
         if (filter != null) {
             applyFilter(filter);
+            for (int i = 0; i < filteredResults.size(); i++) {
+                
+            }
         }
     }
 
@@ -57,7 +60,11 @@ public class Search {
         }
 
         if (filter.getCourseSession() != Main.Session.BLANK) {
-            
+            for(Course course : toBeFiltered) {
+                if (course.getSession() != filter.getCourseSession()) {
+                    toBeFiltered.remove(course);
+                }
+            }
         }
 
         if (!filter.getCourseCodes().isEmpty()) {
@@ -70,8 +77,20 @@ public class Search {
             }
         }
 
-        for (int i = 0; i < toBeFiltered.size(); i++) {
-            filteredResults.add(toBeFiltered.get(i));
+        if (!filter.getDepartment().equals("")) {
+                for(Course course : toBeFiltered) {
+                    if (!course.getCourseDept().equals(filter.getDepartment())) {
+                        toBeFiltered.remove(course);
+                    }
+                }
+        }
+
+        if (!toBeFiltered.isEmpty()) {
+            for (int i = 0; i < toBeFiltered.size(); i++) {
+                filteredResults.add(toBeFiltered.get(i));
+            }
+        } else {
+            System.out.println("I'm sorry, we're unable to find anything related to your search. Try modifying your filters or query.");
         }
 
     }
