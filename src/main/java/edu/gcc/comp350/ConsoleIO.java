@@ -20,41 +20,64 @@ public class ConsoleIO {
         while (!command.equals("quit") && !command.equals("q")) {
             System.out.print(">");
             in = sc.nextLine();
-            command = in.split(" ")[0];
+            String[] tokens = in.split(" ");
+            command = tokens[0];
 
             switch (command) {
                 case "help" :
                     help();
                     break;
                 case "add" :
-                    //add();
+                    if (tokens.length > 1) {
+                        int referenceNumber = Integer.parseInt(tokens[1]);
+                        add(referenceNumber);
+                    }
                     break;
                 case "remove" :
-                    //remove();
+                    if (tokens.length > 1) {
+                        int referenceNumber = Integer.parseInt(tokens[1]);
+                        remove(referenceNumber);
+                    }
                     break;
                 case "save" :
-                    //save();
+                    save();
                     break;
                 case "load" :
-                    //load();
+                    if (tokens.length > 1) {
+                        int schedule = Integer.parseInt(tokens[1]);
+                        load(schedule);
+                    }
                     break;
                 case "delete" :
-                    //delete();
+                    if (tokens.length > 1) {
+                        int schedule = Integer.parseInt(tokens[1]);
+                        delete(schedule);
+                    }
                     break;
                 case "new" :
-                    //newSchedule();
+                    newSchedule();
                     break;
                 case "filter" :
-                    //filter();
+                    if (tokens.length > 2) {
+                        String type = tokens[1];
+                        String val = tokens[2];
+                        filter(type, val);
+                    }
                     break;
                 case "search" :
-                    //search();
+                    if (tokens.length > 1) {
+                        String keywords = in.substring(command.length()).trim();
+                        search(keywords);
+                    }
                     break;
                 case "print" :
-                    //print();
+                    if (tokens.length > 1) {
+                        int referenceNumber = Integer.parseInt(tokens[1]);
+                        print(referenceNumber);
+                    }
                     break;
                 case "schedule" :
-                    //schedule();
+                    schedule();
                     break;
                 default:
                     System.out.println("Invalid command, help or try again");
