@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleIO {
-    List<String> commands = Arrays.asList("add", "remove", "save", "load", "delete", "new", "filter", "search", "printClass", "schedule");
+    List<String> commands = Arrays.asList("add", "remove", "save", "load", "delete", "new", "filter", "search", "print", "schedule");
 
     /**
      * runs testing cycle for console input
@@ -21,10 +21,43 @@ public class ConsoleIO {
             System.out.print(">");
             in = sc.nextLine();
             command = in.split(" ")[0];
-            if (commands.contains(in)) {
 
-            } else if (command.equals("help")) {
-                help();
+            switch (command) {
+                case "help" :
+                    help();
+                    break;
+                case "add" :
+                    //add();
+                    break;
+                case "remove" :
+                    //remove();
+                    break;
+                case "save" :
+                    //save();
+                    break;
+                case "load" :
+                    //load();
+                    break;
+                case "delete" :
+                    //delete();
+                    break;
+                case "new" :
+                    //newSchedule();
+                    break;
+                case "filter" :
+                    //filter();
+                    break;
+                case "search" :
+                    //search();
+                    break;
+                case "print" :
+                    //print();
+                    break;
+                case "schedule" :
+                    //schedule();
+                    break;
+                default:
+                    System.out.println("Invalid command, help or try again");
             }
         }
 
@@ -98,7 +131,7 @@ public class ConsoleIO {
      * prints information of desired course
      * @param referenceNumber int id of desired schedule
      */
-    private void printCourse(int referenceNumber) {
+    private void print(int referenceNumber) {
 
     }
 
@@ -122,7 +155,7 @@ public class ConsoleIO {
         System.out.println("new");
         System.out.println("filter <filter type> <filter value>");
         System.out.println("search <keyword string>");
-        System.out.println("printCourse <referenceNumber>");
+        System.out.println("print <referenceNumber>");
         System.out.println("schedule");
     }
 }
