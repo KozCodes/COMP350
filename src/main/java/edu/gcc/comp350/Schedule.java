@@ -14,10 +14,7 @@ public class Schedule {
 
     /**
      * Schedule Constructor
-     * Class variable id is initialized to a random number [1, 6000)
-     * Class variable classes is initialized to an empty ArrayList
-     * Class variable lastChangedCourses is initialized to a new Stack
-     * Class variable name is initialized to "Schedule " + 1 + the number of schedules the current student currently has
+     * Initializes id, classes, lastChangedCourses, and name.
      */
     protected Schedule() {
         this.id = new Random().nextInt(6000);
@@ -27,13 +24,7 @@ public class Schedule {
     }
 
     /**
-     * Schedule Constructor
-     * Class variable id is initialized to a random number [1, 6000)
-     * Class variable classes is initialized to an empty ArrayList
-     * Class variable lastChangedCourses is initialized to a new Stack
-     * Class variable name is initialized to param name
-     *
-     * @param name String specified name for this Schedule
+     * Schedule Constructor with name parameter
      */
     protected Schedule(String name) {
         this.id = new Random().nextInt(6000);
@@ -43,22 +34,34 @@ public class Schedule {
     }
 
     protected int getId() {
-        return -1;
+        return id;
     }
 
     protected String getName() {
-        return null;
+        return name;  // Return the actual name
     }
 
-    protected void setName() {
-
+    protected void setName(String name) {
+        this.name = name;
     }
 
-    protected void addCourse(int courseID) {
-
+    protected void addCourse(Course course) {
+        if (course != null) {
+            classes.add(course);
+            lastChangedCourses.push(course);  // For undo, keeps track of last course
+        }
     }
 
+    // Undo the last added course
     protected void undo() {
+        if (!lastChangedCourses.isEmpty()) {
+            Course lastCourse = lastChangedCourses.pop();
+            classes.remove(lastCourse);
+        }
+    }
 
+    // Returns all courses in the schedule
+    protected List<Course> getCourses() {
+        return classes;
     }
 }
