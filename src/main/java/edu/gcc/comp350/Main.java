@@ -4,11 +4,13 @@ import java.util.List;
 
 public class Main {
     protected static enum Days {
+        BLANK,
         MWF,
         TR
     }
 
     protected static enum Session {
+        BLANK,
         FALL,
         WINTER,
         SPRING,

@@ -15,10 +15,10 @@ public class Filter {
 
     // empty constructor
     protected Filter() {
-        this.course = Main.Days.MWF;
+        this.course = Main.Days.BLANK;
         this.startTime = new Time(0);
         this.endTime = new Time(0);
-        this.courseSession = Main.Session.FALL;
+        this.courseSession = Main.Session.BLANK;
         this.courseCodes = new ArrayList<>();
         this.department = "";
     }

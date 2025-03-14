@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,21 +18,66 @@ public class Search {
 
     protected void search(String query) {
 
-    }
 
-    protected void applyFilter(Filter filter) {
-       List<Course> temp = new ArrayList<>();
-
-
-        for (Course course : temp) {
-            if () {
-
-            }
+        if (filter != null) {
+            applyFilter(filter);
         }
     }
 
-    protected void modifyFilter(Filter filter) {
+    protected void applyFilter(Filter filter) {
 
+        List<Course> toBeFiltered = new ArrayList<>();
+
+        for (int i = 0; i < searchResults.size(); i++) {
+            toBeFiltered.add(searchResults.get(i));
+        }
+
+        if (filter.getCourse() != Main.Days.BLANK) {
+            for (Course course : toBeFiltered) {
+                if (course.getCourseDays() != filter.getCourse()) {
+                    toBeFiltered.remove(course);
+                }
+            }
+        }
+
+        if (filter.getStartTime() != Time.valueOf("0")) {
+            for (Course course : toBeFiltered) {
+                if (course.getStartTime() != filter.getStartTime()) {
+                    toBeFiltered.remove(course);
+                }
+            }
+        }
+
+        if (filter.getEndTime() != Time.valueOf("0")) {
+            for (Course course : toBeFiltered) {
+                if (course.getEndTime() != filter.getEndTime()) {
+                    toBeFiltered.remove(course);
+                }
+            }
+        }
+
+        if (filter.getCourseSession() != Main.Session.BLANK) {
+            
+        }
+
+        if (!filter.getCourseCodes().isEmpty()) {
+            for (String codes : filter.getCourseCodes()) {
+                for(Course course : toBeFiltered) {
+                    if (!course.getCourseCode().equals(codes)) {
+                        toBeFiltered.remove(course);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < toBeFiltered.size(); i++) {
+            filteredResults.add(toBeFiltered.get(i));
+        }
+
+    }
+
+    protected void modifyFilter(Filter filter) {
+        this.filter = filter;
     }
 
     protected void queryChange(String query) {
