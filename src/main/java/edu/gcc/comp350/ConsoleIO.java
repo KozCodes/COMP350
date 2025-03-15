@@ -24,7 +24,7 @@ public class ConsoleIO {
         while (!command.equals("quit") && !command.equals("q")) {
             System.out.print(">");
             in = sc.nextLine();
-            String[] tokens = in.split(" ");
+            String[] tokens = in.split(" ", 2);
             command = tokens[0];
 
             switch (command) {
@@ -150,16 +150,16 @@ public class ConsoleIO {
      */
     private void filter(String type, String val) {
         switch (type) {
-            case "course" :
+            case "days" :
                 filter.setCourse(Main.Days.valueOf(val));
             case "start" :
-                filter.setStartTime(new Time(Long.parseLong(val)));
+                filter.setStartTime(Time.valueOf(val));
             case "end" :
-                filter.setEndTime(new Time(Long.parseLong(val)));
+                filter.setEndTime(Time.valueOf(val));
             case "session" :
                 filter.setCourseSession(Main.Session.valueOf(val));
             case "courseCode" :
-                filter.setCourseCodes(Arrays.asList(val.split(",")));
+                filter.setCourseCodes(Arrays.asList(val.split(", ")));
             case "department" :
                 filter.setDepartment(val);
             default :
