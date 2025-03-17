@@ -28,5 +28,20 @@ void testSearchConstructor() {
     assertEquals(testQuery, search.getQuery());
     assertEquals(filter, search.getFilter());
 }
+
+@Test
+void testSearchWithNoFilters() {
+    // Sample inputs
+    String testQuery = "Computer Science";
+
+    // Create Filter instance
+    Filter filter = new Filter();
+    Search search = new Search(testQuery, filter);
+
+    search.search(search.getQuery());
+
+    // Assertions
+    assertNotNull(search.getSearchResults());
+}
 }
 
