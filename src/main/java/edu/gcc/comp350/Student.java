@@ -1,5 +1,5 @@
 package edu.gcc.comp350;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class Student {
@@ -10,52 +10,43 @@ public class Student {
     private List<String> minors;
     private List<Schedule> schedules;
 
-    public Student(int id, String name, String major, List<String> minors) {
-        this.id = id;
-        this.name = name;
-        this.major = major;
-        this.minors = minors;
-        this.schedules = new ArrayList<>();
+    protected Student(String name, String major, List<String> minors) {
+
     }
 
     protected int getId() {
-        return id;
+        return -1;
     }
 
     protected String getName() {
-        return name;
+        return null;
     }
 
     protected void setName(String name) {
-        this.name = name;
+
     }
 
     protected String getMajor() {
-        return major;
+        return null;
     }
 
     protected List<String> getMinors() {
-        return minors;
+        return null;
     }
 
     protected List<Schedule> getSchedules() {
-        return schedules;
+        return null;
     }
 
-    protected void addSchedule(Schedule schedule) {
-        schedules.add(schedule);
+    protected Schedule addSchedule(Schedule schedule) {
+        return null;
     }
 
     protected void deleteSchedule(Schedule schedule) {
-        schedules.remove(schedule);
+
     }
 
     protected Schedule getSchedule(int id) {
-        for (Schedule schedule : schedules) {
-            if (schedule.getId() == id) {
-                return schedule;
-            }
-        }
         return null;
     }
 }
