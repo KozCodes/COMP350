@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.util.ArrayList;
 import java.util.List;
 import  java.sql.*;
 
@@ -27,45 +28,33 @@ public class Main {
     protected static Schedule currentSchedule;
     protected static ConsoleIO consoleIO = new ConsoleIO();
 
+    private static DatabaseConnect db = new DatabaseConnect();
+
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
         // for MVP testing
         currentStudent = new Student("John Smith", "Poli Sci", List.of("Music"));
         currentSchedule = currentStudent.addSchedule(new Schedule("John's Schedule"));
         consoleIO.run();
+
+        ArrayList<Object> idList = db.select("startTime","Courses");
+        for (Object id : idList) {
+            System.out.println(id);
+        }
+        db.disconnect();
+
     }
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         connect();
+        db.resetDatabase();
     }
 
-    public static void connect() {
+
+    protected static void connect() {
         // connection string
-        var url = "jdbc:sqlite:Database/scrumbucketData.db";
+        db.connect();
 
-        var sql = "SELECT id, professor, session, startTime, endTime, courseDays, courseDept, courseCode, referenceCode, description FROM courses";
-
-        try (var conn = DriverManager.getConnection(url);
-             var stmt = conn.createStatement();
-             var rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                System.out.println(
-                        rs.getInt("id") +
-                        " | " + rs.getString("professor") +
-                        " | " + rs.getInt("session") +
-                        " | " + rs.getString("startTime") +
-                        " | " + rs.getString("endTime") +
-                        " | " + rs.getString("courseDays") +
-                        " | " + rs.getString("courseDept") +
-                        " | " + rs.getString("courseCode") +
-                        " | " + rs.getInt("referenceCode") +
-                        " | " + rs.getString("description")
-                );
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
     }
 
     protected static void displaySchedule(Schedule schedule) {
