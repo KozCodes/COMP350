@@ -85,15 +85,16 @@ public class Course {
         return null;
     }
 
-    protected int getId() {
-        return -1;
-    }
-
     protected String courseDaysToString() {
         return null;
     }
 
     protected boolean hasConflict(Course course) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return null;
     }
 }

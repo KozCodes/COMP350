@@ -26,16 +26,23 @@ public class Main {
     protected static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
+    protected static ConsoleIO consoleIO = new ConsoleIO();
 
     private static DatabaseConnect db = new DatabaseConnect();
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
+        // for MVP testing
+        currentStudent = new Student("John Smith", "Poli Sci", List.of("Music"));
+        currentSchedule = currentStudent.addSchedule(new Schedule("John's Schedule"));
+        consoleIO.run();
+
         ArrayList<Object> idList = db.select("startTime","Courses");
         for (Object id : idList) {
             System.out.println(id);
         }
         db.disconnect();
+
     }
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
@@ -47,6 +54,7 @@ public class Main {
     protected static void connect() {
         // connection string
         db.connect();
+
     }
 
     protected static void displaySchedule(Schedule schedule) {

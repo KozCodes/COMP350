@@ -58,7 +58,18 @@ public class Schedule {
 
     }
 
+    protected void removeCourse(int courseID) {
+
+    }
+
+    protected ArrayList<Course> getCourses() {
+        return null;
+    }
+
     protected void undo() {
 
+    }
+
+    public void save() {
     }
 }

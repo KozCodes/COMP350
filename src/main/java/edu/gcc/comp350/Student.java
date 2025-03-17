@@ -38,8 +38,8 @@ public class Student {
         return null;
     }
 
-    protected void addSchedule(Schedule schedule) {
-
+    protected Schedule addSchedule(Schedule schedule) {
+        return null;
     }
 
     protected void deleteSchedule(Schedule schedule) {
