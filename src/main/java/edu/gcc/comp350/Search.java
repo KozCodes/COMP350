@@ -96,31 +96,42 @@ public class Search {
             }
 
         //next easiest - make a list of departments based on DB data, then check query for match
-        List<String> dept = new ArrayList<>();
+        if (!searchResults.isEmpty()) {
+            List<String> dept = new ArrayList<>();
 
-        for (int i = 0; i < Main.courses.size(); i++) {
-            if (!dept.contains(Main.courses.get(i).getCourseDept())) {
-                dept.add(Main.courses.get(i).getCourseDept());
+            for (int i = 0; i < Main.courses.size(); i++) {
+                if (!dept.contains(Main.courses.get(i).getCourseDept())) {
+                    dept.add(Main.courses.get(i).getCourseDept());
+                }
             }
-        }
 
-        for (int i = 0; i < dept.size(); i++) {
-
-        }
-        //hardest - check query for a name, then check if it matches any professor names in the DB
-        List<String> profs = new ArrayList<>();
-
-        for (int i = 0; i < Main.courses.size(); i++) {
-            if (!profs.contains(Main.courses.get(i).getProfessor().getName())) {
-                profs.add(Main.courses.get(i).getProfessor().getName());
+            for (int i = 0; i < dept.size(); i++) {
+                if (query.contains(dept.get(i))) {
+                    for (int j = 0; j < Main.courses.size(); j++) {
+                        if (Main.courses.get(j).getCourseDept().equals(dept.get(i)) && !searchResults.contains(Main.courses.get(j))) {
+                            searchResults.add(Main.courses.get(j));
+                        }
+                    }
+                }
             }
-        }
 
-        for(String professors : profs) {
-            if (query.contains(professors)) {
+            if (!searchResults.isEmpty()) {
+                //hardest - check query for a name, then check if it matches any professor names in the DB
+                List<String> profs = new ArrayList<>();
+
                 for (int i = 0; i < Main.courses.size(); i++) {
-                    if (Main.courses.get(i).getCourseCode().contains(professors) && !searchResults.contains(Main.courses.get(i))) {
-                        searchResults.add(Main.courses.get(i));
+                    if (!profs.contains(Main.courses.get(i).getProfessor().getName())) {
+                        profs.add(Main.courses.get(i).getProfessor().getName());
+                    }
+                }
+
+                for(String professors : profs) {
+                    if (query.contains(professors)) {
+                        for (int i = 0; i < Main.courses.size(); i++) {
+                            if (Main.courses.get(i).getCourseCode().contains(professors) && !searchResults.contains(Main.courses.get(i))) {
+                                searchResults.add(Main.courses.get(i));
+                            }
+                        }
                     }
                 }
             }
