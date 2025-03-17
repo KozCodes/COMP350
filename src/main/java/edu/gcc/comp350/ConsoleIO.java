@@ -22,9 +22,9 @@ public class ConsoleIO {
 
         // complete cycle
         while (!command.equals("quit") && !command.equals("q")) {
-            System.out.print(">");
+            System.out.print("> ");
             in = sc.nextLine();
-            String[] tokens = in.split(" ", 2);
+            String[] tokens = in.trim().split(" ", 2);
             command = tokens[0];
 
             switch (command) {
