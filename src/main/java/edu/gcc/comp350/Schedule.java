@@ -71,12 +71,15 @@ public class Schedule {
      * @param courseID int ID of the course to add
      */
     protected void addCourse(int courseID) {
-        // find course in db
-        Course course = null;
-        // add course to classes
-        classes.add(course);
-        // add course to lastChangedCourses
-        lastChangedCourses.push(course);
+        // find course in list of courses
+        for (Course course : Main.courses) {
+            if (course.getId() == courseID) {
+                classes.add(course);
+                // add course to lastChangedCourses
+                lastChangedCourses.push(course);
+                return;
+            }
+        }
     }
 
     /**
@@ -84,12 +87,15 @@ public class Schedule {
      * @param courseID int ID of the course to remove
      */
     protected void removeCourse(int courseID) {
-        // find course in db
-        Course course = null;
-        // remove course from classes
-        classes.remove(course);
-        // add course to lastChangedCourses
-        lastChangedCourses.push(course);
+        // find course in list of courses
+        for (Course course : Main.courses) {
+            if (course.getId() == courseID) {
+                classes.remove(course);
+                // add course to lastChangedCourses
+                lastChangedCourses.push(course);
+                return;
+            }
+        }
     }
 
     /**
