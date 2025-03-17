@@ -119,4 +119,7 @@ public class Schedule {
     protected List<Course> getCourses() {
         return classes;
     }
+
+    public void save() {
+    }
 }
