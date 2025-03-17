@@ -44,7 +44,7 @@ public class Schedule {
 
     /**
      * Get the database ID of the Schedule object
-     * @return
+     * @return int ID of the Schedule
      */
     protected int getId() {
         return id;
@@ -73,7 +73,7 @@ public class Schedule {
     protected void addCourse(int courseID) {
         // find course in list of courses
         for (Course course : Main.courses) {
-            if (course.getId() == courseID) {
+            if (course.getID() == courseID) {
                 classes.add(course);
                 // add course to lastChangedCourses
                 lastChangedCourses.push(course);
@@ -89,7 +89,7 @@ public class Schedule {
     protected void removeCourse(int courseID) {
         // find course in list of courses
         for (Course course : Main.courses) {
-            if (course.getId() == courseID) {
+            if (course.getID() == courseID) {
                 classes.remove(course);
                 // add course to lastChangedCourses
                 lastChangedCourses.push(course);
