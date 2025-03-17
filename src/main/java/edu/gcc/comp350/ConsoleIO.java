@@ -112,7 +112,7 @@ public class ConsoleIO {
      * saves current schedule to database
      */
     private void save() {
-        currentSchedule.save();
+        currentStudent.saveSchedule(currentSchedule);
         System.out.println("Saved schedule");
     }
 
@@ -182,11 +182,11 @@ public class ConsoleIO {
 
     /**
      * prints information of desired course
-     * @param referenceNumber int id of desired schedule
+     * @param id int id of desired schedule
      */
-    private void print(int referenceNumber) {
+    private void print(int id) {
         for (Course course : courses) {
-            if (course.getReferenceCode() == referenceNumber) {
+            if (course.getID() == id) {
                 System.out.println(course.toString());
             }
         }
@@ -215,7 +215,7 @@ public class ConsoleIO {
         System.out.println("new");
         System.out.println("filter <filter type> <filter value>");
         System.out.println("search <keyword string>");
-        System.out.println("print <referenceNumber>");
+        System.out.println("print <id>");
         System.out.println("schedule");
     }
 }

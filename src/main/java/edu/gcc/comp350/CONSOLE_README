@@ -47,7 +47,7 @@ Valid Commands:
 - search <keywords>: Searches the database for course instances that match the given keywords.
     <keywords> must be a list of keywords, eg math 161 comp 350
 
-- print <referenceNumber>: Prints the details of a course instance with the given reference number.
-    <referenceNumber> must be a valid int id of an existing course instance in the database.
+- print <id>: Prints the details of a course instance with the given id.
+    <id> must be a valid int id of an existing course instance in the database.
 
 - schedule: Prints the details of all course instances in current schedule to the console.

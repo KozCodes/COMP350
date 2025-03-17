@@ -28,7 +28,7 @@ public class Main {
     protected static Schedule currentSchedule;
     protected static ConsoleIO consoleIO = new ConsoleIO();
 
-    private static DatabaseConnect db = new DatabaseConnect();
+    protected static DatabaseConnect db = new DatabaseConnect();
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
