@@ -1,7 +1,6 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
-import java.util.Random;
 
 public class Course {
 
@@ -77,7 +76,7 @@ public class Course {
         return null;
     }
 
-    protected int getReferenceCode() {
+    protected int getID() {
         return -1;
     }
 
