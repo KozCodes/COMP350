@@ -16,8 +16,8 @@ public class Filter {
     // empty constructor
     protected Filter() {
         this.course = Main.Days.BLANK;
-        this.startTime = new Time(0);
-        this.endTime = new Time(0);
+        this.startTime = Time.valueOf("00:00:00");
+        this.endTime = Time.valueOf("00:00:00");
         this.courseSession = Main.Session.BLANK;
         this.courseCodes = new ArrayList<>();
         this.department = "";
@@ -32,11 +32,15 @@ public class Filter {
                      String department) {
 
         this.course = course;
-        if (startTime.compareTo(Time.valueOf("08:00:00")) >= 0 && startTime.compareTo(Time.valueOf("18:00:00")) < 0) {
+        if (startTime.compareTo(Time.valueOf("08:00:00")) >= 0 && startTime.compareTo(Time.valueOf("18:00:00")) <= 0) {
             this.startTime = startTime;
+        } else {
+            this.startTime = Time.valueOf("00:00:00");
         }
-        if (endTime.compareTo(Time.valueOf("08:50:00")) >= 0 && endTime.compareTo(Time.valueOf("21:00:00")) < 0) {
+        if (endTime.compareTo(Time.valueOf("08:50:00")) >= 0 && endTime.compareTo(Time.valueOf("21:00:00")) <= 0) {
             this.endTime = endTime;
+        } else {
+            this.endTime = Time.valueOf("00:00:00");
         }
         this.courseSession = courseSession;
         this.courseCodes = courseCodes;
