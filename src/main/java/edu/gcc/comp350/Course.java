@@ -1,7 +1,6 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
-import java.util.Random;
 
 public class Course {
 
@@ -77,16 +76,12 @@ public class Course {
         return null;
     }
 
-    protected int getReferenceCode() {
+    protected int getID() {
         return -1;
     }
 
     protected String getDescription() {
         return null;
-    }
-
-    protected int getId() {
-        return -1;
     }
 
     protected String courseDaysToString() {
@@ -95,5 +90,10 @@ public class Course {
 
     protected boolean hasConflict(Course course) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return null;
     }
 }

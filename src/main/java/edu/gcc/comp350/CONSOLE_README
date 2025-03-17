@@ -1,0 +1,53 @@
+Console IO Instructions:
+
+Valid Commands:
+- help: Displays a help message with reminders of valid commands and their parameters.
+
+- quit: Exits the program.
+
+- add <referenceNumber>: adds a course instance from the database to the current schedule.
+    <referenceNumber> must be a valid int id of an existing course instance in the database.
+
+- remove <referenceNumber>: removes a course instance from the current schedule.
+    <referenceNumber> must be a valid int id of an existing course instance in the database.
+
+- save: Saves the current schedule to the database.
+    NOTE: this has not been finished, and is waiting on Jon's db shortcuts class
+
+- load <schedule>: Loads a schedule from the database into currentSchedule.
+    <schedule> must be a valid int id of an existing schedule of the current student
+
+- delete <schedule>: Deletes a schedule from the database.
+    <schedule> must be a valid int id of an existing schedule of the current student
+
+- new: Creates a new schedule for the current student.  This schedule becomes the current schedule.
+
+- filter <filter type> <filter value>: Filters the current schedule by the given filter type and value.
+    <filter type> must be one of the following:
+        days
+        start
+        end
+        session
+        courseCode
+        department
+    <filter value> must be a valid value for the given filter type.
+        for filter type days, filter value must be one of the following:
+            MWF
+            TR
+        for filter type start and end, filter value must be a valid time in the format HH:MM:SS, eg 13:00:00 for 1pm or 08:00:00 for 8am
+        for filter type session, filter value must be one of the following:
+            FALL
+            WINTER
+            SPRING
+            EARLYSUMMER
+            LATESUMMER
+        for filter type courseCode, filter value must be a list of course codes, the numbers only, separated by commas and spaces, eg 161, 478, 230
+        for filter type department, filter value must be a 4-letter department code, eg COMP, MATH, CHEM
+
+- search <keywords>: Searches the database for course instances that match the given keywords.
+    <keywords> must be a list of keywords, eg math 161 comp 350
+
+- print <id>: Prints the details of a course instance with the given id.
+    <id> must be a valid int id of an existing course instance in the database.
+
+- schedule: Prints the details of all course instances in current schedule to the console.
