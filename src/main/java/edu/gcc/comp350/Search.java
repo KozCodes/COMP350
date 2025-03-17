@@ -116,5 +116,9 @@ public class Search {
         return filter;
     }
 
+    //added method, used for bug testing mostly
+    protected String getQuery() {
+        return query;
+    }
 
 }
