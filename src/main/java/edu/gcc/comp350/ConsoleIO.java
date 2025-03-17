@@ -112,7 +112,7 @@ public class ConsoleIO {
      * saves current schedule to database
      */
     private void save() {
-        currentSchedule.save();
+        currentStudent.saveSchedule(currentSchedule);
         System.out.println("Saved schedule");
     }
 

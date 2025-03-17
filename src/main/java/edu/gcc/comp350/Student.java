@@ -49,4 +49,8 @@ public class Student {
     protected Schedule getSchedule(int id) {
         return null;
     }
+
+    protected void saveSchedule(Schedule schedule) {
+
+    }
 }
