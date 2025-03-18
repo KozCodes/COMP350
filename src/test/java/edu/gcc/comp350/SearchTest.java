@@ -13,10 +13,10 @@ public class SearchTest {
 void testSearchConstructor() {
     // Sample inputs
     String testQuery = "Computer Science";
-    Main.Days testDay = Main.Days.MWF;
-    Time testStartTime = Time.valueOf("09:00:00");
-    Time testEndTime = Time.valueOf("10:30:00");
-    Main.Session testSession = Main.Session.FALL;
+    String testDay = "MWF";
+    String testStartTime = "09:00:00";
+    String testEndTime = "10:30:00";
+    String testSession = "2023_FALL";
     List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
     String testDepartment = "Computer Science";
 

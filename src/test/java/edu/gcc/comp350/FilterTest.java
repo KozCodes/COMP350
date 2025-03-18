@@ -11,8 +11,8 @@ class FilterTest {
 
     // Subclass to access the protected constructor
     private static class TestFilter extends Filter {
-        public TestFilter(Main.Days course, Time startTime, Time endTime,
-                          Main.Session courseSession, List<String> courseCodes,
+        public TestFilter(String course, String startTime, String endTime,
+                          String courseSession, List<String> courseCodes,
                           String department) {
             super(course, startTime, endTime, courseSession, courseCodes, department);
         }
@@ -21,10 +21,10 @@ class FilterTest {
     @Test
     void testFilterConstructor() {
         // Sample inputs
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("09:00:00");
-        Time testEndTime = Time.valueOf("10:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+        String testEndTime = "10:30:00";
+        String testSession = "2023_FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
@@ -42,10 +42,10 @@ class FilterTest {
 
     @Test
     void testBoundaryTimes() {
-        Main.Days testDay = Main.Days.TR;
-        Time testStartTime = Time.valueOf("08:00:00");
-        Time testEndTime = Time.valueOf("21:00:00");
-        Main.Session testSession = Main.Session.WINTER;
+        String testDay = "TR";
+        String testStartTime = "08:00:00";
+        String testEndTime = "21:00:00";
+        String testSession = "2023_WINTER";
         List<String> testCourseCodes = Arrays.asList("ENG201", "ENG202");
         String testDepartment = "English";
 
@@ -58,10 +58,10 @@ class FilterTest {
     //start and end cannot be the same time if starting from beginning of accepted times
     @Test
     void testSameStartAndEndTime() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("08:00:00");
-        Time testEndTime = Time.valueOf("08:00:00");
-        Main.Session testSession = Main.Session.SPRING;
+        String testDay = "MWF";
+        String testStartTime = "08:00:00";
+        String testEndTime = "08:00:00";
+        String testSession = "2024_SPRING";
         List<String> testCourseCodes = Arrays.asList("BIO101");
         String testDepartment = "Biology";
 
@@ -73,14 +73,14 @@ class FilterTest {
 
     @Test
     void testSetters() {
-        Main.Days testDay = Main.Days.TR;
-        Time testStartTime = Time.valueOf("10:00:00");
-        Time testEndTime = Time.valueOf("11:00:00");
-        Main.Session testSession = Main.Session.EARLYSUMMER;
+        String testDay = "TR";
+        String testStartTime = "10:00:00";
+        String testEndTime = "11:00:00";
+        String testSession = "2024_EARLYSUMMER";
         List<String> testCourseCodes = Arrays.asList("HIS101", "HIS102");
         String testDepartment = "History";
 
-        TestFilter filter = new TestFilter(Main.Days.BLANK, Time.valueOf("00:00:00"), Time.valueOf("00:00:00"), Main.Session.BLANK, Arrays.asList(), "");
+        TestFilter filter = new TestFilter("BLANK", "00:00:00", "00:00:00", "BLANK", Arrays.asList(), "");
 
         filter.setCourse(testDay);
         filter.setStartTime(testStartTime);
@@ -99,10 +99,10 @@ class FilterTest {
 
   @Test
     void testFilterEquals() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("09:00:00");
-        Time testEndTime = Time.valueOf("10:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+        String testEndTime = "10:30:00";
+        String testSession = "2023_FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
@@ -119,25 +119,25 @@ class FilterTest {
 
     @Test
     void testFilterNotEquals() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("09:00:00");
-        Time testEndTime = Time.valueOf("10:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+        String testEndTime = "10:30:00";
+        String testSession = "2023_FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
         TestFilter filter1 = new TestFilter(testDay, testStartTime, testEndTime, testSession, testCourseCodes, testDepartment);
-        TestFilter filter2 = new TestFilter(Main.Days.TR, testStartTime, testEndTime, testSession, testCourseCodes, testDepartment);
+        TestFilter filter2 = new TestFilter("TR", testStartTime, testEndTime, testSession, testCourseCodes, testDepartment);
 
         assertNotEquals(filter1.getCourse(), filter2.getCourse());
     }
 
     @Test
     void testFilterNotEqualsDifferentType() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("09:00:00");
-        Time testEndTime = Time.valueOf("10:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+        String testEndTime = "10:30:00";
+        String testSession = "FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
@@ -148,10 +148,10 @@ class FilterTest {
 
     @Test
     void testFilterNotEqualsNull() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("09:00:00");
-        Time testEndTime = Time.valueOf("10:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+        String testEndTime = "10:30:00";
+        String testSession = "2023_FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
@@ -162,10 +162,10 @@ class FilterTest {
 
     @Test
     void validDates() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("09:00:00");
-        Time testEndTime = Time.valueOf("10:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+        String testEndTime = "10:30:00";
+        String testSession = "2023_FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
@@ -177,17 +177,17 @@ class FilterTest {
 
     @Test
     void invalidDates() {
-        Main.Days testDay = Main.Days.MWF;
-        Time testStartTime = Time.valueOf("07:00:00");
-        Time testEndTime = Time.valueOf("22:30:00");
-        Main.Session testSession = Main.Session.FALL;
+        String testDay = "MWF";
+        String testStartTime = "07:00:00";
+        String testEndTime = "22:30:00";
+        String testSession = "2023_FALL";
         List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
         String testDepartment = "Computer Science";
 
         TestFilter filter = new TestFilter(testDay, testStartTime, testEndTime, testSession, testCourseCodes, testDepartment);
 
-        assertEquals(Time.valueOf("00:00:00"), filter.getStartTime());
-        assertEquals(Time.valueOf("00:00:00"), filter.getEndTime());
+        assertEquals("00:00:00", filter.getStartTime());
+        assertEquals("00:00:00", filter.getEndTime());
     }
 }
 
