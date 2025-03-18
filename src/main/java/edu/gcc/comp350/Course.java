@@ -45,32 +45,32 @@ public class Course {
         this.courseCode = courseCode;
     }
 
-    protected String getProfessor() {
+    protected Professor getProfessor() {
         return null;
     }
 
     protected String getSession() {
-        return null;
+        return this.session;
     }
 
     protected String getStartTime() {
-        return null;
+        return this.startTime;
     }
 
     protected String getEndTime() {
-        return null;
+        return this.endTime;
     }
 
     protected String getCourseDays() {
-        return null;
+        return this.courseDays;
     }
 
     protected String getCourseDept() {
-        return null;
+        return this.courseDept;
     }
 
     protected String getCourseCode() {
-        return null;
+        return this.courseCode;
     }
 
     protected int getID() {
