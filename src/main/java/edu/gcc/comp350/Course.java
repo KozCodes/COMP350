@@ -1,23 +1,24 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
+import java.util.Random;
 
 public class Course {
 
-    private Professor professor;
-    private Main.Session session;
-    private Time startTime;
-    private Time endTime;
-    private Main.Days courseDays;
+    private final int id;
+    private String professor;
+    private String session;
+    private String startTime;
+    private String endTime;
+    private String courseDays;
     private String courseDept;
     private String courseCode;
-    private int referenceCode;
-    private String description;
 
 
     /**
      * Course Constructor
      *
+     * @param id Auto-generated unique identifier for this course instance
      * @param professor Professor object that refers to the professor that teaches this course instance
      * @param session Main.Session object that refers to what term session this course instance is taught in
      * @param startTime Time referring to start time of this course instance
@@ -25,18 +26,16 @@ public class Course {
      * @param courseDays Main.Days object containing the days of the week during which this course instance is in session
      * @param courseDept String college department under which this course instance is listed, the 4-letter portion of the course code
      * @param courseCode String course code, including department and number, eg COMP 141, SOCI 221
-     * @param referenceCode int id of course instance, as determined by myGCC software
-     * @param description String course description
      */
-    protected Course(Professor professor,
-                     Main.Session session,
-                     Time startTime,
-                     Time endTime,
-                     Main.Days courseDays,
+    protected Course(int id,
+                     String professor,
+                     String session,
+                     String startTime,
+                     String endTime,
+                     String courseDays,
                      String courseDept,
-                     String courseCode,
-                     int referenceCode,
-                     String description) {
+                     String courseCode) {
+        this.id = id;
         this.professor = professor;
         this.session = session;
         this.startTime = startTime;
@@ -44,8 +43,6 @@ public class Course {
         this.courseDays = courseDays;
         this.courseDept = courseDept;
         this.courseCode = courseCode;
-        this.referenceCode = referenceCode;
-        this.description = description;
     }
 
     protected Professor getProfessor() {
@@ -78,10 +75,6 @@ public class Course {
 
     protected int getID() {
         return -1;
-    }
-
-    protected String getDescription() {
-        return null;
     }
 
     protected String courseDaysToString() {
