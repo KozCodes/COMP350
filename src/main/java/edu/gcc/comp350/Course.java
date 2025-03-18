@@ -45,23 +45,23 @@ public class Course {
         this.courseCode = courseCode;
     }
 
-    protected Professor getProfessor() {
+    protected String getProfessor() {
         return null;
     }
 
-    protected Main.Session getSession() {
+    protected String getSession() {
         return null;
     }
 
-    protected Time getStartTime() {
+    protected String getStartTime() {
         return null;
     }
 
-    protected Time getEndTime() {
+    protected String getEndTime() {
         return null;
     }
 
-    protected Main.Days getCourseDays() {
+    protected String getCourseDays() {
         return null;
     }
 

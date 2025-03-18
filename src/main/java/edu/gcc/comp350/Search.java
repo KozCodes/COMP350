@@ -161,7 +161,7 @@ public class Search {
             toBeFiltered.add(searchResults.get(i));
         }
 
-        if (filter.getCourse() != Main.Days.BLANK) {
+        if (!filter.getCourse().equals("BLANK")) {
             for (Course course : toBeFiltered) {
                 if (course.getCourseDays() != filter.getCourse()) {
                     toBeFiltered.remove(course);
@@ -169,7 +169,7 @@ public class Search {
             }
         }
 
-        if (filter.getStartTime() != Time.valueOf("0")) {
+        if (!filter.getStartTime().equals("00:00:00")) {
             for (Course course : toBeFiltered) {
                 if (course.getStartTime() != filter.getStartTime()) {
                     toBeFiltered.remove(course);
@@ -177,7 +177,7 @@ public class Search {
             }
         }
 
-        if (filter.getEndTime() != Time.valueOf("0")) {
+        if (!filter.getEndTime().equals("00:00:00")) {
             for (Course course : toBeFiltered) {
                 if (course.getEndTime() != filter.getEndTime()) {
                     toBeFiltered.remove(course);
@@ -185,7 +185,7 @@ public class Search {
             }
         }
 
-        if (filter.getCourseSession() != Main.Session.BLANK) {
+        if (!filter.getCourseSession().equals("BLANK")) {
             for(Course course : toBeFiltered) {
                 if (course.getSession() != filter.getCourseSession()) {
                     toBeFiltered.remove(course);
