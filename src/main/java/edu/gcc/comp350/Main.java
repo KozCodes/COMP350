@@ -21,7 +21,7 @@ public class Main {
         LATESUMMER
     }
 
-    protected static List<Course> courses;
+    protected static List<Course> courses = new ArrayList<>();
     protected static List<Professor> professors;
     protected static Student currentStudent;
     protected static Search search;
@@ -31,22 +31,13 @@ public class Main {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
-        ArrayList<Object> idList = db.select("startTime","Courses");
-        for (Object id : idList) {
-            System.out.println(id);
-        }
         db.disconnect();
     }
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
-        connect();
-        db.resetDatabase();
-    }
-
-
-    protected static void connect() {
-        // connection string
         db.connect();
+        db.setDatabase();
+        loadCourses();
     }
 
     protected static void displaySchedule(Schedule schedule) {
@@ -54,7 +45,20 @@ public class Main {
     }
 
     private static void loadCourses() {
-
+        ArrayList<Object> courseList = db.select("id, professor, session, startTime, endTime, courseDays, courseDept, courseCode", "Courses");
+        int currentId = -1;
+        for (int i = 0; i < courseList.size(); i+=8) {
+            currentId = (int) courseList.get(i);
+            String professor = (String) courseList.get(i+1);
+            String session = (String) courseList.get(i+2);
+            String startTime = (String) courseList.get(i+3);
+            String endTime = (String) courseList.get(i+4);
+            String courseDays = (String) courseList.get(i+5);
+            String courseDept = (String) courseList.get(i+6);
+            String courseCode = (String) courseList.get(i+7);
+            Course course = new Course(currentId, professor, session, startTime, endTime, courseDays, courseDept, courseCode);
+            courses.add(course);
+        }
     }
 
     private static void loadProfessors() {
