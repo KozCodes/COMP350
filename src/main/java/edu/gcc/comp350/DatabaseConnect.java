@@ -261,7 +261,7 @@ public class DatabaseConnect {
                     courseStmt.setString(4, String.valueOf(endTime));
                     courseStmt.setString(5, String.valueOf(day));
                     courseStmt.setString(6, course.getString("subject"));
-                    courseStmt.setString(7, course.getString("subject")+" "+course.getInt("number"));
+                    courseStmt.setString(7, course.getString("subject")+" "+course.getInt("number")+" "+course.getString("section"));
                     courseStmt.executeUpdate();
                 }
             }

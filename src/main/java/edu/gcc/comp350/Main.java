@@ -41,7 +41,8 @@ public class Main {
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         db.connect();
-        db.setCoursesInDatabase();
+        //db.setCoursesInDatabase();
+        db.resetCoursesInDatabase();
         loadCourses();
     }
 
