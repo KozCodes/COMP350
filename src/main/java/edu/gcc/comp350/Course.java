@@ -73,7 +73,7 @@ public class Course {
         return null;
     }
 
-    protected int getId() {
+    protected int getID() {
         return -1;
     }
 
@@ -83,5 +83,10 @@ public class Course {
 
     protected boolean hasConflict(Course course) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return null;
     }
 }
