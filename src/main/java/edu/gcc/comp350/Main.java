@@ -21,7 +21,7 @@ public class Main {
         LATESUMMER
     }
 
-    protected static List<Course> courses = new ArrayList<>();;
+    protected static List<Course> courses = new ArrayList<>();
     protected static List<Professor> professors;
     protected static Student currentStudent;
     protected static Search search;
@@ -41,7 +41,7 @@ public class Main {
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         db.connect();
-        db.setDatabase();
+        db.setCoursesInDatabase();
         loadCourses();
     }
 

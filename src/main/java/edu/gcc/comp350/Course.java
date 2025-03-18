@@ -45,48 +45,48 @@ public class Course {
         this.courseCode = courseCode;
     }
 
-    protected Professor getProfessor() {
-        return null;
+    protected String getProfessor() {
+        return professor;
     }
 
-    protected Main.Session getSession() {
-        return null;
+    protected String getSession() {
+        return session;
     }
 
-    protected Time getStartTime() {
-        return null;
+    protected String getStartTime() {
+        return startTime;
     }
 
-    protected Time getEndTime() {
-        return null;
+    protected String getEndTime() {
+        return endTime;
     }
 
-    protected Main.Days getCourseDays() {
-        return null;
+    protected String getCourseDays() {
+        return courseDays;
     }
 
     protected String getCourseDept() {
-        return null;
+        return courseDept;
     }
 
     protected String getCourseCode() {
-        return null;
+        return courseCode;
     }
 
     protected int getID() {
-        return -1;
+        return id;
     }
 
     protected String courseDaysToString() {
-        return null;
+        return courseDays;
     }
 
     protected boolean hasConflict(Course course) {
         return false;
     }
 
-    @Override
-    public String toString() {
-        return null;
-    }
+//    @Override
+//    public String toString() {
+//        return null;
+//    }
 }
