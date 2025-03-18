@@ -91,6 +91,10 @@ public class DatabaseConnect {
      */
     protected void clearDatabase() {
         injectSql("DROP TABLE IF EXISTS Courses");
+        injectSql("DROP TABLE IF EXISTS Student");
+        injectSql("DROP TABLE IF EXISTS Schedule");
+        injectSql("DROP TABLE IF EXISTS StudentSchedules");
+        injectSql("DROP TABLE IF EXISTS ScheduleCourses");
         //injectSql("DROP TABLE Professors");
     }
 
@@ -98,6 +102,7 @@ public class DatabaseConnect {
      * Creates the database with a Courses table.
      */
     protected void createDatabase() {
+        // course table
         String sql = """
             CREATE TABLE IF NOT EXISTS Courses (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,6 +113,46 @@ public class DatabaseConnect {
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
              courseCode TEXT NOT NULL
+            );""";
+        injectSql(sql);
+
+        // student table
+        sql = """
+            CREATE TABLE IF NOT EXISTS Student (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             name TEXT NOT NULL,
+             major TEXT NOT NULL,
+             minor TEXT NOT NULL,
+            );""";
+        injectSql(sql);
+
+        // schedule table
+        sql = """
+            CREATE TABLE IF NOT EXISTS Schedule (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             name TEXT NOT NULL,
+            );""";
+        injectSql(sql);
+
+        // student schedule table
+        sql = """
+            CREATE TABLE IF NOT EXISTS StudentSchedules (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             student INTEGER,
+             FOREIGN KEY (student) REFERENCES Student(id),
+             schedule INTEGER,
+             FOREIGN KEY (schedule) REFERENCES Schedule(id)
+            );""";
+        injectSql(sql);
+
+        // schedule course table
+        sql = """
+            CREATE TABLE IF NOT EXISTS ScheduleCourses (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             schedule INTEGER,
+             FOREIGN KEY (schedule) REFERENCES Schedule(id),
+             course INTEGER,
+             FOREIGN KEY (course) REFERENCES Courses(id)
             );""";
         injectSql(sql);
     }
