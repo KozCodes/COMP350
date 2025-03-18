@@ -69,5 +69,8 @@ public class Schedule {
     protected void undo() {
 
     }
+
+    public void save() {
+    }
 }
 

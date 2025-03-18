@@ -112,7 +112,8 @@ public class ConsoleIO {
      * saves current schedule to database
      */
     private void save() {
-        //TODO save schedule to database
+        currentSchedule.save();
+        System.out.println("Saved schedule");
     }
 
     /**
