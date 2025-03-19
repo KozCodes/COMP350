@@ -54,10 +54,6 @@ public class Search {
             }
         }
 
-        for (int i = 0; i < codes.size(); i++) {
-            System.out.println(codes.get(i));
-        }
-
         for (int i = 0; i < Main.courses.size(); i++) {
             if (!searchResults.contains(Main.courses.get(i)) && searchMatches.contains(Main.courses.get(i).getCourseCode())) {
                 searchResults.add(Main.courses.get(i));
@@ -68,7 +64,25 @@ public class Search {
         //try matching it to a name
 
         if (searchResults.isEmpty()) {
-            
+            List<String> names = new ArrayList<>();
+
+            for (int i = 0; i < Main.courses.size(); i++) {
+                if (!names.contains(Main.courses.get(i).getCourseTitle())) {
+                    names.add(Main.courses.get(i).getCourseTitle());
+                }
+            }
+
+            for (String name : names) {
+                if (name.contains(query) || name.equals(query)) {
+                    searchMatches.add(name);
+                }
+            }
+
+            for (int i = 0; i < Main.courses.size(); i++) {
+                if (!searchResults.contains(Main.courses.get(i)) && searchMatches.contains(Main.courses.get(i).getCourseTitle())) {
+                    searchResults.add(Main.courses.get(i));
+                }
+            }
         }
 
         //print out search results
@@ -78,8 +92,12 @@ public class Search {
                 System.out.println(filteredResults.get(i));
             }
         } else {
-            for (int i = 0; i < searchResults.size(); i++) {
-                System.out.println(searchResults.get(i).getCourseCode());
+            if (searchResults.isEmpty()) {
+                System.out.println("We're sorry, we were unable to find a course related to your search. Please try again.");
+            } else {
+                for (int i = 0; i < searchResults.size(); i++) {
+                    System.out.println(searchResults.get(i).getCourseCode());
+                }
             }
         }
     }

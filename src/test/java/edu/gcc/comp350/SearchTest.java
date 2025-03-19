@@ -30,7 +30,7 @@ void testSearchConstructor() {
 }
 
 @Test
-void testSearchWithNoFilters() throws Exception {
+void testSimpleDepartmentSearchWithNoFilters() throws Exception {
 
     Main.onLoad();
 
@@ -40,11 +40,88 @@ void testSearchWithNoFilters() throws Exception {
     Search search = new Search(testQuery, null);
 
     search.search(search.getQuery());
-    
-    List<Course> temp = search.getSearchResults();
+    // Assertions
+    assertNotEquals(0, search.getSearchResults().size());
+}
+
+@Test
+void testSimpleCourseCodeSearchWithNoFilters() throws Exception {
+
+    Main.onLoad();
+
+    // Sample inputs
+    String testQuery = "COMP 141";
+
+    Search search = new Search(testQuery, null);
+
+    search.search(search.getQuery());
 
     // Assertions
     assertNotEquals(0, search.getSearchResults().size());
 }
+
+@Test
+void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
+
+    Main.onLoad();
+
+    // Sample inputs
+    String testQuery = "COMP 141 A";
+
+    Search search = new Search(testQuery, null);
+
+    search.search(search.getQuery());
+
+    // Assertions
+    assertNotEquals(0, search.getSearchResults().size());
+}
+
+@Test
+    void testSimpleKeywordSearchWithNoFilters() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTRY";
+
+        Search search = new Search(testQuery, null);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
+
+    @Test
+    void testSimpleNameSearchWithNoFilters() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "GENERAL CHEMISTRY I";
+
+        Search search = new Search(testQuery, null);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
+
+    @Test
+    void testReactiontoNoResults() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "BBQ";
+
+        Search search = new Search(testQuery, null);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertEquals(0, search.getSearchResults().size());
+    }
 }
 
