@@ -30,18 +30,21 @@ void testSearchConstructor() {
 }
 
 @Test
-void testSearchWithNoFilters() {
-    // Sample inputs
-    String testQuery = "Computer Science";
+void testSearchWithNoFilters() throws Exception {
 
-    // Create Filter instance
-    Filter filter = new Filter();
-    Search search = new Search(testQuery, filter);
+    Main.onLoad();
+
+    // Sample inputs
+    String testQuery = "COMP";
+
+    Search search = new Search(testQuery, null);
 
     search.search(search.getQuery());
+    
+    List<Course> temp = search.getSearchResults();
 
     // Assertions
-    assertNotNull(search.getSearchResults());
+    assertNotEquals(0, search.getSearchResults().size());
 }
 }
 

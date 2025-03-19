@@ -14,6 +14,8 @@ public class Search {
     protected Search(String query, Filter filter) {
         this.query = query;
         this.filter = filter;
+        this.searchResults = new ArrayList<>();
+        this.filteredResults = new ArrayList<>();
     }
 
     protected void search(String query) {
@@ -37,108 +39,37 @@ public class Search {
                 }
             }
 
-            //sort by best matches: find code with equal first
-            for (String code : codes) {
-                if (query.contains(code)) {
-                    for (int i = 0; i < Main.courses.size(); i++) {
-                        if (Main.courses.get(i).getCourseCode().equals(code)) {
-                            searchResults.add(Main.courses.get(i));
-                        }
-                    }
-                }
-            }
+        //check course codes first - will check for matches between the entire code,
+        //the department, and the number. Will add if theres a match.
+        // not in order, will order down below
 
-            //then, run through again and find courses containing a snippet of the code,
-            //first with department, then with number (department could be incorrect)
-        List<String> deptOnly = new ArrayList<>();
+        List<String> searchMatches = new ArrayList<>();
 
-            for (String code: codes) {
-                String temp = "";
-                for (int i = 0; i < code.length(); i++) {
-                    if (Character.isLetter(code.charAt(i))) {
-                        temp += code.charAt(i);
-                    }
+        for (String code : codes) {
+            if (code.contains(query) || code.equals(query)) {
+                if (!searchMatches.contains(code)) {
+                        searchMatches.add(code);
                 }
 
-                deptOnly.add(temp);
-            }
-
-            for(String code: deptOnly) {
-                if (query.contains(code)) {
-                    for (int i = 0; i < Main.courses.size(); i++) {
-                        if (Main.courses.get(i).getCourseCode().contains(code) && !searchResults.contains(Main.courses.get(i))) {
-                            searchResults.add(Main.courses.get(i));
-                        }
-                    }
-                }
-            }
-
-            List<String> numOnly = new ArrayList<>();
-            for (String code: codes) {
-                String temp = "";
-                for (int i = 0; i < code.length(); i++) {
-                    if (Character.isDigit(code.charAt(i))) {
-                        temp += code.charAt(i);
-                    }
-                }
-
-                numOnly.add(temp);
-            }
-
-            for(String code: numOnly) {
-                if (query.contains(code)) {
-                    for (int i = 0; i < Main.courses.size(); i++) {
-                        if (Main.courses.get(i).getCourseCode().contains(code) && !searchResults.contains(Main.courses.get(i))) {
-                            searchResults.add(Main.courses.get(i));
-                        }
-                    }
-                }
-            }
-
-        //next easiest - make a list of departments based on DB data, then check query for match
-        if (!searchResults.isEmpty()) {
-            List<String> dept = new ArrayList<>();
-
-            for (int i = 0; i < Main.courses.size(); i++) {
-                if (!dept.contains(Main.courses.get(i).getCourseDept())) {
-                    dept.add(Main.courses.get(i).getCourseDept());
-                }
-            }
-
-            for (int i = 0; i < dept.size(); i++) {
-                if (query.contains(dept.get(i))) {
-                    for (int j = 0; j < Main.courses.size(); j++) {
-                        if (Main.courses.get(j).getCourseDept().equals(dept.get(i)) && !searchResults.contains(Main.courses.get(j))) {
-                            searchResults.add(Main.courses.get(j));
-                        }
-                    }
-                }
-            }
-
-            if (!searchResults.isEmpty()) {
-                //hardest - check query for a name, then check if it matches any professor names in the DB
-                List<String> profs = new ArrayList<>();
-
-                for (int i = 0; i < Main.courses.size(); i++) {
-                    if (!profs.contains(Main.courses.get(i).getProfessor().getName())) {
-                        profs.add(Main.courses.get(i).getProfessor().getName());
-                    }
-                }
-
-                for(String professors : profs) {
-                    if (query.contains(professors)) {
-                        for (int i = 0; i < Main.courses.size(); i++) {
-                            if (Main.courses.get(i).getCourseCode().contains(professors) && !searchResults.contains(Main.courses.get(i))) {
-                                searchResults.add(Main.courses.get(i));
-                            }
-                        }
-                    }
-                }
             }
         }
 
-        //TODO: harderer - check query for a snippet of a course name
+        for (int i = 0; i < codes.size(); i++) {
+            System.out.println(codes.get(i));
+        }
 
+        for (int i = 0; i < Main.courses.size(); i++) {
+            if (!searchResults.contains(Main.courses.get(i)) && searchMatches.contains(Main.courses.get(i).getCourseCode())) {
+                searchResults.add(Main.courses.get(i));
+            }
+        }
+
+        //keywords: get the query, and if it doesnt match any sort of course code,
+        //try matching it to a name
+
+        if (searchResults.isEmpty()) {
+            
+        }
 
         //print out search results
         if (filter != null) {
@@ -148,7 +79,7 @@ public class Search {
             }
         } else {
             for (int i = 0; i < searchResults.size(); i++) {
-                System.out.println(searchResults.get(i));
+                System.out.println(searchResults.get(i).getCourseCode());
             }
         }
     }
