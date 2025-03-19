@@ -6,6 +6,7 @@ import java.util.Random;
 public class Course {
 
     private final int id;
+    private String courseTitle;
     private String professor;
     private String session;
     private String startTime;
@@ -28,6 +29,7 @@ public class Course {
      * @param courseCode String course code, including department and number, eg COMP 141, SOCI 221
      */
     protected Course(int id,
+                     String courseTitle,
                      String professor,
                      String session,
                      String startTime,
@@ -36,6 +38,7 @@ public class Course {
                      String courseDept,
                      String courseCode) {
         this.id = id;
+        this.courseTitle = courseTitle;
         this.professor = professor;
         this.session = session;
         this.startTime = startTime;
@@ -45,48 +48,52 @@ public class Course {
         this.courseCode = courseCode;
     }
 
-    protected Professor getProfessor() {
-        return null;
+    protected String getCourseTitle() {
+        return courseTitle;
+    }
+
+    protected String getProfessor() {
+        return professor;
     }
 
     protected String getSession() {
-        return this.session;
+        return session;
     }
 
     protected String getStartTime() {
-        return this.startTime;
+        return startTime;
     }
 
     protected String getEndTime() {
-        return this.endTime;
+        return endTime;
     }
 
     protected String getCourseDays() {
-        return this.courseDays;
+        return courseDays;
     }
 
     protected String getCourseDept() {
-        return this.courseDept;
+        return courseDept;
     }
 
     protected String getCourseCode() {
-        return this.courseCode;
+        return courseCode;
     }
 
     protected int getID() {
-        return -1;
+        return id;
     }
 
     protected String courseDaysToString() {
-        return null;
+        return courseDays;
     }
 
     protected boolean hasConflict(Course course) {
         return false;
     }
 
-    @Override
-    public String toString() {
-        return null;
-    }
+//    @Override
+//    public String toString() {
+//        return null;
+//    }
 }

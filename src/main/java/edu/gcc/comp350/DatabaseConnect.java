@@ -95,7 +95,10 @@ public class DatabaseConnect {
         injectSql("DROP TABLE IF EXISTS Schedule");
         injectSql("DROP TABLE IF EXISTS StudentSchedules");
         injectSql("DROP TABLE IF EXISTS ScheduleCourses");
-        //injectSql("DROP TABLE Professors");
+    }
+
+    protected void clearCoursesFromDatabase() {
+        injectSql("DROP TABLE IF EXISTS Courses");
     }
 
     /**
@@ -106,6 +109,7 @@ public class DatabaseConnect {
         String sql = """
             CREATE TABLE IF NOT EXISTS Courses (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
+             courseTitle TEXT NOT NULL,
              professor TEXT NOT NULL,
              session TEXT NOT NULL,
              startTime TEXT NOT NULL,
@@ -120,9 +124,9 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Student (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             name TEXT NOT NULL,
+             courseTitle TEXT NOT NULL,
              major TEXT NOT NULL,
-             minor TEXT NOT NULL,
+             minor TEXT
             );""";
         injectSql(sql);
 
@@ -130,7 +134,7 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Schedule (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             name TEXT NOT NULL,
+             courseTitle TEXT NOT NULL
             );""";
         injectSql(sql);
 
@@ -157,17 +161,47 @@ public class DatabaseConnect {
         injectSql(sql);
     }
 
-    /**
-     * If the database Courses table does not exist, reset it. Else, it already exists.
-     */
-    protected void setDatabase() {
+    protected void createCoursesTableInDatabase() {
+        // course table
+        String sql = """
+            CREATE TABLE IF NOT EXISTS Courses (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             courseTitle TEXT NOT NULL,
+             professor TEXT NOT NULL,
+             session TEXT NOT NULL,
+             startTime TEXT NOT NULL,
+             endTime TEXT NOT NULL,
+             courseDays TEXT NOT NULL,
+             courseDept TEXT NOT NULL,
+             courseCode TEXT NOT NULL
+            );""";
+        injectSql(sql);
+    }
+//    /**
+//     * If the database Courses table does not exist, reset it. Else, it already exists.
+//     */
+//    protected void setDatabase() {
+//        String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Courses'";
+//        try (var stmt = conn.createStatement();
+//             var rs = stmt.executeQuery(sql)) {
+//            if (!rs.next()) {
+//                resetCoursesInDatabase();
+//            } else {
+//                System.out.println("Database contains data.");
+//            }
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
+
+    protected void setCoursesInDatabase() {
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Courses'";
         try (var stmt = conn.createStatement();
              var rs = stmt.executeQuery(sql)) {
             if (!rs.next()) {
-                resetDatabase();
+                resetCoursesInDatabase();
             } else {
-                System.out.println("Database contains the correct data.");
+                System.out.println("Database contains data.");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -180,14 +214,24 @@ public class DatabaseConnect {
     protected void resetDatabase() {
         System.out.println("Resetting database.");
         clearDatabase();
-        populateDatabase();
+        populateCoursesInDatabase();
+        // populateStudentsInDatabase();
+        // populateSchedulesInDatabase();
+        // populateProfessorsInDatabase();
+        // TODO: Add method to populate data within database
+    }
+
+    protected void resetCoursesInDatabase() {
+        System.out.println("Resetting database.");
+        clearCoursesFromDatabase();
+        populateCoursesInDatabase();
     }
 
     /**
      * Populates the database with course data from a JSON file.
      */
-    protected void populateDatabase() {
-        createDatabase();
+    protected void populateCoursesInDatabase() {
+        createCoursesTableInDatabase();
         String filePath = "Database/data_wolfe.json";
         try {
             String content = new String(Files.readAllBytes(Paths.get(filePath)));
@@ -196,7 +240,7 @@ public class DatabaseConnect {
             // TODO: Put times parsing here
             // Parsing and inserting courses
             JSONArray coursesArray = jsonObject.getJSONArray("classes");
-            String courseSql = "INSERT INTO Courses (professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement courseStmt = conn.prepareStatement(courseSql)) {
                 for (int i = 0; i < coursesArray.length(); i++) {
                     JSONObject course = coursesArray.getJSONObject(i);
@@ -213,13 +257,14 @@ public class DatabaseConnect {
                         endTime.append(timeObj.getString("end_time"));
                         startTime.append(timeObj.getString("start_time"));
                     }
-                    courseStmt.setString(1, course.getJSONArray("faculty").toString());
-                    courseStmt.setString(2, course.getString("semester"));
-                    courseStmt.setString(3, String.valueOf(startTime));
-                    courseStmt.setString(4, String.valueOf(endTime));
-                    courseStmt.setString(5, String.valueOf(day));
-                    courseStmt.setString(6, course.getString("subject"));
-                    courseStmt.setString(7, course.getString("subject")+" "+course.getInt("number"));
+                    courseStmt.setString(1, course.getString("name"));
+                    courseStmt.setString(2, course.getJSONArray("faculty").toString());
+                    courseStmt.setString(3, course.getString("semester"));
+                    courseStmt.setString(4, String.valueOf(startTime));
+                    courseStmt.setString(5, String.valueOf(endTime));
+                    courseStmt.setString(6, String.valueOf(day));
+                    courseStmt.setString(7, course.getString("subject"));
+                    courseStmt.setString(8, course.getString("subject")+" "+course.getInt("number")+" "+course.getString("section"));
                     courseStmt.executeUpdate();
                 }
             }
