@@ -89,7 +89,7 @@ public class Search {
         if (filter != null) {
             applyFilter(filter);
             for (int i = 0; i < filteredResults.size(); i++) {
-                System.out.println(filteredResults.get(i));
+                System.out.println(filteredResults.get(i).getCourseCode());
             }
         } else {
             if (searchResults.isEmpty()) {
@@ -104,67 +104,60 @@ public class Search {
 
     protected void applyFilter(Filter filter) {
 
-        List<Course> toBeFiltered = new ArrayList<>();
-
-        for (int i = 0; i < searchResults.size(); i++) {
-            toBeFiltered.add(searchResults.get(i));
-        }
-
         if (!filter.getCourse().equals("BLANK")) {
-            for (Course course : toBeFiltered) {
-                if (course.getCourseDays() != filter.getCourse()) {
-                    toBeFiltered.remove(course);
+            for (Course course : searchResults) {
+                String condensedDays = course.getCourseDays().replaceAll(", ", "");
+                if (condensedDays.equals(filter.getCourse())) {
+                    filteredResults.add(course);
                 }
             }
         }
 
         if (!filter.getStartTime().equals("00:00:00")) {
-            for (Course course : toBeFiltered) {
-                if (course.getStartTime() != filter.getStartTime()) {
-                    toBeFiltered.remove(course);
+            for (Course course : searchResults) {
+                String condensedTimes = course.getStartTime().split(",")[0];
+                if (condensedTimes.equals(filter.getStartTime())) {
+                    filteredResults.add(course);
                 }
             }
         }
 
         if (!filter.getEndTime().equals("00:00:00")) {
-            for (Course course : toBeFiltered) {
-                if (course.getEndTime() != filter.getEndTime()) {
-                    toBeFiltered.remove(course);
+            for (Course course : searchResults) {
+                String condensedTimes = course.getEndTime().split(",")[0];
+                if (condensedTimes.equals(filter.getEndTime())) {
+                    filteredResults.add(course);
                 }
             }
         }
 
         if (!filter.getCourseSession().equals("BLANK")) {
-            for(Course course : toBeFiltered) {
-                if (course.getSession() != filter.getCourseSession()) {
-                    toBeFiltered.remove(course);
+            for(Course course : searchResults) {
+                if (course.getSession().equals(filter.getCourseSession())) {
+                    filteredResults.add(course);
                 }
             }
         }
 
         if (!filter.getCourseCodes().isEmpty()) {
             for (String codes : filter.getCourseCodes()) {
-                for(Course course : toBeFiltered) {
-                    if (!course.getCourseCode().equals(codes)) {
-                        toBeFiltered.remove(course);
+                for(Course course : searchResults) {
+                    if (course.getCourseCode().equals(codes)) {
+                        filteredResults.add(course);
                     }
                 }
             }
         }
 
         if (!filter.getDepartment().equals("")) {
-                for(Course course : toBeFiltered) {
-                    if (!course.getCourseDept().equals(filter.getDepartment())) {
-                        toBeFiltered.remove(course);
+                for(Course course : searchResults) {
+                    if (course.getCourseDept().equals(filter.getDepartment())) {
+                        filteredResults.remove(course);
                     }
                 }
         }
 
-        if (!toBeFiltered.isEmpty()) {
-            for (int i = 0; i < toBeFiltered.size(); i++) {
-                filteredResults.add(toBeFiltered.get(i));
-            }
-        } else {
+        if (filteredResults.isEmpty()) {
             System.out.println("I'm sorry, we're unable to find anything related to your search. Try modifying your filters or query.");
         }
 

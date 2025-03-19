@@ -3,6 +3,7 @@ package edu.gcc.comp350;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -122,6 +123,112 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         // Assertions
         assertEquals(0, search.getSearchResults().size());
+    }
+
+    @Test
+    void testSimpleDepartmentSearchWithDayFilter() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "COMP";
+        String testDay = "MWF";
+
+        List<String> tempcodes = new ArrayList<>();
+
+        Filter filter = new Filter(testDay, "00:00:00", "00:00:00", "BLANK", tempcodes, "");
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getFilteredResults().size());
+    }
+
+    @Test
+    void testSimpleDepartmentSearchWithTimeFilter() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "COMP";
+        String testStartTime = "09:00:00";
+
+        List<String> tempcodes = new ArrayList<>();
+
+        Filter filter = new Filter("BLANK", testStartTime, "00:00:00", "BLANK", tempcodes, "");
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getFilteredResults().size());
+    }
+
+    @Test
+    void testSimpleDepartmentSearchWithDayAndTimeFilter() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "COMP";
+        String testDay = "MWF";
+        String testStartTime = "09:00:00";
+
+        List<String> tempcodes = new ArrayList<>();
+
+        Filter filter = new Filter(testDay, testStartTime, "00:00:00", "BLANK", tempcodes, "");
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getFilteredResults().size());
+    }
+
+    @Test
+    void testSimpleKeywordSearchWithDayFilter() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTRY";
+        String testDay = "MWF";
+
+        List<String> tempcodes = new ArrayList<>();
+
+        Filter filter = new Filter(testDay, "00:00:00", "00:00:00", "BLANK", tempcodes, "");
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getFilteredResults().size());
+    }
+
+    @Test
+    void testSimpleKeywordSearchWithTimeFilter() throws Exception {
+
+        Main.onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTRY";
+        String testStartTime = "09:00:00";
+
+        List<String> tempcodes = new ArrayList<>();
+
+        Filter filter = new Filter("BLANK", testStartTime, "00:00:00", "BLANK", tempcodes, "");
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getFilteredResults().size());
     }
 }
 
