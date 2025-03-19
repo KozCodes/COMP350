@@ -339,7 +339,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
         // Sample inputs
         String testQuery = "CHEMISTRY";
         String testDay = "MWF";
-        String testStartTime = "09:00:00";
+        String testStartTime = "12:00:00";
 
         List<String> tempcodes = new ArrayList<>();
 

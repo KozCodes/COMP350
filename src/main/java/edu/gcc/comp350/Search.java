@@ -93,12 +93,21 @@ public class Search {
             }
 
             for (int i = 0; i < Main.courses.size(); i++) {
-                for (int j = 0; j < searchResults.size(); j++) {
-                    if (!searchResults.get(i).getCourseCode().equals(Main.courses.get(i).getCourseCode())) {
-                        if (searchMatches.contains(Main.courses.get(i).getCourseTitle())) {
-
-                            searchResults.add(Main.courses.get(i));
+                if (searchResults.isEmpty()) {
+                    if (searchMatches.contains(Main.courses.get(i).getCourseTitle())) {
+                        searchResults.add(Main.courses.get(i));
+                    }
+                } else {
+                    boolean alreadyin = false;
+                    for (int j = 0; j < searchResults.size(); j++) {
+                        if (searchResults.get(j).getCourseCode().equals(Main.courses.get(i).getCourseCode())) {
+                            alreadyin = true;
+                            break;
                         }
+                    }
+
+                    if (searchMatches.contains(Main.courses.get(i).getCourseTitle()) && !alreadyin) {
+                        searchResults.add(Main.courses.get(i));
                     }
                 }
             }
