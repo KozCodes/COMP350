@@ -42,8 +42,8 @@ public class Student {
         return schedules;
     }
 
-    protected void addSchedule(Schedule schedule) {
-        schedules.add(schedule);
+    protected Schedule addSchedule(Schedule schedule) {
+        return schedule;
     }
 
     protected void deleteSchedule(Schedule schedule) {
@@ -57,5 +57,8 @@ public class Student {
             }
         }
         return null;
+    }
+    protected void saveSchedule(Schedule schedule) {
+
     }
 }

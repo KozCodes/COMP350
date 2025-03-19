@@ -28,66 +28,68 @@ public class ConsoleIO {
             command = tokens[0];
 
             switch (command) {
-                case "help" :
+                case "help":
                     help();
                     break;
-                case "add" :
+                case "add":
                     if (tokens.length > 1) {
                         int referenceNumber = Integer.parseInt(tokens[1]);
                         add(referenceNumber);
                     }
                     break;
-                case "remove" :
+                case "remove":
                     if (tokens.length > 1) {
                         int referenceNumber = Integer.parseInt(tokens[1]);
                         remove(referenceNumber);
                     }
                     break;
-                case "save" :
+                case "undo":
+                    undo();
+                    break;
+                case "save":
                     save();
                     break;
-                case "load" :
+                case "load":
                     if (tokens.length > 1) {
                         int schedule = Integer.parseInt(tokens[1]);
                         load(schedule);
                     }
                     break;
-                case "delete" :
+                case "delete":
                     if (tokens.length > 1) {
                         int schedule = Integer.parseInt(tokens[1]);
                         delete(schedule);
                     }
                     break;
-                case "new" :
+                case "new":
                     newSchedule();
                     break;
-                case "filter" :
+                case "filter":
                     if (tokens.length > 2) {
                         String type = tokens[1];
                         String val = tokens[2];
                         filter(type, val);
                     }
                     break;
-                case "search" :
+                case "search":
                     if (tokens.length > 1) {
                         String keywords = in.substring(command.length()).trim();
                         search(keywords);
                     }
                     break;
-                case "print" :
+                case "print":
                     if (tokens.length > 1) {
                         int referenceNumber = Integer.parseInt(tokens[1]);
                         print(referenceNumber);
                     }
                     break;
-                case "schedule" :
+                case "schedule":
                     schedule();
                     break;
                 default:
                     System.out.println("Invalid command, help or try again");
             }
         }
-
     }
 
     /**
@@ -201,6 +203,19 @@ public class ConsoleIO {
             System.out.println(course.toString());
         }
     }
+
+    /**
+     * Undoes the last change made to the current schedule
+     */
+    private void undo() {
+        if (!currentSchedule.getCourses().isEmpty()) {
+            currentSchedule.undo();
+            System.out.println("Last change undone.");
+        } else {
+            System.out.println("No changes to undo.");
+        }
+    }
+
 
     /**
      * print all commands and syntax to console

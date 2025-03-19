@@ -33,7 +33,7 @@ public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
         // for MVP testing
-        currentStudent = new Student("John Smith", "Poli Sci", List.of("Music"));
+        currentStudent = new Student(1, "John Smith", "Poli Sci", List.of("Music"));
         currentSchedule = currentStudent.addSchedule(new Schedule("John's Schedule"));
         consoleIO.run();
 
@@ -48,6 +48,15 @@ public class Main {
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         connect();
         db.resetDatabase();
+
+        professors = Professor.fromJsonFile("C:\\Users\\KOZORAJC23\\IdeaProjects\\COMP350\\Database\\data_wolfe.json");
+
+        System.out.println("Loaded Professors:");
+        for (Professor prof : professors) {
+            System.out.println(prof.getID() + " - " + prof.getName() + " - " + prof.getDepartment());
+        }
+
+        loadCourses();
     }
 
 
@@ -68,5 +77,6 @@ public class Main {
     private static void loadProfessors() {
 
     }
+
 
 }
