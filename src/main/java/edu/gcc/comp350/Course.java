@@ -6,6 +6,7 @@ import java.util.Random;
 public class Course {
 
     private final int id;
+    private String courseTitle;
     private String professor;
     private String session;
     private String startTime;
@@ -28,6 +29,7 @@ public class Course {
      * @param courseCode String course code, including department and number, eg COMP 141, SOCI 221
      */
     protected Course(int id,
+                     String courseTitle,
                      String professor,
                      String session,
                      String startTime,
@@ -36,6 +38,7 @@ public class Course {
                      String courseDept,
                      String courseCode) {
         this.id = id;
+        this.courseTitle = courseTitle;
         this.professor = professor;
         this.session = session;
         this.startTime = startTime;
@@ -43,6 +46,10 @@ public class Course {
         this.courseDays = courseDays;
         this.courseDept = courseDept;
         this.courseCode = courseCode;
+    }
+
+    protected String getCourseTitle() {
+        return courseTitle;
     }
 
     protected String getProfessor() {

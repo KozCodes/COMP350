@@ -109,6 +109,7 @@ public class DatabaseConnect {
         String sql = """
             CREATE TABLE IF NOT EXISTS Courses (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
+             courseTitle TEXT NOT NULL,
              professor TEXT NOT NULL,
              session TEXT NOT NULL,
              startTime TEXT NOT NULL,
@@ -123,7 +124,7 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Student (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             name TEXT NOT NULL,
+             courseTitle TEXT NOT NULL,
              major TEXT NOT NULL,
              minor TEXT
             );""";
@@ -133,7 +134,7 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Schedule (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             name TEXT NOT NULL
+             courseTitle TEXT NOT NULL
             );""";
         injectSql(sql);
 
@@ -165,6 +166,7 @@ public class DatabaseConnect {
         String sql = """
             CREATE TABLE IF NOT EXISTS Courses (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
+             courseTitle TEXT NOT NULL,
              professor TEXT NOT NULL,
              session TEXT NOT NULL,
              startTime TEXT NOT NULL,
@@ -238,7 +240,7 @@ public class DatabaseConnect {
             // TODO: Put times parsing here
             // Parsing and inserting courses
             JSONArray coursesArray = jsonObject.getJSONArray("classes");
-            String courseSql = "INSERT INTO Courses (professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement courseStmt = conn.prepareStatement(courseSql)) {
                 for (int i = 0; i < coursesArray.length(); i++) {
                     JSONObject course = coursesArray.getJSONObject(i);
@@ -255,13 +257,14 @@ public class DatabaseConnect {
                         endTime.append(timeObj.getString("end_time"));
                         startTime.append(timeObj.getString("start_time"));
                     }
-                    courseStmt.setString(1, course.getJSONArray("faculty").toString());
-                    courseStmt.setString(2, course.getString("semester"));
-                    courseStmt.setString(3, String.valueOf(startTime));
-                    courseStmt.setString(4, String.valueOf(endTime));
-                    courseStmt.setString(5, String.valueOf(day));
-                    courseStmt.setString(6, course.getString("subject"));
-                    courseStmt.setString(7, course.getString("subject")+" "+course.getInt("number")+" "+course.getString("section"));
+                    courseStmt.setString(1, course.getString("name"));
+                    courseStmt.setString(2, course.getJSONArray("faculty").toString());
+                    courseStmt.setString(3, course.getString("semester"));
+                    courseStmt.setString(4, String.valueOf(startTime));
+                    courseStmt.setString(5, String.valueOf(endTime));
+                    courseStmt.setString(6, String.valueOf(day));
+                    courseStmt.setString(7, course.getString("subject"));
+                    courseStmt.setString(8, course.getString("subject")+" "+course.getInt("number")+" "+course.getString("section"));
                     courseStmt.executeUpdate();
                 }
             }
