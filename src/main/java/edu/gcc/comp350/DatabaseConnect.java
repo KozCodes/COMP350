@@ -93,7 +93,6 @@ public class DatabaseConnect {
         injectSql("DROP TABLE IF EXISTS Courses");
         injectSql("DROP TABLE IF EXISTS Student");
         injectSql("DROP TABLE IF EXISTS Schedule");
-        injectSql("DROP TABLE IF EXISTS StudentSchedules");
         injectSql("DROP TABLE IF EXISTS ScheduleCourses");
     }
 
@@ -134,18 +133,9 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Schedule (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             courseTitle TEXT NOT NULL
-            );""";
-        injectSql(sql);
-
-        // student schedule table
-        sql = """
-            CREATE TABLE IF NOT EXISTS StudentSchedules (
-             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             courseTitle TEXT NOT NULL,
              student INTEGER,
-             FOREIGN KEY (student) REFERENCES Student(id),
-             schedule INTEGER,
-             FOREIGN KEY (schedule) REFERENCES Schedule(id)
+             FOREIGN KEY (student) REFERENCES Student(id)
             );""";
         injectSql(sql);
 
