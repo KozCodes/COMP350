@@ -24,6 +24,8 @@ public class Schedule {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = "Schedule " + (Main.currentStudent.getSchedules().isEmpty() ? 1 : Main.currentStudent.getSchedules().size() + 1);
+
+        // TODO add to database
     }
 
     /**
@@ -40,6 +42,8 @@ public class Schedule {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = name;
+
+        // TODO add to database
     }
 
     /**
@@ -118,6 +122,15 @@ public class Schedule {
      */
     protected List<Course> getCourses() {
         return classes;
+    }
+
+    @Override
+    public String toString() {
+        //TODO: Implement toString with visuals
+        String title = "Schedule: " + name + "\n";
+        String courses = "";
+
+        return title + courses;
     }
 }
 
