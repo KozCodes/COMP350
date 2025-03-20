@@ -20,7 +20,7 @@ class StudentTest {
         minors.add("Mathematics");
         minors.add("Computer Science");
 
-        student = new Student(1, "Jonah", "Computer Science", minors);
+  //      student = new Student(1, "Jonah", "Computer Science", minors);
     }
 
     @Test

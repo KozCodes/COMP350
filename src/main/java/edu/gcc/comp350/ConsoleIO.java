@@ -154,13 +154,13 @@ public class ConsoleIO {
     private void filter(String type, String val) {
         switch (type) {
             case "days" :
-                filter.setCourse(Main.Days.valueOf(val));
+                filter.setCourse(val);
             case "start" :
-                filter.setStartTime(Time.valueOf(val));
+                filter.setStartTime(val);
             case "end" :
-                filter.setEndTime(Time.valueOf(val));
+                filter.setEndTime(val);
             case "session" :
-                filter.setCourseSession(Main.Session.valueOf(val));
+                filter.setCourseSession(val);
             case "courseCode" :
                 filter.setCourseCodes(Arrays.asList(val.split(", ")));
             case "department" :
