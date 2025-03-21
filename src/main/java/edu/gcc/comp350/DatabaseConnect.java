@@ -144,8 +144,8 @@ public class DatabaseConnect {
             CREATE TABLE IF NOT EXISTS ScheduleCourses (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              schedule INTEGER,
-             FOREIGN KEY (schedule) REFERENCES Schedule(id),
              course INTEGER,
+             FOREIGN KEY (schedule) REFERENCES Schedule(id),
              FOREIGN KEY (course) REFERENCES Courses(id)
             );""";
         injectSql(sql);

@@ -105,8 +105,13 @@ public class Student {
             System.out.println(e.getMessage());
         }
 
-        String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = " + schedule.getId();
-        db.injectSql(scheduleCourseSql);
+        String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
+                try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
+                    pstmt.setInt(1, schedule.getId());
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
 
         for (Course course : schedule.getCourses()) {
             try (var pstmt = db.conn.prepareStatement("INSERT INTO ScheduleCourses (schedule, course) VALUES (?, ?)")) {
