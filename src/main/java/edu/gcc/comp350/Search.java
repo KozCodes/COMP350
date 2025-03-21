@@ -92,22 +92,19 @@ public class Search {
         //print out search results
         if (filter != null) {
             applyFilter(filter);
-            for (int i = 0; i < filteredResults.size(); i++) {
-                System.out.println(filteredResults.get(i).getCourseCode() + " - " + filteredResults.get(i).getSession());
-            }
         } else {
             if (searchResults.isEmpty()) {
                 System.out.println("We're sorry, we were unable to find a course related to your search. Please try again.");
-            } else {
-                for (int i = 0; i < searchResults.size(); i++) {
-                    System.out.println(searchResults.get(i).getCourseCode() + " - " + searchResults.get(i).getSession());
-                }
             }
         }
     }
 
     protected void applyFilter(Filter filter) {
-
+        //filter bot - first checks if a part of a filter is a default value, in which case it will continue on to the next piece of a filter
+        //until no more of it can be checked. After a filter piece is checked and it is not a default value, it will check all the other
+        //values in the filter. if all other values are default, add the current course to be checked into the filtered list. if theres
+        //more that are not default values, it will wait to add a course until it can be determined that the course sufficiently meets
+        //all requirements.
 
             for (Course course : searchResults) {
                 String condensedDays = course.getCourseDays().replaceAll(", ", "");
