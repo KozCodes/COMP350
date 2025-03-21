@@ -25,7 +25,7 @@ public class Schedule {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = "Schedule " + (Main.currentStudent.getSchedules().isEmpty() ? 1 : Main.currentStudent.getSchedules().size() + 1);
-        this.id = addScheduleToDatabase(name);
+        this.id = addScheduleToDatabase();
     }
 
     /**
@@ -41,7 +41,7 @@ public class Schedule {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = name;
-        this.id = addScheduleToDatabase(name);
+        this.id = addScheduleToDatabase();
     }
 
     /**
@@ -65,16 +65,23 @@ public class Schedule {
      * Add the Schedule to the database
      * @return int id assigned to the Schedule
      */
-    protected int addScheduleToDatabase(String name) {
-        String sql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + name + "', " + Main.currentStudent.getId() + ")";
-        Main.db.injectSql(sql);
+    protected int addScheduleToDatabase() {
+        try (var pstmt = Main.db.conn.prepareStatement("INSERT INTO Schedule (scheduleTitle, student) VALUES (?, ?)")) {
+            pstmt.setString(1, this.name);
+            pstmt.setInt(2, Main.currentStudent.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
-        // This code was produced using AI //
-        sql = "SELECT id FROM Schedule WHERE scheduleTitle = '" + name + "' AND student = " + Main.currentStudent.getId();
-        try (var stmt = Main.db.conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) {
-                return rs.getInt("id");
+        String sql = "SELECT id FROM Schedule WHERE scheduleTitle = ? AND student = ?";
+        try (var pstmt = Main.db.conn.prepareStatement(sql)) {
+            pstmt.setString(1, this.name);
+            pstmt.setInt(2, Main.currentStudent.getId());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

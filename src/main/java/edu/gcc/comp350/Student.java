@@ -28,7 +28,7 @@ public class Student {
      */
     protected List<Schedule> getSchedulesFromDatabase() {
         List<Schedule> schedules = new ArrayList<>();
-        String sql = "SELECT id, name FROM Schedule WHERE student = " + this.id;
+        String sql = "SELECT id, scheduleTitle FROM Schedule WHERE student = " + this.id;
 
         try (var stmt = Main.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -94,13 +94,28 @@ public class Student {
 
     protected void saveSchedule(Schedule schedule) {
         deleteSchedule(schedule);
-        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES (" + schedule.getName() + ", " + id + ")";
-        db.injectSql(scheduleSql);
+//        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
+//        db.injectSql(scheduleSql);
+
+        try (var pstmt = db.conn.prepareStatement("INSERT INTO Schedule (scheduleTitle, student) VALUES (?, ?)")) {
+            pstmt.setString(1, schedule.getName());
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
         String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = " + schedule.getId();
         db.injectSql(scheduleCourseSql);
+
         for (Course course : schedule.getCourses()) {
-            String courseSql = "INSERT INTO ScheduleCourses (schedule, course) VALUES (" + schedule.getId() + ", " + course.getID() + ")";
-            db.injectSql(courseSql);
+            try (var pstmt = db.conn.prepareStatement("INSERT INTO ScheduleCourses (schedule, course) VALUES (?, ?)")) {
+                pstmt.setInt(1, schedule.getId());
+                pstmt.setInt(2, course.getID());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }
