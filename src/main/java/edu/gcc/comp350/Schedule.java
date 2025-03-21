@@ -1,5 +1,7 @@
 package edu.gcc.comp350;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,23 +16,21 @@ public class Schedule {
 
     /**
      * Schedule Constructor
-     * Class variable id is initialized to a random number [1, 6000)
+     * Class variable id is the id assigned by the database
      * Class variable classes is initialized to an empty ArrayList
      * Class variable lastChangedCourses is initialized to a new Stack
      * Class variable name is initialized to "Schedule " + 1 + the number of schedules the current student currently has
      */
     protected Schedule() {
-        this.id = new Random().nextInt(6000);
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = "Schedule " + (Main.currentStudent.getSchedules().isEmpty() ? 1 : Main.currentStudent.getSchedules().size() + 1);
-
-        // TODO add to database
+        this.id = addScheduleToDatabase(name);
     }
 
     /**
      * Schedule Constructor
-     * Class variable id is initialized to a random number [1, 6000)
+     * Class variable id is the id assigned by the database
      * Class variable classes is initialized to an empty ArrayList
      * Class variable lastChangedCourses is initialized to a new Stack
      * Class variable name is initialized to param name
@@ -38,12 +38,49 @@ public class Schedule {
      * @param name String specified name for this Schedule
      */
     protected Schedule(String name) {
-        this.id = new Random().nextInt(6000);
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = name;
+        this.id = addScheduleToDatabase(name);
+    }
 
-        // TODO add to database
+    /**
+     * Schedule Constructor solely for loading a schedule from the database
+     * Class variable id is the id assigned by the database
+     * Class variable classes is initialized to an empty ArrayList
+     * Class variable lastChangedCourses is initialized to a new Stack
+     * Class variable name is initialized to param name
+     *
+     * @param name String specified name for this Schedule
+     * @param id int database specified id for this Schedule
+     */
+    protected Schedule(String name, int id) {
+        this.classes = new ArrayList<>();
+        this.lastChangedCourses = new Stack<>();
+        this.id = id;
+        this.name = name;
+    }
+
+    /**
+     * Add the Schedule to the database
+     * @return int id assigned to the Schedule
+     */
+    protected int addScheduleToDatabase(String name) {
+        String sql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + name + "', " + Main.currentStudent.getId() + ")";
+        Main.db.injectSql(sql);
+
+        // This code was produced using AI //
+        sql = "SELECT id FROM Schedule WHERE scheduleTitle = '" + name + "' AND student = " + Main.currentStudent.getId();
+        try (var stmt = Main.db.conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return -1; // Return -1 if no ID is found
+
     }
 
     /**
