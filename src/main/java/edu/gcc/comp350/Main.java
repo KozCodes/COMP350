@@ -28,7 +28,8 @@ public class Main {
     protected static Schedule currentSchedule;
     protected static ConsoleIO consoleIO = new ConsoleIO();
 
-    private static DatabaseConnect db = new DatabaseConnect();
+    // this must be protected so we all have one contact to the db
+    protected static DatabaseConnect db = new DatabaseConnect();
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         onLoad();
@@ -36,7 +37,7 @@ public class Main {
 //            System.out.println(course.getCourseTitle());
 //        }
         // for MVP testing
-        currentStudent = new Student("John Smith", "Poli Sci", List.of("Music"));
+        currentStudent = new Student(1, "John Smith", "Poli Sci", List.of("Music"));
         currentSchedule = currentStudent.addSchedule(new Schedule("John's Schedule"));
         consoleIO.run();
         db.disconnect();

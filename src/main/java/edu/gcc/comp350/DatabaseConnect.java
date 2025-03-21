@@ -18,7 +18,7 @@ import java.util.Random;
  * DatabaseConnect class that connects to the database and injects SQL.
  */
 public class DatabaseConnect {
-    private Connection conn;
+    protected Connection conn;
 
     protected DatabaseConnect() {
     }
@@ -139,7 +139,7 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Schedule (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             courseTitle TEXT NOT NULL,
+             scheduleTitle TEXT NOT NULL,
              student INTEGER,
              FOREIGN KEY (student) REFERENCES Student(id)
             );""";
