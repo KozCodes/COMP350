@@ -37,7 +37,23 @@ public class Main {
 //            System.out.println(course.getCourseTitle());
 //        }
         // for MVP testing
-        currentStudent = new Student("John Smith", "Poli Sci", List.of("Music"));
+
+        String sql = "SELECT id, name, major, minor FROM Student WHERE id = ?";
+        try (var pstmt = Main.db.conn.prepareStatement(sql)) {
+            pstmt.setInt(1, 1);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String major = rs.getString("major");
+                    ArrayList<String> minors = new ArrayList<>(List.of(rs.getString("minor").split(" ")));
+                    currentStudent = new Student(id, name, major, minors);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
         currentSchedule = currentStudent.getSchedule(0);
         consoleIO.run();
         db.disconnect();

@@ -65,6 +65,7 @@ public class Schedule {
         try (var stmt = Main.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
+                System.out.println("course");
                 int courseID = rs.getInt("course");
                 for (Course course : Main.courses) {
                     if (course.getID() == courseID) {

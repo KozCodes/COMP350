@@ -12,7 +12,7 @@ public class Student {
     private String name;
     private String major;
     private List<String> minors;
-    private List<Schedule> schedules;
+    private List<Schedule> schedules = new ArrayList<>();
 
     protected Student(String name, String major, List<String> minors) {
         this.name = name;
@@ -41,6 +41,16 @@ public class Student {
 
         this.schedules = getSchedulesFromDatabase();
 
+    }
+
+
+    protected Student(int id, String name, String major, List<String> minors) {
+        this.name = name;
+        this.major = major;
+        this.minors = minors;
+        this.id = id;
+
+        schedules = getSchedulesFromDatabase();
     }
 
     /**
@@ -112,17 +122,8 @@ public class Student {
         }
     }
     protected void saveSchedule(Schedule schedule) {
-        deleteSchedule(schedule);
 //        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
 //        db.injectSql(scheduleSql);
-
-        try (var pstmt = db.conn.prepareStatement("INSERT INTO Schedule (scheduleTitle, student) VALUES (?, ?)")) {
-            pstmt.setString(1, schedule.getName());
-            pstmt.setInt(2, id);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
 
         String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
                 try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
