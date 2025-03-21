@@ -46,6 +46,9 @@ public class Main {
         db.connect();
         //db.setCoursesInDatabase();
         db.resetCoursesInDatabase();
+        db.resetProfessorsInDatabase();
+        db.populateProfessorsInDatabase();
+        db.setProfessorsInDatabase();
         loadCourses();
     }
 
@@ -70,9 +73,4 @@ public class Main {
             courses.add(course);
         }
     }
-
-    private static void loadProfessors() {
-
-    }
-
 }
