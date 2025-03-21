@@ -280,49 +280,52 @@ public class ConsoleIO {
      */
     private void printSchedule() {
         System.out.println("Weekly Schedule for: " + currentSchedule.getName());
-
         // Print all classes at the top
         System.out.println("\nAll Classes in the Schedule:");
         List<Course> sortedCourses = new ArrayList<>(currentSchedule.getCourses());
         sortedCourses.sort(Comparator.comparing(Course::getStartTime));
-
         for (Course course : sortedCourses) {
-            System.out.println(String.format("Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
-                    course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
+            System.out.println(String.format("Course ID: %-5d | Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
+                    course.getID(), course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
         }
-
         // Days of the week
         String[] days = {"M", "T", "W", "R", "F"};
-
-        // Iterate through each day and print courses
+        // Iterate through each day and print the schedule from 08:00 to 21:00
         for (String day : days) {
-            System.out.println("\n" + getDayName(day) + ":");
+            System.out.println("\n" + getDayName(day) + " Schedule:");
             List<Course> coursesForDay = new ArrayList<>();
-
-            // Filter courses for this day
             for (Course course : currentSchedule.getCourses()) {
                 if (course.getCourseDays().contains(day)) {
                     coursesForDay.add(course);
                 }
             }
-
             // Sort courses by start time
             coursesForDay.sort(Comparator.comparing(Course::getStartTime));
+            // Schedule time slots from 08:00 to 21:00
+            String currentTime = "08:00";
+            String endTime = "21:00";
+            while (currentTime.compareTo(endTime) < 0) {
+                Course scheduledCourse = null;
+                // Check if there is a course at this time
+                for (Course course : coursesForDay) {
+                    if (course.getStartTime().equals(currentTime)) {
+                        scheduledCourse = course;
+                        break;
+                    }
+                }
+                if (scheduledCourse != null) {
+                    // Print the course in its respective time slot
+                    System.out.println(String.format("  %s - %s | %s (ID: %d)",
+                            scheduledCourse.getStartTime(), scheduledCourse.getEndTime(), scheduledCourse.getCourseTitle(), scheduledCourse.getID()));
 
-            if (coursesForDay.isEmpty()) {
-                System.out.println("  No classes scheduled.");
-                continue;
-            }
+                    currentTime = getNextTimeSlot(currentTime);
 
-            String lastEndTime = "08:00"; // Assume earliest class start time
-
-            for (Course course : coursesForDay) {
-
-                // Print course details
-                System.out.println("  " + course.getStartTime() + " - " + course.getEndTime() + " | " + course.getCourseTitle());
-
-                // Update last end time
-                lastEndTime = course.getEndTime();
+                    // Move to the next available slot
+                    } else {
+                    // Print an empty time slot
+                    System.out.println(String.format("  %s - %s | No class scheduled", currentTime, getNextTimeSlot(currentTime)));
+                    currentTime = getNextTimeSlot(currentTime);
+                }
             }
         }
     }
@@ -337,6 +340,17 @@ public class ConsoleIO {
             case "F": return "Friday";
             default: return "Unknown";
         }
+    }
+
+    // Helper method to advance time by 50-minute intervals (standard class duration)
+    private String getNextTimeSlot(String time) {
+        int hour = Integer.parseInt(time.split(":")[0]);
+        int minute = Integer.parseInt(time.split(":")[1]);
+        minute += 60;
+        if (minute >= 60) {
+            hour += 1;
+            minute -= 60;    }
+        return String.format("%02d:%02d", hour, minute);
     }
 
 
