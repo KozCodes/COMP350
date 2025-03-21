@@ -1,10 +1,7 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static edu.gcc.comp350.Main.*;
 
@@ -282,55 +279,66 @@ public class ConsoleIO {
      * Print the current schedule in a formatted manner
      */
     private void printSchedule() {
-        System.out.println("Current schedule: " + currentSchedule.getName());
+        System.out.println("Weekly Schedule for: " + currentSchedule.getName());
 
-        // Print all classes above the calendar
-        System.out.println("List of all classes in the current schedule:");
+        // Print all classes at the top
+        System.out.println("\nAll Classes in the Schedule:");
         List<Course> sortedCourses = new ArrayList<>(currentSchedule.getCourses());
-        sortedCourses.sort((c1, c2) -> c1.getStartTime().compareTo(c2.getStartTime())); // Sort by start time
+        sortedCourses.sort(Comparator.comparing(Course::getStartTime));
 
         for (Course course : sortedCourses) {
-            System.out.println(String.format("Course Code: %-10s | Days: %-5s | Start Time: %-5s | Title: %-20s",
-                    course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getCourseTitle()));
+            System.out.println(String.format("Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
+                    course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
         }
 
-        System.out.println("\n----------------------------------------");
-        System.out.println("Time Schedule:");
-        // Define time slots for the schedule
-        String[] timeSlots = {
-                "08:00", "09:00", "10:00", "11:00", "12:00",
-                "13:00", "14:00", "15:00", "16:00", "17:00"
-        };
+        // Days of the week
+        String[] days = {"M", "T", "W", "R", "F"};
 
-        // Header for the table
-        System.out.println("--------------------------------------------------------");
-        System.out.println("| Time      | Monday  | Tuesday | Wednesday | Thursday | Friday  |");
-        System.out.println("--------------------------------------------------------");
+        // Iterate through each day and print courses
+        for (String day : days) {
+            System.out.println("\n" + getDayName(day) + ":");
+            List<Course> coursesForDay = new ArrayList<>();
 
-        // Loop through each time slot and print corresponding course or empty slot
-        for (String timeSlot : timeSlots) {
-            System.out.print("| " + timeSlot + "  |");
-
-            for (String day : new String[]{"M", "T", "W", "R", "F"}) {
-                boolean courseFound = false;
-
-                for (Course course : sortedCourses) {
-                    if (course.getStartTime().equals(timeSlot) && course.getCourseDays().contains(day)) {
-                        System.out.print(String.format(" %-8s |", course.getCourseCode())); // Print the course code
-                        courseFound = true;
-                        break;
-                    }
-                }
-
-                if (!courseFound) {
-                    System.out.print("          |");
+            // Filter courses for this day
+            for (Course course : currentSchedule.getCourses()) {
+                if (course.getCourseDays().contains(day)) {
+                    coursesForDay.add(course);
                 }
             }
-            System.out.println();
-        }
 
-        System.out.println("--------------------------------------------------------");
+            // Sort courses by start time
+            coursesForDay.sort(Comparator.comparing(Course::getStartTime));
+
+            if (coursesForDay.isEmpty()) {
+                System.out.println("  No classes scheduled.");
+                continue;
+            }
+
+            String lastEndTime = "08:00"; // Assume earliest class start time
+
+            for (Course course : coursesForDay) {
+
+                // Print course details
+                System.out.println("  " + course.getStartTime() + " - " + course.getEndTime() + " | " + course.getCourseTitle());
+
+                // Update last end time
+                lastEndTime = course.getEndTime();
+            }
+        }
     }
+
+    // Helper method to convert day abbreviations to full names
+    private String getDayName(String abbreviation) {
+        switch (abbreviation) {
+            case "M": return "Monday";
+            case "T": return "Tuesday";
+            case "W": return "Wednesday";
+            case "R": return "Thursday";
+            case "F": return "Friday";
+            default: return "Unknown";
+        }
+    }
+
 
 
     /**
