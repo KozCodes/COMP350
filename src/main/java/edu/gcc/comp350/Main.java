@@ -37,8 +37,8 @@ public class Main {
 //            System.out.println(course.getCourseTitle());
 //        }
         // for MVP testing
-        currentStudent = new Student(1, "John Smith", "Poli Sci", List.of("Music"));
-        currentSchedule = currentStudent.addSchedule(new Schedule("John's Schedule"));
+        currentStudent = new Student("John Smith", "Poli Sci", List.of("Music"));
+        currentSchedule = currentStudent.getSchedule(0);
         consoleIO.run();
         db.disconnect();
     }
