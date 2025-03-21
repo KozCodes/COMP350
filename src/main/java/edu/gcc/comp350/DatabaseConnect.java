@@ -9,6 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Random;
 
 /**
  * DatabaseConnect class that connects to the database and injects SQL.
@@ -30,6 +34,7 @@ public class DatabaseConnect {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        createProfessorsTableInDatabase();
     }
 
     /**
@@ -94,6 +99,7 @@ public class DatabaseConnect {
         injectSql("DROP TABLE IF EXISTS Student");
         injectSql("DROP TABLE IF EXISTS Schedule");
         injectSql("DROP TABLE IF EXISTS ScheduleCourses");
+        injectSql("DROP TABLE IF EXISTS Professors");
     }
 
     protected void clearCoursesFromDatabase() {
@@ -149,6 +155,16 @@ public class DatabaseConnect {
              FOREIGN KEY (course) REFERENCES Courses(id)
             );""";
         injectSql(sql);
+
+        // Professors table
+        sql = """
+             CREATE TABLE IF NOT EXISTS Professors (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             score INTEGER NOT NULL,
+             professorName TEXT NOT NULL,
+             department TEXT NOT NULL
+             );""";
+        injectSql(sql);
     }
 
     protected void createCoursesTableInDatabase() {
@@ -165,6 +181,20 @@ public class DatabaseConnect {
              courseDept TEXT NOT NULL,
              courseCode TEXT NOT NULL
             );""";
+        injectSql(sql);
+    }
+
+    /**
+     * Creates the Professors table if it does not already exist.
+     */
+    private void createProfessorsTableInDatabase() {
+        String sql = """
+         CREATE TABLE IF NOT EXISTS Professors (
+         id INTEGER PRIMARY KEY AUTOINCREMENT,
+         score INTEGER NOT NULL,
+         professorName TEXT NOT NULL,
+         department TEXT NOT NULL
+         );""";
         injectSql(sql);
     }
 //    /**
@@ -198,6 +228,33 @@ public class DatabaseConnect {
         }
     }
 
+    protected void setProfessorsInDatabase() {
+        String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Professors'";
+        try (var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
+            if (!rs.next()) {
+                resetProfessorsInDatabase();
+            } else {
+                System.out.println("Professors table already exists in the database.");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    protected void resetProfessorsInDatabase() {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS Professors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        score INTEGER NOT NULL,
+        professorName TEXT NOT NULL,
+        department TEXT NOT NULL
+        );""";
+        injectSql(sql);
+        System.out.println("Professors table has been created/reset.");
+    }
+
+
     /**
      * Resets the database by clearing it and repopulating it with course data.
      */
@@ -207,7 +264,7 @@ public class DatabaseConnect {
         populateCoursesInDatabase();
         // populateStudentsInDatabase();
         // populateSchedulesInDatabase();
-        // populateProfessorsInDatabase();
+        populateProfessorsInDatabase();
         // TODO: Add method to populate data within database
     }
 
@@ -227,8 +284,7 @@ public class DatabaseConnect {
             String content = new String(Files.readAllBytes(Paths.get(filePath)));
             JSONObject jsonObject = new JSONObject(content);
 
-            // TODO: Put times parsing here
-            // Parsing and inserting courses
+
             JSONArray coursesArray = jsonObject.getJSONArray("classes");
             String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement courseStmt = conn.prepareStatement(courseSql)) {
@@ -236,25 +292,27 @@ public class DatabaseConnect {
                     JSONObject course = coursesArray.getJSONObject(i);
                     JSONArray timeData = course.getJSONArray("times");
                     StringBuilder day = new StringBuilder();
-                    StringBuilder endTime = new StringBuilder();
-                    StringBuilder startTime = new StringBuilder();
+                    String startTime = "";
+                    String endTime = "";
                     for (Object time : timeData) {
                         JSONObject timeObj = (JSONObject) time;
                         if (!day.isEmpty()) day.append(", ");
-                        if (!endTime.isEmpty()) endTime.append(", ");
-                        if (!startTime.isEmpty()) startTime.append(", ");
                         day.append(timeObj.getString("day"));
-                        endTime.append(timeObj.getString("end_time"));
-                        startTime.append(timeObj.getString("start_time"));
+                        // added so sets start and end times once
+                        if (startTime.isEmpty() && endTime.isEmpty()) {
+                            startTime = timeObj.getString("start_time");
+                            endTime = timeObj.getString("end_time");
+                        }
                     }
+
                     courseStmt.setString(1, course.getString("name"));
                     courseStmt.setString(2, course.getJSONArray("faculty").toString());
                     courseStmt.setString(3, course.getString("semester"));
-                    courseStmt.setString(4, String.valueOf(startTime));
-                    courseStmt.setString(5, String.valueOf(endTime));
-                    courseStmt.setString(6, String.valueOf(day));
+                    courseStmt.setString(4, startTime);
+                    courseStmt.setString(5, endTime);
+                    courseStmt.setString(6, day.toString()); // Use the accumulated days
                     courseStmt.setString(7, course.getString("subject"));
-                    courseStmt.setString(8, course.getString("subject")+" "+course.getInt("number")+" "+course.getString("section"));
+                    courseStmt.setString(8, course.getString("subject") + " " + course.getInt("number") + " " + course.getString("section"));
                     courseStmt.executeUpdate();
                 }
             }
@@ -265,4 +323,65 @@ public class DatabaseConnect {
         }
     }
 
+
+    protected void populateProfessorsInDatabase() {
+        createProfessorsTableInDatabase();
+        String filePath = "Database/data_wolfe.json";
+        Random random = new Random(); // Random number generator
+
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            JSONObject jsonObject = new JSONObject(content);
+            JSONArray classesArray = jsonObject.getJSONArray("classes");
+
+            String insertSql = "INSERT INTO Professors (professorName, department, score) VALUES (?, ?, ?)";
+
+            Set<String> seenProfessors = new HashSet<>(); // To avoid duplicate entries
+            try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
+                for (int i = 0; i < classesArray.length(); i++) {
+                    JSONObject course = classesArray.getJSONObject(i);
+                    JSONArray facultyArray = course.getJSONArray("faculty");
+
+                    for (int j = 0; j < facultyArray.length(); j++) {
+                        String professorName = facultyArray.getString(j);
+                        String department = course.getString("subject");
+
+                        if (!seenProfessors.contains(professorName)) {
+                            seenProfessors.add(professorName);
+
+                            int randomScore = random.nextInt(5) + 1; // Generates a number from 1 to 5
+
+                            stmt.setString(1, professorName);
+                            stmt.setString(2, department);
+                            stmt.setInt(3, randomScore);
+                            stmt.executeUpdate();
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading JSON file: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error parsing JSON data: " + e.getMessage());
+        }
+    }
+
+
+    public List<Professor> getAllProfessors() {
+        List<Professor> professors = new ArrayList<>();
+        String sql = "SELECT * FROM Professors"; // SQL to retrieve all professors
+        try (var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int score = rs.getInt("score");
+                String name = rs.getString("professorName");
+                String department = rs.getString("department");
+                professors.add(new Professor(id, score, name, department));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return professors;
+    }
 }

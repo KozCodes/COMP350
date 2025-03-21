@@ -112,16 +112,52 @@ public class Schedule {
      * @param courseID int ID of the course to add
      */
     protected void addCourse(int courseID) {
-        // find course in list of courses
-        for (Course course : Main.courses) {
-            if (course.getID() == courseID) {
-                classes.add(course);
-                // add course to lastChangedCourses
-                lastChangedCourses.push(course);
+        for (Course newCourse : Main.courses) {
+            if (newCourse.getID() == courseID) {
+                for (Course existingCourse : classes) {
+                    if (hasDayConflict(existingCourse, newCourse)) {
+                        if (hasTimeConflict(existingCourse, newCourse)) {
+                            System.out.println("Error: Course " + newCourse.getCourseTitle() +
+                                    " conflicts with " + existingCourse.getCourseTitle() +
+                                    " and cannot be added to the schedule.");
+                            return;
+                        }
+                    }
+                }
+                classes.add(newCourse);
+                lastChangedCourses.push(newCourse);
                 return;
             }
         }
     }
+
+    /**
+     * Checks if two courses have overlapping days.
+     */
+    public boolean hasDayConflict(Course existingCourse, Course newCourse) {
+        String existingDays = existingCourse.getCourseDays();
+        String newDays = newCourse.getCourseDays();
+
+        for (char day : existingDays.toCharArray()) {
+            if (newDays.contains(String.valueOf(day))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if two courses have overlapping time slots.
+     */
+    public boolean hasTimeConflict(Course existingCourse, Course newCourse) {
+        int existingStart = Integer.parseInt(existingCourse.getStartTime().replace(":", ""));
+        int existingEnd = Integer.parseInt(existingCourse.getEndTime().replace(":", ""));
+        int newStart = Integer.parseInt(newCourse.getStartTime().replace(":", ""));
+        int newEnd = Integer.parseInt(newCourse.getEndTime().replace(":", ""));
+
+        return newStart < existingEnd && newEnd > existingStart;
+    }
+
 
     /**
      * Remove a course from the Schedule
@@ -159,15 +195,6 @@ public class Schedule {
      */
     protected List<Course> getCourses() {
         return classes;
-    }
-
-    @Override
-    public String toString() {
-        //TODO: Implement toString with visuals
-        String title = "Schedule: " + name + "\n";
-        String courses = "";
-
-        return title + courses;
     }
 }
 
