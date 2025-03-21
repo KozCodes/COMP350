@@ -59,6 +59,23 @@ public class Schedule {
         this.lastChangedCourses = new Stack<>();
         this.id = id;
         this.name = name;
+
+        // Get courses from db
+        String sql = "SELECT course FROM ScheduleCourses WHERE schedule = " + this.id;
+        try (var stmt = Main.db.conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int courseID = rs.getInt("course");
+                for (Course course : Main.courses) {
+                    if (course.getID() == courseID) {
+                        System.out.println(course.getID());
+                        classes.add(course);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**

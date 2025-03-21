@@ -14,12 +14,33 @@ public class Student {
     private List<String> minors;
     private List<Schedule> schedules;
 
-    protected Student(int id, String name, String major, List<String> minors) {
+    protected Student(String name, String major, List<String> minors) {
         this.name = name;
         this.major = major;
         this.minors = minors;
-        this.id = id;
+
+        // put this student in db
+        try (var pstmt = db.conn.prepareStatement("INSERT INTO Student (name, major, minor) VALUES (?, ?, ?)")) {
+            pstmt.setString(1, this.name);
+            pstmt.setString(2, major);
+            pstmt.setString(3, minors.toString());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // get id assigned from db
+        String sql = "SELECT id FROM Student WHERE name = '" + this.name + "'";
+
+        try (var stmt = Main.db.conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+                this.id = rs.getInt("id");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
         this.schedules = getSchedulesFromDatabase();
+
     }
 
     /**
@@ -34,7 +55,7 @@ public class Student {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int scheduleId = rs.getInt("id");
-                String scheduleTitle = rs.getString("name");
+                String scheduleTitle = rs.getString("scheduleTitle");
                 Schedule schedule = new Schedule(scheduleTitle, scheduleId);
                 schedules.add(schedule);
             }
@@ -82,14 +103,13 @@ public class Student {
         db.injectSql(scheduleSql);
     }
 
-    protected Schedule getSchedule(int id) {
-        for (Schedule schedule : schedules) {
-            if (schedule.getId() == id) {
-                return schedule;
-            }
+    protected Schedule getSchedule(int index) {
+        try {
+            return schedules.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Schedule not found");
+            return null;
         }
-        System.out.println("Schedule not found");
-        return null;
     }
     protected void saveSchedule(Schedule schedule) {
         deleteSchedule(schedule);
