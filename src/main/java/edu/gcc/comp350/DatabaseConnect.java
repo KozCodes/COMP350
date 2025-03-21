@@ -123,7 +123,7 @@ public class DatabaseConnect {
         sql = """
             CREATE TABLE IF NOT EXISTS Student (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
-             courseTitle TEXT NOT NULL,
+             name TEXT NOT NULL,
              major TEXT NOT NULL,
              minor TEXT
             );""";

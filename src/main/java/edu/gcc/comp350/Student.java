@@ -28,13 +28,13 @@ public class Student {
      */
     protected List<Schedule> getSchedulesFromDatabase() {
         List<Schedule> schedules = new ArrayList<>();
-        String sql = "SELECT id, scheduleTitle FROM Schedule WHERE student = " + this.id;
+        String sql = "SELECT id, name FROM Schedule WHERE student = " + this.id;
 
         try (var stmt = Main.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int scheduleId = rs.getInt("id");
-                String scheduleTitle = rs.getString("scheduleTitle");
+                String scheduleTitle = rs.getString("name");
                 Schedule schedule = new Schedule(scheduleTitle, scheduleId);
                 schedules.add(schedule);
             }
