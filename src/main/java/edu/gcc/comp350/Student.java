@@ -91,7 +91,6 @@ public class Student {
         System.out.println("Schedule not found");
         return null;
     }
-
     protected void saveSchedule(Schedule schedule) {
         deleteSchedule(schedule);
 //        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";

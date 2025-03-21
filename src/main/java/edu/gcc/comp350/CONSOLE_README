@@ -51,3 +51,5 @@ Valid Commands:
     <id> must be a valid int id of an existing course instance in the database.
 
 - schedule: Prints the details of all course instances in current schedule to the console.
+
+- faculty: Prints the details of all faculty in the database to the console.

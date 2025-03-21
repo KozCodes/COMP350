@@ -92,8 +92,11 @@ public class Course {
         return false;
     }
 
-//    @Override
-//    public String toString() {
-//        return null;
-//    }
+    @Override
+    public String toString() {
+        return String.format(
+                        "| %-2d | %-20s |  Professor: %-14s | %-7s | StartTime: %-5s | EndTime: %-5s | Days: %-7s| %-4s | Code: %-10s |\n",
+                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode
+        );
+    }
 }
