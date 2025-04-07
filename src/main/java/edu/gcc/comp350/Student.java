@@ -113,7 +113,7 @@ public class Student {
         db.injectSql(scheduleSql);
     }
 
-    protected Schedule getSchedule(int index) {
+    public Schedule getSchedule(int index) {
         try {
             return schedules.get(index);
         } catch (IndexOutOfBoundsException e) {

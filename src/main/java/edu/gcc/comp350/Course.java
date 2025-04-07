@@ -28,15 +28,15 @@ public class Course {
      * @param courseDept String college department under which this course instance is listed, the 4-letter portion of the course code
      * @param courseCode String course code, including department and number, eg COMP 141, SOCI 221
      */
-    protected Course(int id,
-                     String courseTitle,
-                     String professor,
-                     String session,
-                     String startTime,
-                     String endTime,
-                     String courseDays,
-                     String courseDept,
-                     String courseCode) {
+    public Course(int id,
+                  String courseTitle,
+                  String professor,
+                  String session,
+                  String startTime,
+                  String endTime,
+                  String courseDays,
+                  String courseDept,
+                  String courseCode) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
