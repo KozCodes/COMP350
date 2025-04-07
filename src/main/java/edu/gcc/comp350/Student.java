@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import static edu.gcc.comp350.Main.*;
+import static edu.gcc.comp350.RefactoredMain.*;
 
 public class Student {
 
@@ -32,7 +32,7 @@ public class Student {
         // get id assigned from db
         String sql = "SELECT id FROM Student WHERE name = '" + this.name + "'";
 
-        try (var stmt = Main.db.conn.createStatement();
+        try (var stmt = RefactoredMain.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
                 this.id = rs.getInt("id");
         } catch (SQLException e) {
@@ -61,7 +61,7 @@ public class Student {
         List<Schedule> schedules = new ArrayList<>();
         String sql = "SELECT id, scheduleTitle FROM Schedule WHERE student = " + this.id;
 
-        try (var stmt = Main.db.conn.createStatement();
+        try (var stmt = RefactoredMain.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 int scheduleId = rs.getInt("id");

@@ -1,6 +1,5 @@
 package edu.gcc.comp350;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class Search {
 
             List<String> codes = new ArrayList<>();
 
-            for (int i = 0; i < Main.courses.size(); i++) {
-                if (!codes.contains(Main.courses.get(i).getCourseCode())) {
-                    codes.add(Main.courses.get(i).getCourseCode());
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                if (!codes.contains(RefactoredMain.courses.get(i).getCourseCode())) {
+                    codes.add(RefactoredMain.courses.get(i).getCourseCode());
                 }
             }
 
@@ -56,9 +55,9 @@ public class Search {
             }
         }
 
-        for (int i = 0; i < Main.courses.size(); i++) {
-                if (searchMatches.contains(Main.courses.get(i).getCourseCode()) && !searchResults.contains(Main.courses.get(i))) {
-                    searchResults.add(Main.courses.get(i));
+        for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                if (searchMatches.contains(RefactoredMain.courses.get(i).getCourseCode()) && !searchResults.contains(RefactoredMain.courses.get(i))) {
+                    searchResults.add(RefactoredMain.courses.get(i));
                 }
         }
 
@@ -70,9 +69,9 @@ public class Search {
 
             List<String> names = new ArrayList<>();
 
-            for (int i = 0; i < Main.courses.size(); i++) {
-                if (!names.contains(Main.courses.get(i).getCourseTitle())) {
-                    names.add(Main.courses.get(i).getCourseTitle());
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                if (!names.contains(RefactoredMain.courses.get(i).getCourseTitle())) {
+                    names.add(RefactoredMain.courses.get(i).getCourseTitle());
                 }
             }
 
@@ -82,9 +81,9 @@ public class Search {
                 }
             }
 
-            for (int i = 0; i < Main.courses.size(); i++) {
-                    if (searchMatches.contains(Main.courses.get(i).getCourseTitle()) && !searchResults.contains(Main.courses.get(i))) {
-                        searchResults.add(Main.courses.get(i));
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                    if (searchMatches.contains(RefactoredMain.courses.get(i).getCourseTitle()) && !searchResults.contains(RefactoredMain.courses.get(i))) {
+                        searchResults.add(RefactoredMain.courses.get(i));
                     }
             }
         }

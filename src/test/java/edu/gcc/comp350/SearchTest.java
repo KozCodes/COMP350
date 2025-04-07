@@ -1,8 +1,10 @@
 package edu.gcc.comp350;
 
 import org.junit.jupiter.api.Test;
+
+import static edu.gcc.comp350.RESTController.onLoad;
 import static org.junit.jupiter.api.Assertions.*;
-import java.sql.Time;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +37,7 @@ void testSearchConstructor() {
 @Test
 void testSimpleDepartmentSearchWithNoFilters() throws Exception {
 
-    Main.onLoad();
+    onLoad();
 
     // Sample inputs
     String testQuery = "COMP";
@@ -50,7 +52,7 @@ void testSimpleDepartmentSearchWithNoFilters() throws Exception {
 @Test
 void testSimpleCourseCodeSearchWithNoFilters() throws Exception {
 
-    Main.onLoad();
+   onLoad();
 
     // Sample inputs
     String testQuery = "COMP 141";
@@ -66,7 +68,7 @@ void testSimpleCourseCodeSearchWithNoFilters() throws Exception {
 @Test
 void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
-    Main.onLoad();
+    onLoad();
 
     // Sample inputs
     String testQuery = "COMP 141 A";
@@ -82,7 +84,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 @Test
     void testSimpleKeywordSearchWithNoFilters() throws Exception {
 
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -98,7 +100,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleNameSearchWithNoFilters() throws Exception {
 
-        Main.onLoad();
+ onLoad();
 
         // Sample inputs
         String testQuery = "GENERAL CHEMISTRY I";
@@ -113,7 +115,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void lowercaseQuery() throws Exception {
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "chemistry";
@@ -128,7 +130,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void MixedQuery() throws Exception {
-        Main.onLoad();
+     onLoad();
 
         // Sample inputs
         String testQuery = "cHeMiStRy";
@@ -145,7 +147,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testReactiontoNoResults() throws Exception {
 
-        Main.onLoad();
+  onLoad();
 
         // Sample inputs
         String testQuery = "BBQ";
@@ -162,7 +164,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleDepartmentSearchWithDayFilter() throws Exception {
 
-        Main.onLoad();
+  onLoad();
 
         // Sample inputs
         String testQuery = "COMP";
@@ -183,7 +185,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleDepartmentSearchWithTimeFilter() throws Exception {
 
-        Main.onLoad();
+    onLoad();
 
         // Sample inputs
         String testQuery = "COMP";
@@ -204,7 +206,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleKeywordSearchWithDayFilter() throws Exception {
 
-        Main.onLoad();
+    onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -225,7 +227,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleKeywordSearchWithTimeFilter() throws Exception {
 
-        Main.onLoad();
+     onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -246,7 +248,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleNameSearchWithDayFilter() throws Exception {
 
-        Main.onLoad();
+       onLoad();
 
         // Sample inputs
         String testQuery = "GENERAL CHEMISTRY I";
@@ -266,7 +268,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void testSimpleDepartmentSearchWithEndTimeFilter() throws Exception {
-        Main.onLoad();
+       onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -286,7 +288,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void testSimpleDepartmentSearchWithSessionFilter() throws Exception {
-        Main.onLoad();
+       onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -306,7 +308,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void ClassesInSpringandFall() throws Exception {
-        Main.onLoad();
+     onLoad();
 
         // Sample inputs
         String testQuery = "HUMA";
@@ -331,7 +333,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void testSimpleCourseCodeSearchWithSessionFilter() throws Exception {
-        Main.onLoad();
+    onLoad();
 
         // Sample inputs
         String testQuery = "COMP 141";
@@ -351,7 +353,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void testSimpleCourseCodeSearchWithCourseCodeFilter() throws Exception {
-        Main.onLoad();
+   onLoad();
 
         // Sample inputs
         String testQuery = "COMP";
@@ -369,7 +371,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void testSimpleDepartmentSearchWithCourseCodeFilter() throws Exception {
-        Main.onLoad();
+    onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -387,7 +389,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void testSimpleCourseCodeSearchWithDepartmentFilter() throws Exception {
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "111";
@@ -409,7 +411,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleKeywordSearchWithDayAndTimeFilter() throws Exception {
 
-        Main.onLoad();
+      onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -431,7 +433,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleDepartmentSearchWithDayAndTimeFilter() throws Exception {
 
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "COMP";
@@ -453,7 +455,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleCourseCodeSearchwithBothTimesFilters() throws Exception {
 
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "COMP";
@@ -475,7 +477,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleKeywordSearchwithBothTimesFilters() throws Exception {
 
-        Main.onLoad();
+       onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -497,7 +499,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleDepartmentSearchwithDayandTimesFilters() throws Exception {
 
-        Main.onLoad();
+       onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
@@ -519,7 +521,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleDepartmentSearchwithDayandSessionFilters() throws Exception {
 
-        Main.onLoad();
+     onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
@@ -541,7 +543,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleKeywordSearchwithDayandSessionFilters() throws Exception {
 
-        Main.onLoad();
+         onLoad();
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
@@ -563,7 +565,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     @Test
     void testSimpleDepartmentSearchwithDayandCourseCodeFilters() throws Exception {
 
-        Main.onLoad();
+    onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
@@ -582,7 +584,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void ComplexSearchwith3Filters() throws Exception {
-        Main.onLoad();
+     onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
@@ -604,7 +606,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void ComplexSearchwith4Filters() throws Exception {
-        Main.onLoad();
+      onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
@@ -627,7 +629,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void ComplexSearchwith5Filters() throws Exception {
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
@@ -649,7 +651,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
     @Test
     void AllFilters() throws Exception{
-        Main.onLoad();
+        onLoad();
 
         // Sample inputs
         String testQuery = "CHEM";
