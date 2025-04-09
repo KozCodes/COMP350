@@ -1,9 +1,8 @@
 package edu.gcc.comp350;
 
-import java.sql.Time;
 import java.util.*;
 
-import static edu.gcc.comp350.Main.*;
+import static edu.gcc.comp350.RefactoredMain.*;
 
 public class ConsoleIO {
     List<String> commands = Arrays.asList("add", "remove", "save", "load", "delete", "new", "filter", "search", "print", "schedule", "faculty");
@@ -102,7 +101,7 @@ public class ConsoleIO {
         boolean conflictDetected = false; // Reset conflict detection
 
         // Find the course with the given reference number
-        for (Course course : Main.courses) {
+        for (Course course : RefactoredMain.courses) {
             if (course.getID() == referenceNumber) {
                 newCourse = course;
                 break;

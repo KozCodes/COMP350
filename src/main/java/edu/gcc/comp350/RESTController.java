@@ -1,45 +1,24 @@
 package edu.gcc.comp350;
 
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import  java.sql.*;
 
-public class Main {
-    public Main() {
-    }
-
-    protected static enum Days {
-        MWF,
-        TR
-    }
-
-    protected static enum Session {
-        FALL,
-        WINTER,
-        SPRING,
-        EARLYSUMMER,
-        LATESUMMER
-    }
-
-    protected static List<Course> courses = new ArrayList<>();
-    protected static List<Professor> professors;
-    protected static Student currentStudent;
-    protected static Search search;
-    protected static Schedule currentSchedule;
-    protected static ConsoleIO consoleIO = new ConsoleIO();
+@RestController
+public class RESTController {
 
     // this must be protected so we all have one contact to the db
-    protected static DatabaseConnect db = new DatabaseConnect();
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    @GetMapping("/runFunction")
+    public String runFunction() throws SQLException, ClassNotFoundException {
         onLoad();
-//        for(Course course : courses) {
-//            System.out.println(course.getCourseTitle());
-//        }
-        // for MVP testing
-
+        //currentSchedule = currentStudent.getSchedule(0);
         String sql = "SELECT id, name, major, minor FROM Student WHERE id = ?";
-        try (var pstmt = Main.db.conn.prepareStatement(sql)) {
+        try (var pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
             pstmt.setInt(1, 1);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -47,35 +26,36 @@ public class Main {
                     String name = rs.getString("name");
                     String major = rs.getString("major");
                     ArrayList<String> minors = new ArrayList<>(List.of(rs.getString("minor").split(" ")));
-                    currentStudent = new Student(id, name, major, minors);
+                    RefactoredMain.currentStudent = new Student(id, name, major, minors);
+                } else {
+                    RefactoredMain.currentStudent = new Student(0, "John Doe", "Undeclared", new ArrayList<>());
                 }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
-        currentSchedule = currentStudent.getSchedule(0);
-        consoleIO.run();
-        db.disconnect();
+        RefactoredMain.currentSchedule = RefactoredMain.currentStudent.getSchedule(0);
+
+        RefactoredMain.db.disconnect();
+
+        return RefactoredMain.courses.get(0).toString();//Main.main();
     }
 
+
     protected static void onLoad() throws SQLException, ClassNotFoundException {
-        db.connect();
+        RefactoredMain.db.connect();
         //db.setCoursesInDatabase();
-        db.createDatabase();
-        db.resetCoursesInDatabase();
-        db.resetProfessorsInDatabase();
-        db.populateProfessorsInDatabase();
-        db.setProfessorsInDatabase();
+        RefactoredMain.db.createDatabase();
+        RefactoredMain.db.resetCoursesInDatabase();
+        RefactoredMain.db.resetProfessorsInDatabase();
+        RefactoredMain.db.populateProfessorsInDatabase();
+        RefactoredMain.db.setProfessorsInDatabase();
         loadCourses();
     }
 
-    protected static void displaySchedule(Schedule schedule) {
-
-    }
-
     private static void loadCourses() {
-        ArrayList<Object> courseList = db.select("id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode", "Courses");
+        ArrayList<Object> courseList = RefactoredMain.db.select("id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode", "Courses");
         int currentId = -1;
         for (int i = 0; i < courseList.size(); i+=9) {
             currentId = (int) courseList.get(i);
@@ -88,7 +68,8 @@ public class Main {
             String courseDept = (String) courseList.get(i+7);
             String courseCode = (String) courseList.get(i+8);
             Course course = new Course(currentId, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode);
-            courses.add(course);
+            RefactoredMain.courses.add(course);
         }
     }
+
 }

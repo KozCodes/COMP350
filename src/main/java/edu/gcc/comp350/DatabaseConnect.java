@@ -20,13 +20,13 @@ import java.util.Random;
 public class DatabaseConnect {
     protected Connection conn;
 
-    protected DatabaseConnect() {
+    public DatabaseConnect() {
     }
 
     /**
      * Connects to the database.
      */
-    protected void connect() {
+    public void connect() {
         var url = "jdbc:sqlite:Database/scrumbucketData.db";
         try {
             System.out.println("Connected to the database.");
@@ -40,7 +40,7 @@ public class DatabaseConnect {
     /**
      * Disconnects from the database.
      */
-    protected void disconnect() {
+    public void disconnect() {
         if (conn != null) {
             try {
                 conn.close();
@@ -72,7 +72,7 @@ public class DatabaseConnect {
      * @param table the table to select from
      * @return an ArrayList of Objects containing the selected data
      */
-    protected ArrayList<Object> select(String columns, String table) {
+    public ArrayList<Object> select(String columns, String table) {
         String sql = "SELECT " + columns + " FROM " + table;
         ArrayList<Object> results = new ArrayList<>();
         try (var stmt = conn.createStatement();
@@ -109,7 +109,7 @@ public class DatabaseConnect {
     /**
      * Creates the database with a Courses table.
      */
-    protected void createDatabase() {
+    public void createDatabase() {
         // course table
         String sql = """
             CREATE TABLE IF NOT EXISTS Courses (
@@ -214,7 +214,7 @@ public class DatabaseConnect {
 //        }
 //    }
 
-    protected void setCoursesInDatabase() {
+    public void setCoursesInDatabase() {
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Courses'";
         try (var stmt = conn.createStatement();
              var rs = stmt.executeQuery(sql)) {
@@ -228,7 +228,7 @@ public class DatabaseConnect {
         }
     }
 
-    protected void setProfessorsInDatabase() {
+    public void setProfessorsInDatabase() {
         String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='Professors'";
         try (var stmt = conn.createStatement();
              var rs = stmt.executeQuery(sql)) {
@@ -242,7 +242,7 @@ public class DatabaseConnect {
         }
     }
 
-    protected void resetProfessorsInDatabase() {
+    public void resetProfessorsInDatabase() {
         String sql = """
         CREATE TABLE IF NOT EXISTS Professors (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -268,7 +268,7 @@ public class DatabaseConnect {
         // TODO: Add method to populate data within database
     }
 
-    protected void resetCoursesInDatabase() {
+    public void resetCoursesInDatabase() {
         System.out.println("Resetting database.");
         clearCoursesFromDatabase();
         populateCoursesInDatabase();
@@ -324,7 +324,7 @@ public class DatabaseConnect {
     }
 
 
-    protected void populateProfessorsInDatabase() {
+    public void populateProfessorsInDatabase() {
         createProfessorsTableInDatabase();
         String filePath = "Database/data_wolfe.json";
         Random random = new Random(); // Random number generator

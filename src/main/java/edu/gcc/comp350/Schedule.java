@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Stack;
 
 public class Schedule {
@@ -24,7 +23,7 @@ public class Schedule {
     protected Schedule() {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
-        this.name = "Schedule " + (Main.currentStudent.getSchedules().isEmpty() ? 1 : Main.currentStudent.getSchedules().size() + 1);
+        this.name = "Schedule " + (RefactoredMain.currentStudent.getSchedules().isEmpty() ? 1 : RefactoredMain.currentStudent.getSchedules().size() + 1);
         this.id = addScheduleToDatabase();
     }
 
@@ -62,12 +61,12 @@ public class Schedule {
 
         // Get courses from db
         String sql = "SELECT course FROM ScheduleCourses WHERE schedule = " + this.id;
-        try (var stmt = Main.db.conn.createStatement();
+        try (var stmt = RefactoredMain.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 System.out.println("course");
                 int courseID = rs.getInt("course");
-                for (Course course : Main.courses) {
+                for (Course course : RefactoredMain.courses) {
                     if (course.getID() == courseID) {
                         System.out.println(course.getID());
                         classes.add(course);
@@ -84,18 +83,18 @@ public class Schedule {
      * @return int id assigned to the Schedule
      */
     protected int addScheduleToDatabase() {
-        try (var pstmt = Main.db.conn.prepareStatement("INSERT INTO Schedule (scheduleTitle, student) VALUES (?, ?)")) {
+        try (var pstmt = RefactoredMain.db.conn.prepareStatement("INSERT INTO Schedule (scheduleTitle, student) VALUES (?, ?)")) {
             pstmt.setString(1, this.name);
-            pstmt.setInt(2, Main.currentStudent.getId());
+            pstmt.setInt(2, RefactoredMain.currentStudent.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
         String sql = "SELECT id FROM Schedule WHERE scheduleTitle = ? AND student = ?";
-        try (var pstmt = Main.db.conn.prepareStatement(sql)) {
+        try (var pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
             pstmt.setString(1, this.name);
-            pstmt.setInt(2, Main.currentStudent.getId());
+            pstmt.setInt(2, RefactoredMain.currentStudent.getId());
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
@@ -137,7 +136,7 @@ public class Schedule {
      * @param courseID int ID of the course to add
      */
     protected void addCourse(int courseID) {
-        for (Course newCourse : Main.courses) {
+        for (Course newCourse : RefactoredMain.courses) {
             if (newCourse.getID() == courseID) {
                 for (Course existingCourse : classes) {
                     if (hasDayConflict(existingCourse, newCourse)) {
@@ -190,7 +189,7 @@ public class Schedule {
      */
     protected void removeCourse(int courseID) {
         // find course in list of courses
-        for (Course course : Main.courses) {
+        for (Course course : RefactoredMain.courses) {
             if (course.getID() == courseID) {
                 classes.remove(course);
                 // add course to lastChangedCourses
