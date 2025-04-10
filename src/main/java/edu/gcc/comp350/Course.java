@@ -8,10 +8,10 @@ public class Course {
     private final int id;
     private String courseTitle;
     private String professor;
-    private String session;
-    private String startTime;
-    private String endTime;
-    private String courseDays;
+    private RefactoredMain.Session session;
+    private Time startTime;
+    private Time endTime;
+    private RefactoredMain.Days courseDays;
     private String courseDept;
     private String courseCode;
 
@@ -31,10 +31,10 @@ public class Course {
     public Course(int id,
                   String courseTitle,
                   String professor,
-                  String session,
-                  String startTime,
-                  String endTime,
-                  String courseDays,
+                  RefactoredMain.Session session,
+                  Time startTime,
+                  Time endTime,
+                  RefactoredMain.Days courseDays,
                   String courseDept,
                   String courseCode) {
         this.id = id;
@@ -56,19 +56,19 @@ public class Course {
         return professor;
     }
 
-    protected String getSession() {
+    protected RefactoredMain.Session getSession() {
         return session;
     }
 
-    protected String getStartTime() {
+    protected Time getStartTime() {
         return startTime;
     }
 
-    protected String getEndTime() {
+    protected Time getEndTime() {
         return endTime;
     }
 
-    protected String getCourseDays() {
+    protected RefactoredMain.Days getCourseDays() {
         return courseDays;
     }
 
@@ -85,7 +85,7 @@ public class Course {
     }
 
     protected String courseDaysToString() {
-        return courseDays;
+        return courseDays.toString();
     }
 
     protected boolean hasConflict(Course course) {

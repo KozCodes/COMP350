@@ -53,7 +53,6 @@ public class Search {
                 if (!searchMatches.contains(code)) {
                         searchMatches.add(code);
                 }
-
             }
         }
 
@@ -113,9 +112,9 @@ public class Search {
 
             //code generated with the assistance of Github Copilot
 
-            filteredResults.removeIf(course -> course.getCourseDays().replaceAll(", ", "").equals(filter.getCourse()));
-            filteredResults.removeIf(course -> course.getStartTime().split(",")[0].equals(filter.getStartTime()));
-            filteredResults.removeIf(course -> course.getEndTime().split(",")[0].equals(filter.getEndTime()));
+            filteredResults.removeIf(course -> course.getCourseDays().equals(filter.getCourse()));
+            filteredResults.removeIf(course -> course.getStartTime().equals(filter.getStartTime()));
+            filteredResults.removeIf(course -> course.getEndTime().equals(filter.getEndTime()));
             filteredResults.removeIf(course -> course.getSession().equals(filter.getCourseSession()));
             filteredResults.removeIf(course -> course.getCourseDept().equals(filter.getDepartment()));
             filteredResults.removeIf(course -> filter.getCourseCodes().contains(course.getCourseCode()));

@@ -25,13 +25,15 @@ function App() {
   );
 }
 
-function Search() {
+
+
+function Search(e) {
 const [results, setResults] = useState('');
 
 return (
-<>
+<form method = "post" onSubmit = {} >
 <input name = "SearchQuery"/>
-</>
+</form>
 );
 }
 

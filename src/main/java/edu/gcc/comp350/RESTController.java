@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,39 @@ public class RESTController {
             String courseDays = (String) courseList.get(i+6);
             String courseDept = (String) courseList.get(i+7);
             String courseCode = (String) courseList.get(i+8);
-            Course course = new Course(currentId, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode);
+
+            Time start = Time.valueOf(startTime);
+            Time end = Time.valueOf(endTime);
+            String cutSession = session.split("_")[0];
+            String splicedDays = courseDays.replace(",", "");
+            RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
+            RefactoredMain.Days days = RefactoredMain.Days.BLANK;
+
+            //AI assisted in helping fill in the cases, which were numerous
+
+            switch(cutSession) {
+                case "FALL" -> finalSession = RefactoredMain.Session.FALL;
+                case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
+                case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
+                case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
+            }
+
+            switch(splicedDays) {
+                case "MWF" -> days = RefactoredMain.Days.MWF;
+                case "TR" -> days = RefactoredMain.Days.TR;
+                case "M" -> days = RefactoredMain.Days.M;
+                case "T" -> days = RefactoredMain.Days.T;
+                case "W" -> days = RefactoredMain.Days.W;
+                case "R" -> days = RefactoredMain.Days.R;
+                case "F" -> days = RefactoredMain.Days.F;
+                case "MW" -> days = RefactoredMain.Days.MW;
+                case "WF" -> days = RefactoredMain.Days.WF;
+                case "MTWF" -> days = RefactoredMain.Days.MTWF;
+                case "MWRF" -> days = RefactoredMain.Days.MWRF;
+            }
+
+            Course course = new Course(currentId, courseTitle, professor, finalSession, start, end, days, courseDept, courseCode);
             RefactoredMain.courses.add(course);
         }
     }

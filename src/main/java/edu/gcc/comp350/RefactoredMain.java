@@ -20,11 +20,22 @@ public class RefactoredMain {
     protected static DatabaseConnect db = new DatabaseConnect();
 
     protected static enum Days {
+        BLANK,
         MWF,
-        TR
+        TR,
+        M,
+        T,
+        W,
+        R,
+        F,
+        MW,
+        WF,
+        MTWF,
+        MWRF
     }
 
     protected static enum Session {
+        BLANK,
         FALL,
         WINTER,
         SPRING,
