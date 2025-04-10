@@ -19,10 +19,21 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Data from backend: {data}</p>
+        <p>Data from backend: {data} </p>
       </header>
     </div>
   );
 }
+
+function Search() {
+const [results, setResults] = useState('');
+
+return (
+<>
+<input name = "SearchQuery"/>
+</>
+);
+}
+
 
 export default App;

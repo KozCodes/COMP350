@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 public class RESTController {
-
     // this must be protected so we all have one contact to the db
 
     @GetMapping("/runFunction")
@@ -42,6 +41,10 @@ public class RESTController {
         return RefactoredMain.courses.get(0).toString();//Main.main();
     }
 
+    @GetMapping("/search")
+    public String search() throws SQLException, ClassNotFoundException {
+      return "";
+    }
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         RefactoredMain.db.connect();
