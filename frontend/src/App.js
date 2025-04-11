@@ -1,7 +1,5 @@
-import logo from './logo.svg';
-import './App.css';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './components/LoginSignup/LoginSignup';
 
 function App() {
   const [data, setData] = useState('');
@@ -17,12 +15,16 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>Data from backend: {data}</p>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          {/* Add other routes here as needed */}
+        </Routes>
+        <header className="App-header">
+          <p>Data from backend: {data}</p>
+        </header>
+      </div>
+    </Router>
   );
 }
-
-export default App;
