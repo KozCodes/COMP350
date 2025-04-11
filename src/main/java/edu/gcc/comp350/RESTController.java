@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -72,14 +74,66 @@ public class RESTController {
             String courseDept = (String) courseList.get(i+7);
             String courseCode = (String) courseList.get(i+8);
 
-            Time start = Time.valueOf(startTime);
-            Time end = Time.valueOf(endTime);
-            String cutSession = session.split("_")[0];
-            String splicedDays = courseDays.replace(",", "");
-            RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
-            RefactoredMain.Days days = RefactoredMain.Days.BLANK;
 
-            //AI assisted in helping fill in the cases, which were numerous
+            //course Start Times
+            List<Time> start = new ArrayList<>();
+
+            for (String times : startTime.split(", ")) {
+                if (!start.contains(Time.valueOf(times))) {
+                    start.add(Time.valueOf(times));
+                }
+            }
+
+            //course End Times
+            List<Time> end = new ArrayList<>();
+
+            for(String times : endTime.split(", ")) {
+                if (!end.contains(Time.valueOf(times))) {
+                    end.add(Time.valueOf(times));
+                }
+            }
+
+            //days
+            List<String> splicedDays = Arrays.stream(courseDays.split(", ")).toList();
+            List<RefactoredMain.Days> days = new ArrayList<>();
+
+
+            //format extraneous cases:
+            int numDays = splicedDays.size();
+            switch(numDays) {
+                case 2 -> {
+                   //cases: all same
+                   String temp = splicedDays.get(0) + splicedDays.get(1);
+                }
+                case 3 -> {
+                    //cases: all same, 1 different
+
+                }
+                case 4 -> {
+                    //cases: all same, 1 different, 2 different
+                }
+            }
+
+            for (int j = 0; j < splicedDays.size(); j++) {
+                switch(splicedDays.get(j)) {
+                    case "M" -> days.add(RefactoredMain.Days.M);
+                    case "T" -> days.add(RefactoredMain.Days.T);
+                    case "W" -> days.add(RefactoredMain.Days.W);
+                    case "R" -> days.add(RefactoredMain.Days.R);
+                    case "F" -> days.add(RefactoredMain.Days.F);
+                    case "MW" -> days.add(RefactoredMain.Days.MW);
+                    case  "WF" -> days.add(RefactoredMain.Days.WF);
+                    case "TR" -> days.add(RefactoredMain.Days.TR);
+                    case "MWF" -> days.add(RefactoredMain.Days.MWF);
+                }
+            }
+
+           //session
+            String cutSession = session.split("_")[1];
+            int year = Integer.parseInt(session.split("_")[0]);
+
+
+            RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
 
             switch(cutSession) {
                 case "FALL" -> finalSession = RefactoredMain.Session.FALL;
@@ -89,21 +143,9 @@ public class RESTController {
                 case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
             }
 
-            switch(splicedDays) {
-                case "MWF" -> days = RefactoredMain.Days.MWF;
-                case "TR" -> days = RefactoredMain.Days.TR;
-                case "M" -> days = RefactoredMain.Days.M;
-                case "T" -> days = RefactoredMain.Days.T;
-                case "W" -> days = RefactoredMain.Days.W;
-                case "R" -> days = RefactoredMain.Days.R;
-                case "F" -> days = RefactoredMain.Days.F;
-                case "MW" -> days = RefactoredMain.Days.MW;
-                case "WF" -> days = RefactoredMain.Days.WF;
-                case "MTWF" -> days = RefactoredMain.Days.MTWF;
-                case "MWRF" -> days = RefactoredMain.Days.MWRF;
-            }
+            //AI assisted in helping fill in the cases, which were numerous
 
-            Course course = new Course(currentId, courseTitle, professor, finalSession, start, end, days, courseDept, courseCode);
+            Course course = new Course(currentId, courseTitle, professor, finalSession, start, end, days, courseDept, courseCode, year);
             RefactoredMain.courses.add(course);
         }
     }

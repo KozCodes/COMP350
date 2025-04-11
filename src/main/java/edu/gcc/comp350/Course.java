@@ -1,6 +1,7 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
+import java.util.List;
 import java.util.Random;
 
 public class Course {
@@ -9,11 +10,12 @@ public class Course {
     private String courseTitle;
     private String professor;
     private RefactoredMain.Session session;
-    private Time startTime;
-    private Time endTime;
-    private RefactoredMain.Days courseDays;
+    private List<Time> startTime;
+    private List<Time> endTime;
+    private List<RefactoredMain.Days> courseDays;
     private String courseDept;
     private String courseCode;
+    private int year;
 
 
     /**
@@ -32,11 +34,11 @@ public class Course {
                   String courseTitle,
                   String professor,
                   RefactoredMain.Session session,
-                  Time startTime,
-                  Time endTime,
-                  RefactoredMain.Days courseDays,
+                  List<Time> startTime,
+                  List<Time> endTime,
+                  List<RefactoredMain.Days> courseDays,
                   String courseDept,
-                  String courseCode) {
+                  String courseCode, int year) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -46,6 +48,7 @@ public class Course {
         this.courseDays = courseDays;
         this.courseDept = courseDept;
         this.courseCode = courseCode;
+        this.year = year;
     }
 
     protected String getCourseTitle() {
@@ -60,15 +63,15 @@ public class Course {
         return session;
     }
 
-    protected Time getStartTime() {
+    protected List<Time> getStartTime() {
         return startTime;
     }
 
-    protected Time getEndTime() {
+    protected List<Time> getEndTime() {
         return endTime;
     }
 
-    protected RefactoredMain.Days getCourseDays() {
+    protected List<RefactoredMain.Days> getCourseDays() {
         return courseDays;
     }
 
@@ -90,6 +93,14 @@ public class Course {
 
     protected boolean hasConflict(Course course) {
         return false;
+    }
+
+    protected int getYear() {
+        return year;
+    }
+
+    protected void setYear(int year) {
+        this.year = year;
     }
 
     @Override

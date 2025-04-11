@@ -29,9 +29,7 @@ public class RefactoredMain {
         R,
         F,
         MW,
-        WF,
-        MTWF,
-        MWRF
+        WF
     }
 
     protected static enum Session {
