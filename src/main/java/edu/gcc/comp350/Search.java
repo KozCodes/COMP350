@@ -112,9 +112,9 @@ public class Search {
 
             //code generated with the assistance of Github Copilot
 
-            filteredResults.removeIf(course -> course.getCourseDays().equals(filter.getCourse()));
-            filteredResults.removeIf(course -> course.getStartTime().equals(filter.getStartTime()));
-            filteredResults.removeIf(course -> course.getEndTime().equals(filter.getEndTime()));
+            filteredResults.removeIf(course -> filter.getCourse().contains(course.getCourseDays()));
+            filteredResults.removeIf(course -> filter.getStartTime().contains(course.getStartTime()));
+            filteredResults.removeIf(course -> filter.getEndTime().contains(course.getEndTime()));
             filteredResults.removeIf(course -> course.getSession().equals(filter.getCourseSession()));
             filteredResults.removeIf(course -> course.getCourseDept().equals(filter.getDepartment()));
             filteredResults.removeIf(course -> filter.getCourseCodes().contains(course.getCourseCode()));

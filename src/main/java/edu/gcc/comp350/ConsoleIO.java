@@ -315,10 +315,10 @@ public class ConsoleIO {
         // Print all classes at the top
         System.out.println("\nAll Classes in the Schedule:");
         List<Course> sortedCourses = new ArrayList<>(currentSchedule.getCourses());
-        sortedCourses.sort(Comparator.comparing(Course::getStartTime));
+        //sortedCourses.sort(Comparator.comparing(Course::getStartTime));
         for (Course course : sortedCourses) {
-            System.out.println(String.format("Course ID: %-5d | Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
-                    course.getID(), course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
+            //System.out.println(String.format("Course ID: %-5d | Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
+                    //course.getID(), course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
         }
         // Days of the week
         String[] days = {"M", "T", "W", "R", "F"};
@@ -332,7 +332,7 @@ public class ConsoleIO {
                 }
             }
             // Sort courses by start time
-            coursesForDay.sort(Comparator.comparing(Course::getStartTime));
+           // coursesForDay.sort(Comparator.comparing(Course::getStartTime));
             // Schedule time slots from 08:00 to 21:00
             String currentTime = "08:00";
             String endTime = "21:00";

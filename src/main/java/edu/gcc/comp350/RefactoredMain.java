@@ -41,7 +41,6 @@ public class RefactoredMain {
         LATESUMMER
     }
 
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         SpringApplication.run(RefactoredMain.class, args);
     }

@@ -16,7 +16,7 @@ public class RESTController {
     // this must be protected so we all have one contact to the db
 
     @GetMapping("/runFunction")
-    public String runFunction() throws SQLException, ClassNotFoundException {
+    public void runFunction() throws SQLException, ClassNotFoundException {
         onLoad();
         //currentSchedule = currentStudent.getSchedule(0);
         String sql = "SELECT id, name, major, minor FROM Student WHERE id = ?";
@@ -40,8 +40,6 @@ public class RESTController {
         RefactoredMain.currentSchedule = RefactoredMain.currentStudent.getSchedule(0);
 
         RefactoredMain.db.disconnect();
-
-        return RefactoredMain.courses.get(0).toString();//Main.main();
     }
 
     @GetMapping("/search")
@@ -78,15 +76,21 @@ public class RESTController {
             //course Start Times
             List<Time> start = new ArrayList<>();
 
-            for (String times : startTime.split(", ")) {
+            if (startTime != "") {
+                for (String times : startTime.split(", ")) {
                     start.add(Time.valueOf(times));
+                }
             }
 
             //course End Times
             List<Time> end = new ArrayList<>();
 
-            for(String times : endTime.split(", ")) {
+            if (endTime != "") {
+                for(String times : endTime.split(", ")) {
                     end.add(Time.valueOf(times));
+                }
+            } else {
+                end.add(Time.valueOf("00:00:00"));
             }
 
             //days
