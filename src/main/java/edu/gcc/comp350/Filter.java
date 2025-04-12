@@ -6,68 +6,66 @@ import java.util.List;
 
 public class Filter {
 
-    private RefactoredMain.Days course;
-    private Time startTime;
-    private Time endTime;
+    private List<RefactoredMain.Days> course;
+    private List<Time> startTime;
+    private List<Time> endTime;
     private RefactoredMain.Session courseSession;
     private List<String> courseCodes;
     private String department;
 
     // empty constructor
     protected Filter() {
-        this.course = RefactoredMain.Days.BLANK;
-        this.startTime = Time.valueOf("00:00:00");
-        this.endTime = Time.valueOf("00:00:00");
+        List<RefactoredMain.Days> days = new ArrayList<>();
+        days.add(RefactoredMain.Days.BLANK);
+        this.course = days;
+        List<Time> startTime = new ArrayList<>();
+        startTime.add(Time.valueOf("00:00:00"));
+        this.startTime = startTime;
+        List<Time> endTime = new ArrayList<>();
+        endTime.add(Time.valueOf("00:00:00"));
+        this.endTime = endTime;
         this.courseSession = RefactoredMain.Session.BLANK;
         this.courseCodes = new ArrayList<>();
         this.department = "";
     }
 
     // overloaded constructor
-    protected Filter(RefactoredMain.Days course,
-                     Time startTime,
-                     Time endTime,
+    protected Filter(List<RefactoredMain.Days> course,
+                     List<Time> startTime,
+                     List<Time> endTime,
                      RefactoredMain.Session courseSession,
                      List<String> courseCodes,
                      String department) {
 
         this.course = course;
-        if (startTime.compareTo(Time.valueOf("08:00:00")) >= 0 && startTime.compareTo(Time.valueOf("18:00:00")) <= 0) {
-            this.startTime = startTime;
-        } else {
-            this.startTime = Time.valueOf("00:00:00");
-        }
-        if (endTime.compareTo(Time.valueOf("08:50:00")) >= 0 && endTime.compareTo(Time.valueOf("21:00:00")) <= 0) {
-            this.endTime = endTime;
-        } else {
-            this.endTime = Time.valueOf("00:00:00");
-        }
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.courseSession = courseSession;
         this.courseCodes = courseCodes;
         this.department = department;
     }
 
-    protected RefactoredMain.Days getCourse() {
+    protected List<RefactoredMain.Days> getCourse() {
         return course;
     }
 
-    protected void setCourse(RefactoredMain.Days course) {
+    protected void setCourse(List<RefactoredMain.Days> course) {
         this.course = course;
     }
 
-    protected Time getStartTime() {
+    protected List<Time> getStartTime() {
         return startTime;
     }
 
-    protected void setStartTime(Time startTime) {
+    protected void setStartTime(List<Time> startTime) {
         this.startTime = startTime;
     }
 
-    protected Time getEndTime() {
+    protected List<Time> getEndTime() {
         return endTime;
     }
 
-    protected void setEndTime(Time endTime) {
+    protected void setEndTime(List<Time> endTime) {
         this.endTime = endTime;
     }
 

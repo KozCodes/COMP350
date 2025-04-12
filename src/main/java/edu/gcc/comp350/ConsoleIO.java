@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.sql.Time;
 import java.util.*;
 
 import static edu.gcc.comp350.RefactoredMain.*;
@@ -196,13 +197,45 @@ public class ConsoleIO {
     private void filter(String type, String val) {
         switch (type) {
             case "days" :
-                filter.setCourse(val);
+                List<String> days = Arrays.asList(val.split(", "));
+                List<RefactoredMain.Days> finalDays = new ArrayList<>();
+
+                for (int j = 0; j < days.size(); j++) {
+                    switch(days.get(j)) {
+                        case "M" -> finalDays.add(RefactoredMain.Days.M);
+                        case "T" -> finalDays.add(RefactoredMain.Days.T);
+                        case "W" -> finalDays.add(RefactoredMain.Days.W);
+                        case "R" -> finalDays.add(RefactoredMain.Days.R);
+                        case "F" -> finalDays.add(RefactoredMain.Days.F);
+                    }
+                }
+
+                filter.setCourse(finalDays);
             case "start" :
-                filter.setStartTime(val);
+                List<String> tempTimes = Arrays.asList(val.split(", "));
+                List<Time> startTimes = new ArrayList<>();
+                for (String time : tempTimes) {
+                    startTimes.add(Time.valueOf(time));
+                }
+                filter.setStartTime(startTimes);
             case "end" :
-                filter.setEndTime(val);
+                List<String> tempTimes2 = Arrays.asList(val.split(", "));
+                List<Time> endTimes = new ArrayList<>();
+                for (String time : tempTimes2) {
+                    endTimes.add(Time.valueOf(time));
+                }
+                filter.setEndTime(endTimes);
             case "session" :
-                filter.setCourseSession(val);
+                RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
+
+                switch(val) {
+                    case "FALL" -> finalSession = RefactoredMain.Session.FALL;
+                    case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                    case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
+                    case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
+                    case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
+                }
+                filter.setCourseSession(finalSession);
             case "courseCode" :
                 filter.setCourseCodes(Arrays.asList(val.split(", ")));
             case "department" :
