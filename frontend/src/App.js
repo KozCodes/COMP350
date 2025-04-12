@@ -2,32 +2,33 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
-  const [data, setData] = useState('');
-
-  useEffect(() => {
-    axios.get('http://localhost:8080/runFunction')
-      .then(response => {
-        setData(response.data);
-      })
-      .catch(error => {
-        console.error('There was an error!', error);
-      });
-  }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>Data from backend: {data} </p>
-      </header>
-    </div>
+  <Router>
+    <Routes>
+    <Route path = "/runFunction" element = {<HomePage/>}/>
+    <Route path = "/search" element = {<SearchPage/>}/>
+     </Routes>
+     </Router>
   );
 }
 
+function HomePage() {
+    return (
+    <div>
+    <h1> Welcome to the GCC Scheduling App! </h1>
+    <Link to = "/search">
+        <button> Search </button>
+    </Link>
+    </div>
+    );
+}
 
-
-function Search(e) {
+function SearchPage(e) {
 const [results, setResults] = useState('');
 
 return (
