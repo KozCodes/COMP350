@@ -79,40 +79,20 @@ public class RESTController {
             List<Time> start = new ArrayList<>();
 
             for (String times : startTime.split(", ")) {
-                if (!start.contains(Time.valueOf(times))) {
                     start.add(Time.valueOf(times));
-                }
             }
 
             //course End Times
             List<Time> end = new ArrayList<>();
 
             for(String times : endTime.split(", ")) {
-                if (!end.contains(Time.valueOf(times))) {
                     end.add(Time.valueOf(times));
-                }
             }
 
             //days
             List<String> splicedDays = Arrays.stream(courseDays.split(", ")).toList();
             List<RefactoredMain.Days> days = new ArrayList<>();
 
-
-            //format extraneous cases:
-            int numDays = splicedDays.size();
-            switch(numDays) {
-                case 2 -> {
-                   //cases: all same
-                   String temp = splicedDays.get(0) + splicedDays.get(1);
-                }
-                case 3 -> {
-                    //cases: all same, 1 different
-
-                }
-                case 4 -> {
-                    //cases: all same, 1 different, 2 different
-                }
-            }
 
             for (int j = 0; j < splicedDays.size(); j++) {
                 switch(splicedDays.get(j)) {
@@ -121,17 +101,12 @@ public class RESTController {
                     case "W" -> days.add(RefactoredMain.Days.W);
                     case "R" -> days.add(RefactoredMain.Days.R);
                     case "F" -> days.add(RefactoredMain.Days.F);
-                    case "MW" -> days.add(RefactoredMain.Days.MW);
-                    case  "WF" -> days.add(RefactoredMain.Days.WF);
-                    case "TR" -> days.add(RefactoredMain.Days.TR);
-                    case "MWF" -> days.add(RefactoredMain.Days.MWF);
                 }
             }
 
            //session
             String cutSession = session.split("_")[1];
             int year = Integer.parseInt(session.split("_")[0]);
-
 
             RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
 
