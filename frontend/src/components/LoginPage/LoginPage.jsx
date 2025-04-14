@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [success, printSuccess] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,6 +25,19 @@ function LoginPage() {
       }
     }
   };
+
+   useEffect(() => {
+        const fetch = async () => {
+              try {
+              const response = await axios.get('/api/runFunction');
+              console.log(response.data);
+              } catch (error) {
+                  console.error('error booting database', error);
+             }
+        };
+
+         fetch();
+   }, []);
 
   return (
     <div>
