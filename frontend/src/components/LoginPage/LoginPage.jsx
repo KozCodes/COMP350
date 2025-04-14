@@ -9,13 +9,19 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/login', {
+      const response = await axios.post('http://localhost:8080/api/login', {
         username,
         password,
       });
       setMessage(response.data); // Display success message
     } catch (error) {
-      setMessage('Invalid username or password'); // Display error message
+      if (error.response) {
+        // Server responded with an error
+        setMessage(error.response.data || 'Invalid username or password');
+      } else {
+        // Network or other error
+        setMessage('Network error, please try again later.');
+      }
     }
   };
 

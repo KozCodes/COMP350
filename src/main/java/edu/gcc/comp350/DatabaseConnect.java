@@ -131,7 +131,9 @@ public class DatabaseConnect {
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              name TEXT NOT NULL,
              major TEXT NOT NULL,
-             minor TEXT
+             minor TEXT,
+             username TEXT UNIQUE NOT NULL,
+             password TEXT NOT NULL
             );""";
         injectSql(sql);
 
