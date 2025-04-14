@@ -266,7 +266,6 @@ public class DatabaseConnect {
         // populateStudentsInDatabase();
         // populateSchedulesInDatabase();
         populateProfessorsInDatabase();
-        // TODO: Add method to populate data within database
     }
 
     public void resetCoursesInDatabase() {
