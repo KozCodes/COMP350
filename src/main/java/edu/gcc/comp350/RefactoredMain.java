@@ -20,18 +20,26 @@ public class RefactoredMain {
     protected static DatabaseConnect db = new DatabaseConnect();
 
     protected static enum Days {
+        BLANK,
         MWF,
-        TR
+        TR,
+        M,
+        T,
+        W,
+        R,
+        F,
+        MW,
+        WF
     }
 
     protected static enum Session {
+        BLANK,
         FALL,
         WINTER,
         SPRING,
         EARLYSUMMER,
         LATESUMMER
     }
-
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         SpringApplication.run(RefactoredMain.class, args);

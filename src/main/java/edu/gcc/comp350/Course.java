@@ -1,19 +1,22 @@
 package edu.gcc.comp350;
 
 import java.sql.Time;
+import java.util.List;
 import java.util.Random;
 
 public class Course {
 
     private final int id;
     private String courseTitle;
-    private String professor;
-    private String session;
-    private String startTime;
-    private String endTime;
-    private String courseDays;
+    private Professor professor;
+    private RefactoredMain.Session session;
+    private List<Time> startTime;
+    private List<Time> endTime;
+    private List<RefactoredMain.Days> courseDays;
     private String courseDept;
     private String courseCode;
+    private int year;
+    private boolean taken;
 
 
     /**
@@ -30,13 +33,13 @@ public class Course {
      */
     public Course(int id,
                   String courseTitle,
-                  String professor,
-                  String session,
-                  String startTime,
-                  String endTime,
-                  String courseDays,
+                  Professor professor,
+                  RefactoredMain.Session session,
+                  List<Time> startTime,
+                  List<Time> endTime,
+                  List<RefactoredMain.Days> courseDays,
                   String courseDept,
-                  String courseCode) {
+                  String courseCode, int year, boolean taken) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -46,29 +49,31 @@ public class Course {
         this.courseDays = courseDays;
         this.courseDept = courseDept;
         this.courseCode = courseCode;
+        this.year = year;
+        this.taken = taken;
     }
 
     protected String getCourseTitle() {
         return courseTitle;
     }
 
-    protected String getProfessor() {
+    protected Professor getProfessor() {
         return professor;
     }
 
-    protected String getSession() {
+    protected RefactoredMain.Session getSession() {
         return session;
     }
 
-    protected String getStartTime() {
+    protected List<Time> getStartTime() {
         return startTime;
     }
 
-    protected String getEndTime() {
+    protected List<Time> getEndTime() {
         return endTime;
     }
 
-    protected String getCourseDays() {
+    protected List<RefactoredMain.Days> getCourseDays() {
         return courseDays;
     }
 
@@ -85,11 +90,27 @@ public class Course {
     }
 
     protected String courseDaysToString() {
-        return courseDays;
+        return courseDays.toString();
     }
 
     protected boolean hasConflict(Course course) {
         return false;
+    }
+
+    protected int getYear() {
+        return year;
+    }
+
+    protected boolean getTaken() {
+        return taken;
+    }
+
+    protected void setTaken(boolean taken) {
+        this.taken = taken;
+    }
+
+    protected void setYear(int year) {
+        this.year = year;
     }
 
     @Override

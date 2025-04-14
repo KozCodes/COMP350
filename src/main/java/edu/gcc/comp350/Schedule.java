@@ -2,6 +2,7 @@ package edu.gcc.comp350;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -159,11 +160,11 @@ public class Schedule {
      * Checks if two courses have overlapping days.
      */
     public boolean hasDayConflict(Course existingCourse, Course newCourse) {
-        String existingDays = existingCourse.getCourseDays();
-        String newDays = newCourse.getCourseDays();
+        List<RefactoredMain.Days> existingDays = existingCourse.getCourseDays();
+        List<RefactoredMain.Days> newDays = newCourse.getCourseDays();
 
-        for (char day : existingDays.toCharArray()) {
-            if (newDays.contains(String.valueOf(day))) {
+        for (RefactoredMain.Days day : existingDays) {
+            if (newDays.contains(day)) {
                 return true;
             }
         }
@@ -174,12 +175,24 @@ public class Schedule {
      * Checks if two courses have overlapping time slots.
      */
     public boolean hasTimeConflict(Course existingCourse, Course newCourse) {
-        int existingStart = Integer.parseInt(existingCourse.getStartTime().replace(":", ""));
-        int existingEnd = Integer.parseInt(existingCourse.getEndTime().replace(":", ""));
-        int newStart = Integer.parseInt(newCourse.getStartTime().replace(":", ""));
-        int newEnd = Integer.parseInt(newCourse.getEndTime().replace(":", ""));
+        List<Time> existingStartTimes = existingCourse.getStartTime();
+        List<Time> existingEndTimes = existingCourse.getEndTime();
+        List<Time> newStartTimes = newCourse.getStartTime();
+        List<Time> newEndTimes = newCourse.getEndTime();
 
-        return newStart < existingEnd && newEnd > existingStart;
+        for (Time times : existingStartTimes) {
+           if (newStartTimes.contains(times)) {
+               return true;
+           }
+        }
+
+        for (Time times : existingEndTimes) {
+            if (newEndTimes.contains(times)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
