@@ -47,6 +47,12 @@ public class RESTController {
       return "";
     }
 
+    @GetMapping("/look")
+    public String description(String name) throws SQLException, ClassNotFoundException {
+
+        return "";
+    }
+
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         RefactoredMain.db.connect();
         //db.setCoursesInDatabase();
@@ -55,6 +61,7 @@ public class RESTController {
         RefactoredMain.db.resetProfessorsInDatabase();
         RefactoredMain.db.populateProfessorsInDatabase();
         RefactoredMain.db.setProfessorsInDatabase();
+        loadProfessors();
         loadCourses();
     }
 
@@ -76,7 +83,7 @@ public class RESTController {
             //course Start Times
             List<Time> start = new ArrayList<>();
 
-            if (startTime != "") {
+            if (!startTime.equals("")) {
                 for (String times : startTime.split(", ")) {
                     start.add(Time.valueOf(times));
                 }
@@ -85,7 +92,7 @@ public class RESTController {
             //course End Times
             List<Time> end = new ArrayList<>();
 
-            if (endTime != "") {
+            if (!endTime.equals("")) {
                 for(String times : endTime.split(", ")) {
                     end.add(Time.valueOf(times));
                 }
@@ -122,10 +129,31 @@ public class RESTController {
                 case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
             }
 
+            Professor prof = new Professor(-1, -1,"John Doe", "BLANK");
+            for (int j = 0; j < RefactoredMain.professors.size(); j++) {
+                if (professor.equals(RefactoredMain.professors.get(j).getName())) {
+                    prof = RefactoredMain.professors.get(j);
+                }
+            }
+
             //AI assisted in helping fill in the cases, which were numerous
 
-            Course course = new Course(currentId, courseTitle, professor, finalSession, start, end, days, courseDept, courseCode, year);
+            Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false);
             RefactoredMain.courses.add(course);
+        }
+    }
+
+
+    private static void loadProfessors() {
+        ArrayList<Object> profList = RefactoredMain.db.select("id, score, professorName, department", "Professors");
+        for (int i = 0; i < profList.size(); i++) {
+            String id = (String) profList.get(i+1);
+            String score = (String) profList.get(i+2);
+            String profname = (String) profList.get(i+3);
+            String dept = (String) profList.get(i+4);
+
+            Professor prof = new Professor(Integer.parseInt(id), Integer.parseInt(score), profname, dept);
+            RefactoredMain.professors.add(prof);
         }
     }
 

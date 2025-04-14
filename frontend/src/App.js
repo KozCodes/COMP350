@@ -7,25 +7,19 @@ import { useNavigate } from 'react-router-dom';
 
 function App() {
 
-  return (
-  <Router>
-    <Routes>
-    <Route path = "/runFunction" element = {<HomePage/>}/>
-    <Route path = "/search" element = {<SearchPage/>}/>
-     </Routes>
-     </Router>
-  );
-}
+    const navigate = useNavigate();
 
-function HomePage() {
-    return (
-    <div>
+
+   const handleClick = () => {
+   navigate('/search');
+   }
+
+  return (
+   <div>
     <h1> Welcome to the GCC Scheduling App! </h1>
-    <Link to = "/search">
-        <button> Search </button>
-    </Link>
+    <button onClick = {handleClick}> Search </button>
     </div>
-    );
+  );
 }
 
 function SearchPage(e) {

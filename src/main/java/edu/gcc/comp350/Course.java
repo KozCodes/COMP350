@@ -8,7 +8,7 @@ public class Course {
 
     private final int id;
     private String courseTitle;
-    private String professor;
+    private Professor professor;
     private RefactoredMain.Session session;
     private List<Time> startTime;
     private List<Time> endTime;
@@ -16,6 +16,7 @@ public class Course {
     private String courseDept;
     private String courseCode;
     private int year;
+    private boolean taken;
 
 
     /**
@@ -32,13 +33,13 @@ public class Course {
      */
     public Course(int id,
                   String courseTitle,
-                  String professor,
+                  Professor professor,
                   RefactoredMain.Session session,
                   List<Time> startTime,
                   List<Time> endTime,
                   List<RefactoredMain.Days> courseDays,
                   String courseDept,
-                  String courseCode, int year) {
+                  String courseCode, int year, boolean taken) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -49,13 +50,14 @@ public class Course {
         this.courseDept = courseDept;
         this.courseCode = courseCode;
         this.year = year;
+        this.taken = taken;
     }
 
     protected String getCourseTitle() {
         return courseTitle;
     }
 
-    protected String getProfessor() {
+    protected Professor getProfessor() {
         return professor;
     }
 
@@ -97,6 +99,14 @@ public class Course {
 
     protected int getYear() {
         return year;
+    }
+
+    protected boolean getTaken() {
+        return taken;
+    }
+
+    protected void setTaken(boolean taken) {
+        this.taken = taken;
     }
 
     protected void setYear(int year) {

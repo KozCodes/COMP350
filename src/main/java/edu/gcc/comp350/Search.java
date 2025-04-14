@@ -89,6 +89,26 @@ public class Search {
             }
         }
 
+        //if none so far, try matching to a profs name
+
+        if (searchResults.isEmpty()) {
+            List<Professor> profs = new ArrayList<>();
+
+            for (int i = 0; i < RefactoredMain.professors.size(); i++) {
+                if (RefactoredMain.professors.get(i).getName().equals(query)) {
+                   profs.add(RefactoredMain.professors.get(i));
+                }
+            }
+
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                for (int j = 0; j < profs.size(); j++) {
+                    if (RefactoredMain.courses.get(i).getProfessor().getID() == profs.get(j).getID()) {
+                       searchResults.add(RefactoredMain.courses.get(i));
+                    }
+                }
+            }
+        }
+
         //print out search results
         if (filter != null) {
             applyFilter(filter);
