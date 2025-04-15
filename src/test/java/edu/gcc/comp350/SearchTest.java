@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static edu.gcc.comp350.RESTController.onLoad;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,10 +18,10 @@ public class SearchTest {
 void testSearchConstructor() {
     // Sample inputs
     String testQuery = "Computer Science";
-    String testDay = "MWF";
-    String testStartTime = "09:00:00";
-    String testEndTime = "10:30:00";
-    String testSession = "2023_FALL";
+    RefactoredMain.Days testDay = RefactoredMain.Days.MWF;
+    Time testStartTime = Time.valueOf("09:00:00");
+    Time testEndTime = Time.valueOf("10:30:00");
+    RefactoredMain.Session testSession = RefactoredMain.Session.FALL;
     List<String> testCourseCodes = Arrays.asList("CS101", "CS102");
     String testDepartment = "Computer Science";
 
@@ -168,11 +169,11 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         // Sample inputs
         String testQuery = "COMP";
-        String testDay = "MWF";
+        RefactoredMain.Days testDay = RefactoredMain.Days.MWF;
 
         List<String> tempcodes = new ArrayList<>();
 
-        Filter filter = new Filter(testDay, "00:00:00", "00:00:00", "BLANK", tempcodes, "");
+        Filter filter = new Filter(testDay, Time.valueOf("00:00:00"), Time.valueOf("00:00:00"), RefactoredMain.Session.BLANK, tempcodes, "");
 
         Search search = new Search(testQuery, filter);
 
@@ -189,11 +190,11 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         // Sample inputs
         String testQuery = "COMP";
-        String testStartTime = "09:00:00";
+        Time testStartTime = Time.valueOf("09:00:00");
 
         List<String> tempcodes = new ArrayList<>();
 
-        Filter filter = new Filter("BLANK", testStartTime, "00:00:00", "BLANK", tempcodes, "");
+        Filter filter = new Filter(RefactoredMain.Days.BLANK, testStartTime, Time.valueOf("00:00:00"), RefactoredMain.Session.BLANK, tempcodes, "");
 
         Search search = new Search(testQuery, filter);
 
@@ -210,11 +211,11 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
-        String testDay = "MWF";
+        RefactoredMain.Days testDay = RefactoredMain.Days.MWF;
 
         List<String> tempcodes = new ArrayList<>();
 
-        Filter filter = new Filter(testDay, "00:00:00", "00:00:00", "BLANK", tempcodes, "");
+        Filter filter = new Filter(testDay, Time.valueOf("00:00:00"), Time.valueOf("00:00:00"), RefactoredMain.Session.BLANK, tempcodes, "");
 
         Search search = new Search(testQuery, filter);
 
@@ -231,11 +232,11 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         // Sample inputs
         String testQuery = "CHEMISTRY";
-        String testStartTime = "09:00:00";
+        Time testStartTime = Time.valueOf("09:00:00");
 
         List<String> tempcodes = new ArrayList<>();
 
-        Filter filter = new Filter("BLANK", testStartTime, "00:00:00", "BLANK", tempcodes, "");
+        Filter filter = new Filter(RefactoredMain.Days.BLANK, testStartTime, "00:00:00", "BLANK", tempcodes, "");
 
         Search search = new Search(testQuery, filter);
 
@@ -655,7 +656,7 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         // Sample inputs
         String testQuery = "CHEM";
-        String testDay = "MWF";
+        RefactoredMain.Days testDay = RefactoredMain.Days.MWF;
         String testStartTime = "12:00:00";
         String testEndTime = "12:50:00";
         String testSession = "2023_Fall";

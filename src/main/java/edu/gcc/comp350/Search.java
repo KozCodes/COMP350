@@ -9,12 +9,14 @@ public class Search {
     private Filter filter;
     private List<Course> searchResults;
     private List<Course> filteredResults;
+    private List<Course> alreadyTakenClasses;
 
     protected Search(String query, Filter filter) {
         this.query = query;
         this.filter = filter;
         this.searchResults = new ArrayList<>();
         this.filteredResults = new ArrayList<>();
+        this.alreadyTakenClasses = new ArrayList<>();
     }
 
     protected void search(String query) {
@@ -51,7 +53,6 @@ public class Search {
                 if (!searchMatches.contains(code)) {
                         searchMatches.add(code);
                 }
-
             }
         }
 
@@ -88,6 +89,26 @@ public class Search {
             }
         }
 
+        //if none so far, try matching to a profs name
+
+        if (searchResults.isEmpty()) {
+            List<Professor> profs = new ArrayList<>();
+
+            for (int i = 0; i < RefactoredMain.professors.size(); i++) {
+                if (RefactoredMain.professors.get(i).getName().equals(query)) {
+                   profs.add(RefactoredMain.professors.get(i));
+                }
+            }
+
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                for (int j = 0; j < profs.size(); j++) {
+                    if (RefactoredMain.courses.get(i).getProfessor().getID() == profs.get(j).getID()) {
+                       searchResults.add(RefactoredMain.courses.get(i));
+                    }
+                }
+            }
+        }
+
         //print out search results
         if (filter != null) {
             applyFilter(filter);
@@ -106,129 +127,26 @@ public class Search {
         //all requirements.
 
             for (Course course : searchResults) {
-                String condensedDays = course.getCourseDays().replaceAll(", ", "");
-                String condensedTimes = course.getStartTime().split(",")[0];
-                String condensedTimes2 = course.getEndTime().split(",")[0];
-
-                if (condensedDays.equals(filter.getCourse()) && !filter.getCourse().equals("BLANK")) {
-                    if (filter.getCourseSession().equals("BLANK") && filter.getStartTime().equals("00:00:00") && filter.getEndTime().equals("00:00:00") && filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                        filteredResults.add(course);
-                    } else {
-                      if (condensedTimes.equals(filter.getStartTime()) && !filter.getStartTime().equals("00:00:00")) {
-                          if (filter.getEndTime().equals("00:00:00") && filter.getCourseSession().equals("BLANK") && filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                              filteredResults.add(course);
-                          } else {
-                                if (condensedTimes2.equals(filter.getEndTime()) && !filter.getEndTime().equals("00:00:00")) {
-                                    if (filter.getCourseSession().equals("BLANK") && filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                        filteredResults.add(course);
-                                    } else {
-                                        if (course.getSession().equals(filter.getCourseSession()) && !filter.getCourseSession().equals("BLANK")) {
-                                            if (filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                                    filteredResults.add(course);
-                                            } else {
-                                                if (filter.getCourseCodes().contains(course.getCourseCode()) && !filter.getCourseCodes().isEmpty()) {
-                                                    if (filter.getDepartment().equals("")){
-                                                        filteredResults.add(course);
-                                                    } else {
-                                                        if (course.getCourseDept().equals(filter.getDepartment()) && !filter.getDepartment().equals("")) {
-                                                            filteredResults.add(course);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                          }
-                      }
-                    }
-                } else {
-                    if (condensedTimes.equals(filter.getStartTime()) && !filter.getStartTime().equals("00:00:00")) {
-                        if (filter.getEndTime().equals("00:00:00") && filter.getCourseSession().equals("BLANK") && filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                            filteredResults.add(course);
-                        } else {
-                            if (condensedTimes2.equals(filter.getEndTime()) && !filter.getEndTime().equals("00:00:00")) {
-                                if (filter.getCourseSession().equals("BLANK") && filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                    filteredResults.add(course);
-                                } else {
-                                    if (course.getSession().equals(filter.getCourseSession()) && !filter.getCourseSession().equals("BLANK")) {
-                                        if (filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                            filteredResults.add(course);
-                                        } else {
-                                            if (filter.getCourseCodes().contains(course.getCourseCode()) && !filter.getCourseCodes().isEmpty()) {
-                                                if (filter.getDepartment().equals("")){
-                                                    filteredResults.add(course);
-                                                } else {
-                                                    if (course.getCourseDept().equals(filter.getDepartment()) && !filter.getDepartment().equals("")) {
-                                                        filteredResults.add(course);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if (condensedTimes2.equals(filter.getEndTime()) && !filter.getEndTime().equals("00:00:00")) {
-                            if (filter.getCourseSession().equals("BLANK") && filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                filteredResults.add(course);
-                            } else {
-                                if (course.getSession().equals(filter.getCourseSession()) && !filter.getCourseSession().equals("BLANK")) {
-                                    if (filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                        filteredResults.add(course);
-                                    } else {
-                                        if (filter.getCourseCodes().contains(course.getCourseCode()) && !filter.getCourseCodes().isEmpty()) {
-                                            if (filter.getDepartment().equals("")){
-                                                filteredResults.add(course);
-                                            } else {
-                                                if (course.getCourseDept().equals(filter.getDepartment())) {
-                                                    filteredResults.add(course);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if (course.getSession().equals(filter.getCourseSession()) && !filter.getCourseSession().equals("BLANK")) {
-                                if (filter.getCourseCodes().isEmpty() && filter.getDepartment().equals("")) {
-                                    filteredResults.add(course);
-                                } else {
-                                    if (filter.getCourseCodes().contains(course.getCourseCode()) && !filter.getCourseCodes().isEmpty()) {
-                                        if (filter.getDepartment().equals("")){
-                                            filteredResults.add(course);
-                                        } else {
-                                            if (course.getCourseDept().equals(filter.getDepartment())) {
-                                                filteredResults.add(course);
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                if (filter.getCourseCodes().contains(course.getCourseCode()) && !filter.getCourseCodes().isEmpty()) {
-                                    if (filter.getDepartment().equals("")){
-                                        filteredResults.add(course);
-                                    } else {
-                                        if (course.getCourseDept().equals(filter.getDepartment())) {
-                                            filteredResults.add(course);
-                                        }
-                                    }
-                                } else {
-                                    if (course.getCourseDept().equals(filter.getDepartment())) {
-                                        filteredResults.add(course);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                filteredResults.add(course);
             }
+
+            //code generated with the assistance of Github Copilot
+
+            filteredResults.removeIf(course -> filter.getCourse().contains(course.getCourseDays()));
+            filteredResults.removeIf(course -> filter.getStartTime().contains(course.getStartTime()));
+            filteredResults.removeIf(course -> filter.getEndTime().contains(course.getEndTime()));
+            filteredResults.removeIf(course -> course.getSession().equals(filter.getCourseSession()));
+            filteredResults.removeIf(course -> course.getCourseDept().equals(filter.getDepartment()));
+            filteredResults.removeIf(course -> filter.getCourseCodes().contains(course.getCourseCode()));
 
         if (filteredResults.isEmpty()) {
             System.out.println("I'm sorry, we're unable to find anything related to your search. Try modifying your filters or query.");
         }
 
+    }
+
+    protected void Parser() {
+        //parse the query and attempt to match it with
     }
 
     protected void modifyFilter(Filter filter) {
