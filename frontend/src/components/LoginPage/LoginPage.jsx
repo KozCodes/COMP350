@@ -26,19 +26,6 @@ function LoginPage() {
     }
   };
 
-   useEffect(() => {
-        const fetch = async () => {
-              try {
-              const response = await axios.get('/api/runFunction');
-              console.log(response.data);
-              } catch (error) {
-                  console.error('error booting database', error);
-             }
-        };
-
-         fetch();
-   }, []);
-
   return (
     <div>
       <h2>Login</h2>
