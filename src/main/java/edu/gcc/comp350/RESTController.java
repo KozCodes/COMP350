@@ -40,7 +40,6 @@ public class RESTController {
         }
 
         RefactoredMain.currentSchedule = RefactoredMain.currentStudent.getSchedule(0);
-        RefactoredMain.db.disconnect();
 
         return "Database Connected.";
     }
@@ -114,6 +113,9 @@ public class RESTController {
                 case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
             }
 
+            professor = professor.replace("[\"", "");
+            professor = professor.replace("\"]", "");
+
             //professors
             Professor prof = new Professor(-1, -1,"John Doe", "BLANK");
             for (int j = 0; j < RefactoredMain.professors.size(); j++) {
@@ -130,13 +132,14 @@ public class RESTController {
     private static void loadProfessors() {
         ArrayList<Object> profList = RefactoredMain.db.select("id, score, professorName, department", "Professors");
         int currentId = -1;
+        int score = -1;
         for (int i = 0; i < profList.size(); i+= 4) {
             currentId = (int) profList.get(i);
-            String score = (String) profList.get(i+2);
-            String profname = (String) profList.get(i+3);
-            String dept = (String) profList.get(i+4);
+            score = (int) profList.get(i+1);
+            String profname = (String) profList.get(i+2);
+            String dept = (String) profList.get(i+3);
 
-            Professor prof = new Professor(currentId, Integer.parseInt(score), profname, dept);
+            Professor prof = new Professor(currentId, score, profname, dept);
             RefactoredMain.professors.add(prof);
         }
     }

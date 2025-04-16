@@ -12,7 +12,7 @@ import  java.sql.*;
 public class RefactoredMain {
 
     public static List<Course> courses = new ArrayList<>();
-    protected static List<Professor> professors;
+    protected static List<Professor> professors = new ArrayList<>();
     public static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;

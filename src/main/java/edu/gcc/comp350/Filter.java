@@ -12,6 +12,7 @@ public class Filter {
     private RefactoredMain.Session courseSession;
     private List<String> courseCodes;
     private String department;
+    private int year;
 
     // empty constructor
     protected Filter() {
@@ -27,6 +28,7 @@ public class Filter {
         this.courseSession = RefactoredMain.Session.BLANK;
         this.courseCodes = new ArrayList<>();
         this.department = "";
+        this.year = 0000;
     }
 
     // overloaded constructor
@@ -35,14 +37,46 @@ public class Filter {
                      List<Time> endTime,
                      RefactoredMain.Session courseSession,
                      List<String> courseCodes,
-                     String department) {
+                     String department, int year) {
 
         this.course = course;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        boolean validStartTime = true;
+        for (int i = 0; i < startTime.size(); i++) {
+            if (startTime.get(i).compareTo(Time.valueOf("08:00:00")) < 0 ||
+                    startTime.get(i).compareTo(Time.valueOf("21:00:00")) > 0) {
+                validStartTime = false;
+                break;
+            }
+        }
+        if (validStartTime) {
+            this.startTime = startTime;
+        } else {
+            startTime = new ArrayList<>();
+            startTime.add(Time.valueOf("00:00:00"));
+            this.startTime = startTime;
+        }
+
+        boolean validEndTime = true;
+        for (int i = 0; i < endTime.size(); i++) {
+            if (endTime.get(i).compareTo(Time.valueOf("08:50:00")) < 0 ||
+                    endTime.get(i).compareTo(Time.valueOf("21:50:00")) > 0) {
+                validEndTime = false;
+                break;
+            }
+        }
+
+        if (validEndTime) {
+            this.endTime = endTime;
+        } else {
+            endTime = new ArrayList<>();
+            endTime.add(Time.valueOf("00:00:00"));
+            this.endTime = endTime;
+        }
+
         this.courseSession = courseSession;
         this.courseCodes = courseCodes;
         this.department = department;
+        this.year = 0000;
     }
 
     protected List<RefactoredMain.Days> getCourse() {
@@ -93,5 +127,11 @@ public class Filter {
         this.department = department;
     }
 
+    protected int getYear() {
+        return year;
+    }
 
+    protected void setYear(int year) {
+        this.year = year;
+    }
 }
