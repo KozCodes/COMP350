@@ -3,6 +3,7 @@ package edu.gcc.comp350;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class RESTController {
 
-    @GetMapping("/runFunction")
+    @GetMapping("/test")
     public static String runFunction() throws SQLException, ClassNotFoundException {
         onLoad();
         String sql = "SELECT id, name, major, minor FROM Student WHERE id = ?";
@@ -44,6 +45,8 @@ public class RESTController {
         return "Database Connected.";
     }
 
+    /* Load Database Functions */
+
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         RefactoredMain.db.connect();
         RefactoredMain.db.createDatabase();
@@ -53,6 +56,7 @@ public class RESTController {
         RefactoredMain.db.setProfessorsInDatabase();
         loadProfessors();
         loadCourses();
+        System.out.println("onLoad() called");
     }
 
     private static void loadCourses() {
@@ -144,6 +148,8 @@ public class RESTController {
         }
     }
 
+    /* Login Functions */
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws SQLException {
         String username = loginRequest.getUsername();
@@ -189,6 +195,8 @@ public class RESTController {
         }
     }
 
+    /* Sign Up Functions */
+
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) throws SQLException {
         if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
@@ -227,5 +235,34 @@ public class RESTController {
 
         public String getMinor() { return minor; }
         public void setMinor(String minor) { this.minor = minor; }
+    }
+
+    /* Schedule Functions */
+    @RequestMapping("/schedule")
+    public ResponseEntity<List<String>> getSchedule(@RequestParam("id") int id) throws SQLException {
+
+        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+            RefactoredMain.db.connect();
+        }
+
+        // Get courses from db
+        String sql = "SELECT scheduleTitle FROM Schedule WHERE id = ?";
+        try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String name = rs.getString("scheduleTitle");
+                Schedule schedule = new Schedule(name, id);
+                ArrayList<String> courseJSONList = new ArrayList<>();
+                for(Course course : schedule.getCourses()) {
+                    courseJSONList.add(course.toJson());
+                }
+                return ResponseEntity.ok(courseJSONList);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return ResponseEntity.ok(null);
     }
 }
