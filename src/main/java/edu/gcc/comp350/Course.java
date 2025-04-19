@@ -1,5 +1,8 @@
 package edu.gcc.comp350;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.sql.Time;
 import java.util.List;
 import java.util.Random;
@@ -120,4 +123,20 @@ public class Course {
                 id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode
         );
     }
+
+    /**
+     * Convert the Schedule object to a JSON string
+     * @return String JSON string representation of the Schedule
+     */
+    protected String toJson() {
+        ObjectMapper om = new ObjectMapper();
+        String courseJSON = "";
+        try {
+            courseJSON = om.writeValueAsString(this);
+        } catch (Exception e) {
+            courseJSON = "ERROR";
+        }
+        return courseJSON;
+    }
+
 }
