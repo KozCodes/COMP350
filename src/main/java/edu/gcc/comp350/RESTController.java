@@ -1,21 +1,26 @@
 package edu.gcc.comp350;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class RESTController {
 
-    private final DatabaseConnect dbConnect = new DatabaseConnect();
-
-    @GetMapping("/runFunction")
-    public String runFunction() throws SQLException, ClassNotFoundException {
+    @GetMapping("/test")
+    public static String runFunction() throws SQLException, ClassNotFoundException {
         onLoad();
         String sql = "SELECT id, name, major, minor FROM Student WHERE id = ?";
         try (var pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
@@ -37,10 +42,10 @@ public class RESTController {
 
         RefactoredMain.currentSchedule = RefactoredMain.currentStudent.getSchedule(0);
 
-        RefactoredMain.db.disconnect();
-
-        return RefactoredMain.courses.get(0).toString();
+        return "Database Connected.";
     }
+
+    /* Load Database Functions */
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
         RefactoredMain.db.connect();
@@ -49,39 +54,215 @@ public class RESTController {
         RefactoredMain.db.resetProfessorsInDatabase();
         RefactoredMain.db.populateProfessorsInDatabase();
         RefactoredMain.db.setProfessorsInDatabase();
+        loadProfessors();
         loadCourses();
+        System.out.println("onLoad() called");
     }
 
     private static void loadCourses() {
         ArrayList<Object> courseList = RefactoredMain.db.select("id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode", "Courses");
         int currentId = -1;
-        for (int i = 0; i < courseList.size(); i += 9) {
+        for (int i = 0; i < courseList.size(); i+=9) {
             currentId = (int) courseList.get(i);
-            String courseTitle = (String) courseList.get(i + 1);
-            String professor = (String) courseList.get(i + 2);
-            String session = (String) courseList.get(i + 3);
-            String startTime = (String) courseList.get(i + 4);
-            String endTime = (String) courseList.get(i + 5);
-            String courseDays = (String) courseList.get(i + 6);
-            String courseDept = (String) courseList.get(i + 7);
-            String courseCode = (String) courseList.get(i + 8);
-            Course course = new Course(currentId, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode);
+            String courseTitle = (String) courseList.get(i+1);
+            String professor = (String) courseList.get(i+2);
+            String session = (String) courseList.get(i+3);
+            String startTime = (String) courseList.get(i+4);
+            String endTime = (String) courseList.get(i+5);
+            String courseDays = (String) courseList.get(i+6);
+            String courseDept = (String) courseList.get(i+7);
+            String courseCode = (String) courseList.get(i+8);
+
+            //course Start Times
+            List<Time> start = new ArrayList<>();
+            if (!startTime.equals("")) {
+                for (String times : startTime.split(", ")) {
+                    start.add(Time.valueOf(times));
+                }
+            }
+
+            //course End Times
+            List<Time> end = new ArrayList<>();
+            if (!endTime.equals("")) {
+                for(String times : endTime.split(", ")) {
+                    end.add(Time.valueOf(times));
+                }
+            } else {
+                end.add(Time.valueOf("00:00:00"));
+            }
+
+            //days
+            List<String> splicedDays = Arrays.stream(courseDays.split(", ")).toList();
+            List<RefactoredMain.Days> days = new ArrayList<>();
+
+            for (int j = 0; j < splicedDays.size(); j++) {
+                switch(splicedDays.get(j)) {
+                    case "M" -> days.add(RefactoredMain.Days.M);
+                    case "T" -> days.add(RefactoredMain.Days.T);
+                    case "W" -> days.add(RefactoredMain.Days.W);
+                    case "R" -> days.add(RefactoredMain.Days.R);
+                    case "F" -> days.add(RefactoredMain.Days.F);
+                }
+            }
+
+            //session
+            String cutSession = session.split("_")[1];
+            int year = Integer.parseInt(session.split("_")[0]);
+            RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
+            switch(cutSession) {
+                case "FALL" -> finalSession = RefactoredMain.Session.FALL;
+                case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
+                case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
+                case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
+            }
+
+            professor = professor.replace("[\"", "");
+            professor = professor.replace("\"]", "");
+
+            //professors
+            Professor prof = new Professor(-1, -1,"John Doe", "BLANK");
+            for (int j = 0; j < RefactoredMain.professors.size(); j++) {
+                if (professor.equals(RefactoredMain.professors.get(j).getName())) {
+                    prof = RefactoredMain.professors.get(j);
+                }
+            }
+
+            Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false);
             RefactoredMain.courses.add(course);
         }
     }
 
-    @GetMapping("/faculty")
-    @ResponseBody
-    public List<Professor> getFaculty() {
-        try {
-            dbConnect.connect();
-            List<Professor> professors = dbConnect.getAllProfessors();
-            return professors;
-        } catch (Exception e) {
-            System.err.println("Error fetching faculty: " + e.getMessage());
-            return List.of();
-        } finally {
-            dbConnect.disconnect();
+    private static void loadProfessors() {
+        ArrayList<Object> profList = RefactoredMain.db.select("id, score, professorName, department", "Professors");
+        int currentId = -1;
+        int score = -1;
+        for (int i = 0; i < profList.size(); i+= 4) {
+            currentId = (int) profList.get(i);
+            score = (int) profList.get(i+1);
+            String profname = (String) profList.get(i+2);
+            String dept = (String) profList.get(i+3);
+
+            Professor prof = new Professor(currentId, score, profname, dept);
+            RefactoredMain.professors.add(prof);
         }
+    }
+
+    /* Login Functions */
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws SQLException {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+            RefactoredMain.db.connect();
+        }
+
+        String sql = "SELECT * FROM Student WHERE username = ? AND password = ?";
+        try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return ResponseEntity.ok("Login successful");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    static class LoginRequest {
+        private String username;
+        private String password;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    /* Sign Up Functions */
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody SignupRequest request) throws SQLException {
+        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+            RefactoredMain.db.connect();
+        }
+
+        String sql = "INSERT INTO Student (name, major, minor, username, password) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
+            pstmt.setString(1, request.getName());
+            pstmt.setString(2, request.getMajor());
+            pstmt.setString(3, request.getMinor());
+            pstmt.setString(4, request.getUsername());
+            pstmt.setString(5, request.getPassword());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already taken.");
+        }
+
+        return ResponseEntity.ok("Signup successful");
+    }
+
+    static class SignupRequest {
+        private String username, password, name, major, minor;
+
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+
+        public String getMajor() { return major; }
+        public void setMajor(String major) { this.major = major; }
+
+        public String getMinor() { return minor; }
+        public void setMinor(String minor) { this.minor = minor; }
+    }
+
+    /* Schedule Functions */
+    @RequestMapping("/schedule")
+    public ResponseEntity<List<String>> getSchedule(@RequestParam("id") int id) throws SQLException {
+
+        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+            RefactoredMain.db.connect();
+        }
+
+        // Get courses from db
+        String sql = "SELECT scheduleTitle FROM Schedule WHERE id = ?";
+        try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String name = rs.getString("scheduleTitle");
+                Schedule schedule = new Schedule(name, id);
+                ArrayList<String> courseJSONList = new ArrayList<>();
+                for(Course course : schedule.getCourses()) {
+                    courseJSONList.add(course.toJson());
+                }
+                return ResponseEntity.ok(courseJSONList);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return ResponseEntity.ok(null);
     }
 }

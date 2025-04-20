@@ -2,9 +2,17 @@ package edu.gcc.comp350;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
+
+import static edu.gcc.comp350.RefactoredMain.db;
+
 
 public class Schedule {
 
@@ -135,7 +143,7 @@ public class Schedule {
      * Add a course to the Schedule
      * @param courseID int ID of the course to add
      */
-    protected void addCourse(int courseID) {
+    protected int addCourse(int courseID) {
         for (Course newCourse : RefactoredMain.courses) {
             if (newCourse.getID() == courseID) {
                 for (Course existingCourse : classes) {
@@ -144,26 +152,27 @@ public class Schedule {
                             System.out.println("Error: Course " + newCourse.getCourseTitle() +
                                     " conflicts with " + existingCourse.getCourseTitle() +
                                     " and cannot be added to the schedule.");
-                            return;
+                            return 0;
                         }
                     }
                 }
                 classes.add(newCourse);
                 lastChangedCourses.push(newCourse);
-                return;
+                return 1;
             }
         }
+        return 0;
     }
 
     /**
      * Checks if two courses have overlapping days.
      */
     public boolean hasDayConflict(Course existingCourse, Course newCourse) {
-        String existingDays = existingCourse.getCourseDays();
-        String newDays = newCourse.getCourseDays();
+        List<RefactoredMain.Days> existingDays = existingCourse.getCourseDays();
+        List<RefactoredMain.Days> newDays = newCourse.getCourseDays();
 
-        for (char day : existingDays.toCharArray()) {
-            if (newDays.contains(String.valueOf(day))) {
+        for (RefactoredMain.Days day : existingDays) {
+            if (newDays.contains(day)) {
                 return true;
             }
         }
@@ -174,12 +183,24 @@ public class Schedule {
      * Checks if two courses have overlapping time slots.
      */
     public boolean hasTimeConflict(Course existingCourse, Course newCourse) {
-        int existingStart = Integer.parseInt(existingCourse.getStartTime().replace(":", ""));
-        int existingEnd = Integer.parseInt(existingCourse.getEndTime().replace(":", ""));
-        int newStart = Integer.parseInt(newCourse.getStartTime().replace(":", ""));
-        int newEnd = Integer.parseInt(newCourse.getEndTime().replace(":", ""));
+        List<Time> existingStartTimes = existingCourse.getStartTime();
+        List<Time> existingEndTimes = existingCourse.getEndTime();
+        List<Time> newStartTimes = newCourse.getStartTime();
+        List<Time> newEndTimes = newCourse.getEndTime();
 
-        return newStart < existingEnd && newEnd > existingStart;
+        for (Time times : existingStartTimes) {
+           if (newStartTimes.contains(times)) {
+               return true;
+           }
+        }
+
+        for (Time times : existingEndTimes) {
+            if (newEndTimes.contains(times)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -219,6 +240,30 @@ public class Schedule {
      */
     protected List<Course> getCourses() {
         return classes;
+    }
+
+
+    protected void saveSchedule() {
+//        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
+//        db.injectSql(scheduleSql);
+
+        String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
+        try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
+            pstmt.setInt(1, this.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        for (Course course : this.getCourses()) {
+            try (var pstmt = db.conn.prepareStatement("INSERT INTO ScheduleCourses (schedule, course) VALUES (?, ?)")) {
+                pstmt.setInt(1, this.getId());
+                pstmt.setInt(2, course.getID());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
 

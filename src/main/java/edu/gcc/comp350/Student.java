@@ -122,9 +122,6 @@ public class Student {
         }
     }
     protected void saveSchedule(Schedule schedule) {
-//        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
-//        db.injectSql(scheduleSql);
-
         String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
                 try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
                     pstmt.setInt(1, schedule.getId());

@@ -132,7 +132,9 @@ public class DatabaseConnect {
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              name TEXT NOT NULL,
              major TEXT NOT NULL,
-             minor TEXT
+             minor TEXT,
+             username TEXT UNIQUE NOT NULL,
+             password TEXT NOT NULL
             );""";
         injectSql(sql);
 
@@ -292,24 +294,23 @@ public class DatabaseConnect {
                     JSONObject course = coursesArray.getJSONObject(i);
                     JSONArray timeData = course.getJSONArray("times");
                     StringBuilder day = new StringBuilder();
-                    String startTime = "";
-                    String endTime = "";
+                    StringBuilder startTime = new StringBuilder();
+                    StringBuilder endTime = new StringBuilder();
                     for (Object time : timeData) {
                         JSONObject timeObj = (JSONObject) time;
                         if (!day.isEmpty()) day.append(", ");
                         day.append(timeObj.getString("day"));
-                        // added so sets start and end times once
-                        if (startTime.isEmpty() && endTime.isEmpty()) {
-                            startTime = timeObj.getString("start_time");
-                            endTime = timeObj.getString("end_time");
-                        }
+                        if (!startTime.isEmpty()) startTime.append(", ");
+                        startTime.append(timeObj.getString("start_time"));
+                        if (!endTime.isEmpty()) endTime.append(", ");
+                        endTime.append(timeObj.getString("end_time"));
                     }
 
                     courseStmt.setString(1, course.getString("name"));
                     courseStmt.setString(2, course.getJSONArray("faculty").toString());
                     courseStmt.setString(3, course.getString("semester"));
-                    courseStmt.setString(4, startTime);
-                    courseStmt.setString(5, endTime);
+                    courseStmt.setString(4, startTime.toString());
+                    courseStmt.setString(5, endTime.toString());
                     courseStmt.setString(6, day.toString()); // Use the accumulated days
                     courseStmt.setString(7, course.getString("subject"));
                     courseStmt.setString(8, course.getString("subject") + " " + course.getInt("number") + " " + course.getString("section"));

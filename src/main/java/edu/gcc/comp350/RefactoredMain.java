@@ -12,7 +12,7 @@ import  java.sql.*;
 public class RefactoredMain {
 
     public static List<Course> courses = new ArrayList<>();
-    protected static List<Professor> professors;
+    protected static List<Professor> professors = new ArrayList<>();
     public static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
@@ -20,11 +20,20 @@ public class RefactoredMain {
     protected static DatabaseConnect db = new DatabaseConnect();
 
     protected static enum Days {
+        BLANK,
         MWF,
-        TR
+        TR,
+        M,
+        T,
+        W,
+        R,
+        F,
+        MW,
+        WF
     }
 
     protected static enum Session {
+        BLANK,
         FALL,
         WINTER,
         SPRING,
@@ -32,8 +41,16 @@ public class RefactoredMain {
         LATESUMMER
     }
 
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
+// If changes are made to the database structure, uncomment these lines and run once to reset the database
+//        db.connect();
+//        db.clearDatabase();
+//        db.createDatabase();
+//        db.resetCoursesInDatabase();
+//        db.resetProfessorsInDatabase();
+//        db.populateProfessorsInDatabase();
+//        db.setProfessorsInDatabase();
+//        db.disconnect();
         SpringApplication.run(RefactoredMain.class, args);
     }
 

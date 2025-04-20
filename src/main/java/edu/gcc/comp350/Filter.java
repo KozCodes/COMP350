@@ -6,76 +6,108 @@ import java.util.List;
 
 public class Filter {
 
-    private String course;
-    private String startTime;
-    private String endTime;
-    private String courseSession;
+    private List<RefactoredMain.Days> course;
+    private List<Time> startTime;
+    private List<Time> endTime;
+    private RefactoredMain.Session courseSession;
     private List<String> courseCodes;
     private String department;
+    private int year;
 
     // empty constructor
     protected Filter() {
-        this.course = "BLANK";
-        this.startTime = "00:00:00";
-        this.endTime = "00:00:00";
-        this.courseSession = "BLANK";
+        List<RefactoredMain.Days> days = new ArrayList<>();
+        days.add(RefactoredMain.Days.BLANK);
+        this.course = days;
+        List<Time> startTime = new ArrayList<>();
+        startTime.add(Time.valueOf("00:00:00"));
+        this.startTime = startTime;
+        List<Time> endTime = new ArrayList<>();
+        endTime.add(Time.valueOf("00:00:00"));
+        this.endTime = endTime;
+        this.courseSession = RefactoredMain.Session.BLANK;
         this.courseCodes = new ArrayList<>();
         this.department = "";
+        this.year = 0000;
     }
 
     // overloaded constructor
-    protected Filter(String course,
-                     String startTime,
-                     String endTime,
-                     String courseSession,
+    protected Filter(List<RefactoredMain.Days> course,
+                     List<Time> startTime,
+                     List<Time> endTime,
+                     RefactoredMain.Session courseSession,
                      List<String> courseCodes,
-                     String department) {
+                     String department, int year) {
 
         this.course = course;
-        if (startTime.compareTo("08:00:00") >= 0 && startTime.compareTo("18:00:00") <= 0) {
+        boolean validStartTime = true;
+        for (int i = 0; i < startTime.size(); i++) {
+            if (startTime.get(i).compareTo(Time.valueOf("08:00:00")) < 0 ||
+                    startTime.get(i).compareTo(Time.valueOf("21:00:00")) > 0) {
+                validStartTime = false;
+                break;
+            }
+        }
+        if (validStartTime) {
             this.startTime = startTime;
         } else {
-            this.startTime = "00:00:00";
+            startTime = new ArrayList<>();
+            startTime.add(Time.valueOf("00:00:00"));
+            this.startTime = startTime;
         }
-        if (endTime.compareTo("08:50:00") >= 0 && endTime.compareTo("21:00:00") <= 0) {
+
+        boolean validEndTime = true;
+        for (int i = 0; i < endTime.size(); i++) {
+            if (endTime.get(i).compareTo(Time.valueOf("08:50:00")) < 0 ||
+                    endTime.get(i).compareTo(Time.valueOf("21:50:00")) > 0) {
+                validEndTime = false;
+                break;
+            }
+        }
+
+        if (validEndTime) {
             this.endTime = endTime;
         } else {
-            this.endTime = "00:00:00";
+            endTime = new ArrayList<>();
+            endTime.add(Time.valueOf("00:00:00"));
+            this.endTime = endTime;
         }
+
         this.courseSession = courseSession;
         this.courseCodes = courseCodes;
         this.department = department;
+        this.year = 0000;
     }
 
-    protected String getCourse() {
+    protected List<RefactoredMain.Days> getCourse() {
         return course;
     }
 
-    protected void setCourse(String course) {
+    protected void setCourse(List<RefactoredMain.Days> course) {
         this.course = course;
     }
 
-    protected String getStartTime() {
+    protected List<Time> getStartTime() {
         return startTime;
     }
 
-    protected void setStartTime(String startTime) {
+    protected void setStartTime(List<Time> startTime) {
         this.startTime = startTime;
     }
 
-    protected String getEndTime() {
+    protected List<Time> getEndTime() {
         return endTime;
     }
 
-    protected void setEndTime(String endTime) {
+    protected void setEndTime(List<Time> endTime) {
         this.endTime = endTime;
     }
 
-    protected String getCourseSession() {
+    protected RefactoredMain.Session getCourseSession() {
         return courseSession;
     }
 
-    protected void setCourseSession(String courseSession) {
+    protected void setCourseSession(RefactoredMain.Session courseSession) {
         this.courseSession = courseSession;
     }
 
@@ -95,5 +127,11 @@ public class Filter {
         this.department = department;
     }
 
+    protected int getYear() {
+        return year;
+    }
 
+    protected void setYear(int year) {
+        this.year = year;
+    }
 }

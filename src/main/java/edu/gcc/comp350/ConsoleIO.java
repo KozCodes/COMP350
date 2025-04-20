@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.sql.Time;
 import java.util.*;
 
 import static edu.gcc.comp350.RefactoredMain.*;
@@ -196,13 +197,45 @@ public class ConsoleIO {
     private void filter(String type, String val) {
         switch (type) {
             case "days" :
-                filter.setCourse(val);
+                List<String> days = Arrays.asList(val.split(", "));
+                List<RefactoredMain.Days> finalDays = new ArrayList<>();
+
+                for (int j = 0; j < days.size(); j++) {
+                    switch(days.get(j)) {
+                        case "M" -> finalDays.add(RefactoredMain.Days.M);
+                        case "T" -> finalDays.add(RefactoredMain.Days.T);
+                        case "W" -> finalDays.add(RefactoredMain.Days.W);
+                        case "R" -> finalDays.add(RefactoredMain.Days.R);
+                        case "F" -> finalDays.add(RefactoredMain.Days.F);
+                    }
+                }
+
+                filter.setCourse(finalDays);
             case "start" :
-                filter.setStartTime(val);
+                List<String> tempTimes = Arrays.asList(val.split(", "));
+                List<Time> startTimes = new ArrayList<>();
+                for (String time : tempTimes) {
+                    startTimes.add(Time.valueOf(time));
+                }
+                filter.setStartTime(startTimes);
             case "end" :
-                filter.setEndTime(val);
+                List<String> tempTimes2 = Arrays.asList(val.split(", "));
+                List<Time> endTimes = new ArrayList<>();
+                for (String time : tempTimes2) {
+                    endTimes.add(Time.valueOf(time));
+                }
+                filter.setEndTime(endTimes);
             case "session" :
-                filter.setCourseSession(val);
+                RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
+
+                switch(val) {
+                    case "FALL" -> finalSession = RefactoredMain.Session.FALL;
+                    case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                    case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
+                    case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
+                    case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
+                }
+                filter.setCourseSession(finalSession);
             case "courseCode" :
                 filter.setCourseCodes(Arrays.asList(val.split(", ")));
             case "department" :
@@ -282,10 +315,10 @@ public class ConsoleIO {
         // Print all classes at the top
         System.out.println("\nAll Classes in the Schedule:");
         List<Course> sortedCourses = new ArrayList<>(currentSchedule.getCourses());
-        sortedCourses.sort(Comparator.comparing(Course::getStartTime));
+        //sortedCourses.sort(Comparator.comparing(Course::getStartTime));
         for (Course course : sortedCourses) {
-            System.out.println(String.format("Course ID: %-5d | Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
-                    course.getID(), course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
+            //System.out.println(String.format("Course ID: %-5d | Course Code: %-10s | Days: %-5s | Start Time: %-5s | End Time: %-5s | Title: %-20s",
+                    //course.getID(), course.getCourseCode(), String.join(", ", course.getCourseDays()), course.getStartTime(), course.getEndTime(), course.getCourseTitle()));
         }
         // Days of the week
         String[] days = {"M", "T", "W", "R", "F"};
@@ -299,7 +332,7 @@ public class ConsoleIO {
                 }
             }
             // Sort courses by start time
-            coursesForDay.sort(Comparator.comparing(Course::getStartTime));
+           // coursesForDay.sort(Comparator.comparing(Course::getStartTime));
             // Schedule time slots from 08:00 to 21:00
             String currentTime = "08:00";
             String endTime = "21:00";

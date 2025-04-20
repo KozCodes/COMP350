@@ -1,46 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from "react";
+import axios from "axios";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LoginSignup from "./LoginSignup";
+//import Home from "./Home";
+import Schedule from "./components/Schedule/schedule";
 
-function App() {
-  const [professors, setProfessors] = useState([]);
-  const [message, setMessage] = useState('Loading professors...');
-
-  useEffect(() => {
-    axios.get('http://localhost:8080/faculty')
-      .then(response => {
-        if (response.data && response.data.length > 0) {
-          setProfessors(response.data);
-          setMessage('');
-        } else {
-          setMessage('No professors found.');
+function Home() {
+    const load = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/test`);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching schedule data:", error);
         }
-      })
-      .catch(error => {
-        setMessage('There was an error fetching the professors.');
-        console.error('There was an error!', error);
-      });
-  }, []);
+    };
 
+    load();
+
+    return(
+        <div>
+            <h1>Welcome to the Home Page</h1>
+        </div>
+    );
+}
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Faculty List</h1>
-        {message && <p>{message}</p>} {/* Display loading/error messages */}
-        {professors.length > 0 ? (
-          <ul>
-            {professors.map(professor => (
-              <li key={professor.id}>
-                <strong>{professor.name}</strong> - {professor.department}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No professors to display.</p>
-        )}
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={<Home />}
+        />
+        <Route
+          path="/login"
+          element={<LoginSignup />}
+        />
+        <Route
+          path="/schedule/:scheduleId"
+          element={<Schedule />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
