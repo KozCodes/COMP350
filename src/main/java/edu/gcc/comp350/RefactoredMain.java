@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import  java.sql.*;
 
@@ -16,6 +17,8 @@ public class RefactoredMain {
     public static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
+    protected static List<String> Dictionary = new ArrayList<>();
+    protected static List<String> stopwordList = Arrays.asList("a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has", "have", "he", "his", "is", "it", "its", "in", "of", "on", "that", "the", "to", "with");
 
     protected static DatabaseConnect db = new DatabaseConnect();
 

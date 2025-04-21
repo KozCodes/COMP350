@@ -3,7 +3,8 @@ import axios from "axios";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginSignup from "./LoginSignup";
 //import Home from "./Home";
-import Schedule from "./components/Schedule/schedule";
+import Schedule from " ./components/Schedule/schedule";
+import SearchPage from "./components/SearchPage/SearchPage";
 
 function Home() {
     const load = async () => {

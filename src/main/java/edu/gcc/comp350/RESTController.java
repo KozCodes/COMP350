@@ -54,9 +54,20 @@ public class RESTController {
         RefactoredMain.db.resetProfessorsInDatabase();
         RefactoredMain.db.populateProfessorsInDatabase();
         RefactoredMain.db.setProfessorsInDatabase();
+        RefactoredMain.db.populateDictionary();
+        loadDictionary();
         loadProfessors();
         loadCourses();
         System.out.println("onLoad() called");
+    }
+
+    private static void loadDictionary() {
+        // ai generated code
+        ArrayList<Object> dictionaryList = RefactoredMain.db.select("word", "Dictionary");
+        for (int i = 0; i < dictionaryList.size(); i++) {
+            String word = (String) dictionaryList.get(i);
+            RefactoredMain.Dictionary.add(word);
+        }
     }
 
     private static void loadCourses() {

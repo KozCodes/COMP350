@@ -2,6 +2,8 @@ package edu.gcc.comp350;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Search {
@@ -10,104 +12,300 @@ public class Search {
     private Filter filter;
     private List<Course> searchResults;
     private List<Course> filteredResults;
-    private List<Course> alreadyTakenClasses;
 
     protected Search(String query, Filter filter) {
         this.query = query;
         this.filter = filter;
         this.searchResults = new ArrayList<>();
         this.filteredResults = new ArrayList<>();
-        this.alreadyTakenClasses = new ArrayList<>();
     }
 
     protected void search(String query) {
-        //likely 4 things a user can search with: a name, a course code, a department,
-        //or a prof's name. first, need to check what type the query is.
+        //Uses TF-IDF and NLP to calculate the weight of the given query against the course
+        //database, returning a list of courses that are sorted by weight
+        //of relevance to the query.
 
-        //can add implementation later to check query for a description of a course, or
-        //recommending courses based on a keyword that returns no results (ie spelling errors,
-        //wrong data, etc.)
+        //3 main search queries usually - course title, course code, professor name
+        boolean isKeyword = false;
+        boolean isCourseCode = false;
+        boolean isProf = false;
 
-        //easiest - make a list of course codes based on DB data, then check if
-        //query contains any course code
-
-        //code generated with the assistance of Github Copilot for this section
+        //algorithm to check what type query is - don't need to perform TF-IDF
+        //multiple times if query is not of a certain type
 
         query = query.toUpperCase();
 
-            List<String> codes = new ArrayList<>();
-
-            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-                if (!codes.contains(RefactoredMain.courses.get(i).getCourseCode())) {
-                    codes.add(RefactoredMain.courses.get(i).getCourseCode());
-                }
-            }
-
-        //check course codes first - will check for matches between the entire code,
-        //the department, and the number. Will add if theres a match.
-        // not in order, will order down below
-
-        List<String> searchMatches = new ArrayList<>();
-
-        for (String code : codes) {
-            if (code.contains(query) || code.equals(query)) {
-                if (!searchMatches.contains(code)) {
-                        searchMatches.add(code);
-                }
-            }
-        }
-
-        for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-                if (searchMatches.contains(RefactoredMain.courses.get(i).getCourseCode()) && !searchResults.contains(RefactoredMain.courses.get(i))) {
-                    searchResults.add(RefactoredMain.courses.get(i));
-                }
-        }
-
-        //keywords: get the query, and if it doesnt match any sort of course code,
-        //try matching it to a name
-
-        if (searchResults.isEmpty()) {
-
-
-            List<String> names = new ArrayList<>();
-
-            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-                if (!names.contains(RefactoredMain.courses.get(i).getCourseTitle())) {
-                    names.add(RefactoredMain.courses.get(i).getCourseTitle());
-                }
-            }
-
-            for (String name : names) {
-                if (name.contains(query) || name.equals(query)) {
-                    searchMatches.add(name);
-                }
-            }
-
-            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-                    if (searchMatches.contains(RefactoredMain.courses.get(i).getCourseTitle()) && !searchResults.contains(RefactoredMain.courses.get(i))) {
-                        searchResults.add(RefactoredMain.courses.get(i));
-                    }
-            }
-        }
-
-        //if none so far, try matching to a profs name
-
-        if (searchResults.isEmpty()) {
-            List<Professor> profs = new ArrayList<>();
-
+        //easiest tell - if theres recognizable digits somewhere, then its a course code query
+        if (Character.isDigit(query.charAt(0)) || Character.isDigit(query.charAt(5))) {
+            isCourseCode = true;
+        } else {
+            //harder - if the query contains a professor name, then it is a professor query
             for (int i = 0; i < RefactoredMain.professors.size(); i++) {
-                if (RefactoredMain.professors.get(i).getName().equals(query)) {
-                   profs.add(RefactoredMain.professors.get(i));
+                if (RefactoredMain.professors.get(i).getName().contains(query)) {
+                    isProf = true;
+                    break;
                 }
             }
 
+            //if still nothing, do the same thing but for course titles
             for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-                for (int j = 0; j < profs.size(); j++) {
-                    if (RefactoredMain.courses.get(i).getProfessor().getID() == profs.get(j).getID()) {
-                       searchResults.add(RefactoredMain.courses.get(i));
+                if (RefactoredMain.courses.get(i).getCourseTitle().contains(query)) {
+                    isKeyword = true;
+                    break;
+                }
+            }
+        }
+
+
+        if (isKeyword) {
+            List<String> splitQuery = Arrays.asList(query.split(" "));
+            splitQuery.removeIf(num -> RefactoredMain.stopwordList.contains(num));
+
+            //weight all classes based on query
+            HashMap<Course, Double> queryWeights = new HashMap();
+
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                //initialize the course to already have an int value
+                queryWeights.put(RefactoredMain.courses.get(i), 0.0);
+
+                for (int j = 0; j < splitQuery.size(); j++) {
+                    List<String> title = Arrays.asList(RefactoredMain.courses.get(i).getCourseTitle().toUpperCase().split(" "));
+                    double m = 0.0;
+
+                    for (int k = 0; k < title.size(); k++) {
+                        if (title.get(k).equals(splitQuery.get(j))) {
+                            m++;
+                        }
+                    }
+
+                    double weight = m / title.size();
+
+                    //TF - if the term is in the title, weight it by the amount of times it shows up and add it to the weight
+                    queryWeights.put(RefactoredMain.courses.get(i), queryWeights.get(RefactoredMain.courses.get(i)) + weight);
+                }
+            }
+
+            //remove all courses that have a weight of 0, because they are not relevant to the query and
+            //have no need to calculate the IDF
+            HashMap<Course, Double> queryWeightsCopy = new HashMap<>();
+
+            for (Course course : queryWeights.keySet()) {
+                if (queryWeights.get(course) > 0) {
+                    queryWeightsCopy.put(course, queryWeights.get(course));
+                }
+            }
+
+            int IDFcount = 0;
+            //IDF - count how many times the term shows up across the database, then multiply the weight
+            for (int i = 0; i < splitQuery.size(); i++) {
+                for (Course course : queryWeightsCopy.keySet()) {
+                    if (course.getCourseTitle().toUpperCase().contains(splitQuery.get(i))) {
+                        IDFcount++;
+                    }
+                }
+
+                for (Course course : queryWeightsCopy.keySet()) {
+                    if (course.getCourseTitle().toUpperCase().contains(splitQuery.get(i))) {
+                        double weight = queryWeightsCopy.get(course) * Math.log(RefactoredMain.courses.size() / IDFcount);
+                        queryWeightsCopy.put(course, weight);
+                    }
+                }
+
+                IDFcount = 0;
+            }
+
+            //sort the courses by weight, highest to lowest - do not count any courses
+            //that have a weight of 0
+
+            for (Course course : queryWeightsCopy.keySet()) {
+                searchResults.add(course);
+            }
+
+            //do a binary sort on the searchResults list
+
+            //binary search code generated with the assistance of Github Copilot
+            for (int i = 0; i < searchResults.size(); i++) {
+                for (int j = 0; j < searchResults.size() - 1; j++) {
+                    if (queryWeights.get(searchResults.get(j)) < queryWeights.get(searchResults.get(j + 1))) {
+                        Course temp = searchResults.get(j);
+                        searchResults.set(j, searchResults.get(j + 1));
+                        searchResults.set(j + 1, temp);
                     }
                 }
             }
+        } else if (isProf) {
+            List<String> splitQuery = Arrays.asList(query.split(" "));
+            splitQuery.removeIf(num -> RefactoredMain.stopwordList.contains(num));
+
+            //weight all classes based on query
+            HashMap<Course, Double> queryWeights = new HashMap();
+
+            //IF less helpful here but still want to do as it weeds out irrelevant courses
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                //initialize the course to already have an int value
+                queryWeights.put(RefactoredMain.courses.get(i), 0.0);
+
+                for (int j = 0; j < splitQuery.size(); j++) {
+                    List<String> title = Arrays.asList(RefactoredMain.courses.get(i).getProfessor().getName().toUpperCase().split(" "));
+                    double m = 0.0;
+
+                    for (int k = 0; k < title.size(); k++) {
+                        if (title.get(k).equals(splitQuery.get(j))) {
+                            m++;
+                        }
+                    }
+
+                    double weight = m / title.size();
+
+                    //TF - if the term is in the title, weight it by the amount of times it shows up and add it to the weight
+                    queryWeights.put(RefactoredMain.courses.get(i), queryWeights.get(RefactoredMain.courses.get(i)) + weight);
+                }
+            }
+
+            //remove all courses that have a weight of 0, because they are not relevant to the query and
+            //have no need to calculate the IDF
+            HashMap<Course, Double> queryWeightsCopy = new HashMap<>();
+
+            for (Course course : queryWeights.keySet()) {
+                if (queryWeights.get(course) > 0) {
+                    queryWeightsCopy.put(course, queryWeights.get(course));
+                }
+            }
+
+            int IDFcount = 0;
+            //IDF - count how many times the term shows up across the database, then multiply the weight
+            for (int i = 0; i < splitQuery.size(); i++) {
+                for (Course course : queryWeightsCopy.keySet()) {
+                    if (course.getProfessor().getName().toUpperCase().contains(splitQuery.get(i))) {
+                        IDFcount++;
+                    }
+                }
+
+                for (Course course : queryWeightsCopy.keySet()) {
+                    if (course.getProfessor().getName().toUpperCase().contains(splitQuery.get(i))) {
+                        double weight = queryWeightsCopy.get(course) * Math.log(RefactoredMain.courses.size() / IDFcount);
+                        queryWeightsCopy.put(course, weight);
+                    }
+                }
+
+                IDFcount = 0;
+            }
+
+            //sort the courses by weight, highest to lowest - do not count any courses
+            //that have a weight of 0
+
+            for (Course course : queryWeightsCopy.keySet()) {
+                searchResults.add(course);
+            }
+
+            //do a binary sort on the searchResults list
+
+            //binary search code generated with the assistance of Github Copilot
+            for (int i = 0; i < searchResults.size(); i++) {
+                for (int j = 0; j < searchResults.size() - 1; j++) {
+                    if (queryWeights.get(searchResults.get(j)) < queryWeights.get(searchResults.get(j + 1))) {
+                        Course temp = searchResults.get(j);
+                        searchResults.set(j, searchResults.get(j + 1));
+                        searchResults.set(j + 1, temp);
+                    }
+                }
+            }
+        } else if (isCourseCode) {
+            List<String> splitQuery = Arrays.asList(query.split(" "));
+            splitQuery.removeIf(num -> RefactoredMain.stopwordList.contains(num));
+
+            //weight all classes based on query
+            HashMap<Course, Double> queryWeights = new HashMap();
+
+            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                //initialize the course to already have an int value
+                queryWeights.put(RefactoredMain.courses.get(i), 0.0);
+
+                for (int j = 0; j < splitQuery.size(); j++) {
+                    List<String> title = Arrays.asList(RefactoredMain.courses.get(i).getCourseCode().split(" "));
+                    double m = 0.0;
+
+                    for (int k = 0; k < title.size(); k++) {
+                        if (title.get(k).equals(splitQuery.get(j))) {
+                            m++;
+                        }
+                    }
+
+                    double weight = m / title.size();
+
+                    //TF - if the term is in the title, weight it by the amount of times it shows up and add it to the weight
+                    queryWeights.put(RefactoredMain.courses.get(i), queryWeights.get(RefactoredMain.courses.get(i)) + weight);
+                }
+            }
+
+            //remove all courses that have a weight of 0, because they are not relevant to the query and
+            //have no need to calculate the IDF
+            HashMap<Course, Double> queryWeightsCopy = new HashMap<>();
+
+            for (Course course : queryWeights.keySet()) {
+                if (queryWeights.get(course) > 0) {
+                    queryWeightsCopy.put(course, queryWeights.get(course));
+                }
+            }
+
+            int IDFcount = 0;
+            //IDF - count how many times the term shows up across the database, then multiply the weight
+            for (int i = 0; i < splitQuery.size(); i++) {
+                for (Course course : queryWeightsCopy.keySet()) {
+                    if (course.getCourseCode().toUpperCase().contains(splitQuery.get(i))) {
+                        IDFcount++;
+                    }
+                }
+
+                for (Course course : queryWeightsCopy.keySet()) {
+                    if (course.getCourseCode().toUpperCase().contains(splitQuery.get(i))) {
+                        double weight = queryWeightsCopy.get(course) * Math.log(RefactoredMain.courses.size() / IDFcount);
+                        queryWeightsCopy.put(course, weight);
+                    }
+                }
+
+                IDFcount = 0;
+            }
+
+            //sort the courses by weight, highest to lowest - do not count any courses
+            //that have a weight of 0
+
+            for (Course course : queryWeightsCopy.keySet()) {
+                searchResults.add(course);
+            }
+
+            //do a binary sort on the searchResults list
+
+            //binary search code generated with the assistance of Github Copilot
+            for (int i = 0; i < searchResults.size(); i++) {
+                for (int j = 0; j < searchResults.size() - 1; j++) {
+                    if (queryWeights.get(searchResults.get(j)) < queryWeights.get(searchResults.get(j + 1))) {
+                        Course temp = searchResults.get(j);
+                        searchResults.set(j, searchResults.get(j + 1));
+                        searchResults.set(j + 1, temp);
+                    }
+                }
+            }
+        }
+
+        //if search results is still empty, don't call it quits just yet, use NLP
+        //to parse the query and check the dictionary and collect any close
+        //enough matches to the query
+
+        //4 most common errors in spelling: missing letter, extra letter, swapped letters, and
+        //incorrect letters
+
+        if (searchResults.isEmpty()) {
+            List<String> manipulations = new ArrayList<>();
+
+            //generate all possible manipulations of the query - limitations - can only generate one letter manipulations
+
+
+
+            //remove any manipulations that are gibberish, or, anything not in our vocabulary
+            manipulations.removeIf(man -> RefactoredMain.Dictionary.contains(man));
+
+            //if there are manipulations not gibberish, try searching for them
         }
 
         //print out search results
