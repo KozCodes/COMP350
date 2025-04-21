@@ -156,13 +156,43 @@ public class Schedule {
                         }
                     }
                 }
+
+                String seatCheckSql = "SELECT numSeats, numRegistered FROM Courses WHERE id = ?";
+                try (var pstmt = db.conn.prepareStatement(seatCheckSql)) {
+                    pstmt.setInt(1, courseID);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        if (rs.next()) {
+                            int numSeats = rs.getInt("numSeats");
+                            int numRegistered = rs.getInt("numRegistered");
+
+                            if (numRegistered >= numSeats) {
+                                System.out.println("Course is full. Cannot add " + newCourse.getCourseTitle());
+                                return 0;
+                            }
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Error checking course seats: " + e.getMessage());
+                    return 0;
+                }
+
                 classes.add(newCourse);
                 lastChangedCourses.push(newCourse);
+
+                String updateSql = "UPDATE Courses SET numRegistered = numRegistered + 1 WHERE id = ?";
+                try (var pstmt = db.conn.prepareStatement(updateSql)) {
+                    pstmt.setInt(1, courseID);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.out.println("Error updating registered count: " + e.getMessage());
+                }
+
                 return 1;
             }
         }
         return 0;
     }
+
 
     /**
      * Checks if two courses have overlapping days.
@@ -212,16 +242,24 @@ public class Schedule {
      * @param courseID int ID of the course to remove
      */
     protected void removeCourse(int courseID) {
-        // find course in list of courses
         for (Course course : RefactoredMain.courses) {
             if (course.getID() == courseID) {
                 classes.remove(course);
-                // add course to lastChangedCourses
                 lastChangedCourses.push(course);
+
+                String updateSql = "UPDATE Courses SET numRegistered = numRegistered - 1 WHERE id = ?";
+                try (var pstmt = db.conn.prepareStatement(updateSql)) {
+                    pstmt.setInt(1, courseID);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.out.println("Error decrementing registered count: " + e.getMessage());
+                }
+
                 return;
             }
         }
     }
+
 
     /**
      * Undo the last change made to the Schedule

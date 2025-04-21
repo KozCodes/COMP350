@@ -123,7 +123,9 @@ public class DatabaseConnect {
              endTime TEXT NOT NULL,
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
-             courseCode TEXT NOT NULL
+             courseCode TEXT NOT NULL,
+             numSeats INTEGER NOT NULL DEFAULT 2,
+             numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
         injectSql(sql);
 
@@ -184,6 +186,8 @@ public class DatabaseConnect {
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
              courseCode TEXT NOT NULL
+             numSeats INTEGER NOT NULL DEFAULT 2,
+             numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
         injectSql(sql);
     }
@@ -289,7 +293,7 @@ public class DatabaseConnect {
 
 
             JSONArray coursesArray = jsonObject.getJSONArray("classes");
-            String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode, numSeats, numRegistered) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement courseStmt = conn.prepareStatement(courseSql)) {
                 for (int i = 0; i < coursesArray.length(); i++) {
                     JSONObject course = coursesArray.getJSONObject(i);
@@ -315,6 +319,8 @@ public class DatabaseConnect {
                     courseStmt.setString(6, day.toString()); // Use the accumulated days
                     courseStmt.setString(7, course.getString("subject"));
                     courseStmt.setString(8, course.getString("subject") + " " + course.getInt("number") + " " + course.getString("section"));
+                    courseStmt.setInt(9, 2);
+                    courseStmt.setInt(10, 0);
                     courseStmt.executeUpdate();
                 }
             }
@@ -416,7 +422,6 @@ public class DatabaseConnect {
                 }
             }
 
-            // Get current score and number of ratings
             String getProfSql = "SELECT score, numRatings FROM Professors WHERE id = ?";
             int numRatings = 0;
             double oldAvg = 0;
@@ -429,10 +434,8 @@ public class DatabaseConnect {
                 }
             }
 
-            // Calculate new average
             double newAvg = Math.round(((oldAvg * numRatings) + newRating) / (numRatings + 1) * 100.0) / 100.0;
 
-            // Update professor's score and numRatings
             String updateProfSql = "UPDATE Professors SET score = ?, numRatings = ? WHERE id = ?";
             try (PreparedStatement updateStmt = conn.prepareStatement(updateProfSql)) {
                 updateStmt.setDouble(1, newAvg);
@@ -441,7 +444,6 @@ public class DatabaseConnect {
                 updateStmt.executeUpdate();
             }
 
-            // Insert record into StudentRatings
             String insertRatingSql = "INSERT INTO StudentRatings (studentId, professorId, rating) VALUES (?, ?, ?)";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertRatingSql)) {
                 insertStmt.setInt(1, studentId);

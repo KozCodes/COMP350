@@ -53,6 +53,6 @@ public class RefactoredMain {
 //        db.ProfRatings();
 //        db.disconnect();
 
-        SpringApplication.run(RefactoredMain.class, args);
+       SpringApplication.run(RefactoredMain.class, args);
     }
 }

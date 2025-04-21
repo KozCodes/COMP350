@@ -5,6 +5,7 @@ import LoginSignup from "./components/LoginPage/LoginPage";
 import Schedule from "./components/Schedule/schedule";
 import ProfessorRatingPage from "./components/ProfessorRater/ProfessorRatingPage";
 import HomePage from "./components/HomePage/HomePage";
+import SearchPage from './components/SearchPage/SearchPage';
 
 
 function Home() {
@@ -46,6 +47,7 @@ const App = () => {
           path="/rate-professors"
           element={<ProfessorRatingPage />}
         />
+         <Route path="/search" element={<SearchPage />} />
       </Routes>
     </BrowserRouter>
   );
