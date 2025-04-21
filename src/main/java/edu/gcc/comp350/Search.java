@@ -56,6 +56,119 @@ public class Search {
             }
         }
 
+        if (isCourseCode || isProf || isKeyword) {
+            TFIDFSearch(isCourseCode, isProf, isKeyword);
+        }
+        //if search results is still empty, don't call it quits just yet, use NLP
+        //to parse the query and check the dictionary and collect any close
+        //enough matches to the query
+
+        //4 most common errors in spelling: missing letter, extra letter, swapped letters, and
+        //incorrect letters (subsets - missing spaces, extra spaces)
+
+        if (searchResults.isEmpty()) {
+            List<String> manipulations = new ArrayList<>();
+
+            //generate all possible manipulations of the query - limitations - can only generate one letter manipulations
+
+            //if proof of concept works, this method can be expanded to include multiple letter manipulations
+
+            //missing letters - add a letter to the query
+            for (int i = 0; i < query.toUpperCase().length(); i++) {
+                StringBuilder sb = new StringBuilder(query);
+                for (int j = 0; j < 26; j++) {
+                    sb.insert(i, (char) ('A' + j));
+                    if (!manipulations.contains(sb.toString())) {
+                        manipulations.add(sb.toString());
+                    }
+                }
+                //subsection: as last resort, try adding spaces to query
+                    sb.insert(i, " ");
+                    if (!manipulations.contains(sb.toString())) {
+                        manipulations.add(sb.toString());
+                    }
+            }
+
+            //extra letters - remove a letter from the query
+            //Github copilot generated code for these manipulations
+
+            for (int i = 0; i < query.toUpperCase().length(); i++) {
+                StringBuilder sb = new StringBuilder(query);
+                sb.deleteCharAt(i);
+                if (!manipulations.contains(sb.toString())) {
+                    manipulations.add(sb.toString());
+                }
+            }
+
+            //swapped letters - swap two letters in the query
+
+            for (int i = 0; i < query.length(); i++) {
+                for (int j = 0; j < query.length(); j++) {
+                    char temp = query.charAt(i);
+                    query.replace(query.charAt(i), query.charAt(j));
+                    query.replace(query.charAt(j), temp);
+                    manipulations.add(query);
+                }
+            }
+
+            //incorrect letters - replace a letter in the query with another letter
+
+            for (int i = 0; i < query.toUpperCase().length(); i++) {
+                StringBuilder sb = new StringBuilder(query);
+                for (int j = 0; j < 26; j++) {
+                    sb.replace(i, i+ 1, ('A' + j) + "");
+                    if (!manipulations.contains(sb.toString())) {
+                        manipulations.add(sb.toString());
+                    }
+                }
+                //subsection: as last resort, try adding spaces to query
+                sb.replace(i, i+ 1, " ");
+                if (!manipulations.contains(sb.toString())) {
+                    manipulations.add(sb.toString());
+                }
+            }
+
+            //remove any manipulations that are gibberish, or, anything not in our vocabulary
+            manipulations.removeIf(man -> RefactoredMain.Dictionary.contains(man));
+
+            //if there are manipulations not gibberish, try searching for them
+            if (!manipulations.isEmpty()) {
+                for (int i = 0; i < manipulations.size(); i++) {
+                    if (Character.isDigit(query.charAt(0)) || Character.isDigit(query.charAt(5))) {
+                        isCourseCode = true;
+                    } else {
+                        //harder - if the query contains a professor name, then it is a professor query
+                        for (int j = 0; j < RefactoredMain.professors.size(); j++) {
+                            if (RefactoredMain.professors.get(j).getName().contains(query)) {
+                                isProf = true;
+                                break;
+                            }
+                        }
+
+                        //if still nothing, do the same thing but for course titles
+                        for (int j = 0; j < RefactoredMain.courses.size(); j++) {
+                            if (RefactoredMain.courses.get(j).getCourseTitle().contains(query)) {
+                                isKeyword = true;
+                                break;
+                            }
+                        }
+                    }
+                    TFIDFSearch(isCourseCode, isProf, isKeyword);
+                }
+            }
+        }
+
+        //print out search results
+        if (filter != null) {
+            applyFilter(filter);
+        } else {
+            if (searchResults.isEmpty()) {
+                System.out.println("We're sorry, we were unable to find a course related to your search. Please try again.");
+            }
+        }
+    }
+
+    protected void TFIDFSearch(boolean isCourseCode, boolean isProf, boolean isKeyword) {
 
         if (isKeyword) {
             List<String> splitQuery = Arrays.asList(query.split(" "));
@@ -285,35 +398,6 @@ public class Search {
                         searchResults.set(j + 1, temp);
                     }
                 }
-            }
-        }
-
-        //if search results is still empty, don't call it quits just yet, use NLP
-        //to parse the query and check the dictionary and collect any close
-        //enough matches to the query
-
-        //4 most common errors in spelling: missing letter, extra letter, swapped letters, and
-        //incorrect letters
-
-        if (searchResults.isEmpty()) {
-            List<String> manipulations = new ArrayList<>();
-
-            //generate all possible manipulations of the query - limitations - can only generate one letter manipulations
-
-
-
-            //remove any manipulations that are gibberish, or, anything not in our vocabulary
-            manipulations.removeIf(man -> RefactoredMain.Dictionary.contains(man));
-
-            //if there are manipulations not gibberish, try searching for them
-        }
-
-        //print out search results
-        if (filter != null) {
-            applyFilter(filter);
-        } else {
-            if (searchResults.isEmpty()) {
-                System.out.println("We're sorry, we were unable to find a course related to your search. Please try again.");
             }
         }
     }

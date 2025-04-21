@@ -331,38 +331,6 @@ public class DatabaseConnect {
         }
     }
 
-    protected void createDictionary() {
-        // course table
-        String sql = """
-            CREATE TABLE IF NOT EXISTS Dictionary (
-             courseTitle TEXT NOT NULL
-             
-            );""";
-        injectSql(sql);
-    }
-
-    protected void populateDictionary() {
-        createDictionary();
-        String filePath = "Database/data_wolfe.json";
-
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
-            JSONObject jsonObject = new JSONObject(content);
-            JSONArray classesArray = jsonObject.getJSONArray("classes");
-
-            String insertSql = "INSERT INTO Dictionary (words) VALUES (?)";
-            Set<String> seenWords = new HashSet<>();
-            try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
-
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading JSON file: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Error parsing JSON data: " + e.getMessage());
-        }
-    }
-
-
     public void populateProfessorsInDatabase() {
         createProfessorsTableInDatabase();
         String filePath = "Database/data_wolfe.json";
