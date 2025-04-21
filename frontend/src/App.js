@@ -1,9 +1,11 @@
 import React from "react";
 import axios from "axios";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LoginSignup from "./LoginSignup";
-//import Home from "./Home";
+import LoginSignup from "./components/LoginPage/LoginPage";
 import Schedule from "./components/Schedule/schedule";
+import ProfessorRatingPage from "./components/ProfessorRater/ProfessorRatingPage";
+import HomePage from "./components/HomePage/HomePage";
+
 
 function Home() {
     const load = async () => {
@@ -27,10 +29,10 @@ function Home() {
 const App = () => {
   return (
     <BrowserRouter>
-      <Routes>
+  <Routes>
         <Route
           path="/"
-          element={<Home />}
+          element={<HomePage />}
         />
         <Route
           path="/login"
@@ -39,6 +41,10 @@ const App = () => {
         <Route
           path="/schedule/:scheduleId"
           element={<Schedule />}
+        />
+        <Route
+          path="/rate-professors"
+          element={<ProfessorRatingPage />}
         />
       </Routes>
     </BrowserRouter>

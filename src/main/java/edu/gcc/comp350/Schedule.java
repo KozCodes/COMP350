@@ -188,20 +188,23 @@ public class Schedule {
         List<Time> newStartTimes = newCourse.getStartTime();
         List<Time> newEndTimes = newCourse.getEndTime();
 
-        for (Time times : existingStartTimes) {
-           if (newStartTimes.contains(times)) {
-               return true;
-           }
-        }
+        for (int i = 0; i < existingStartTimes.size(); i++) {
+            Time existingStart = existingStartTimes.get(i);
+            Time existingEnd = existingEndTimes.get(i);
 
-        for (Time times : existingEndTimes) {
-            if (newEndTimes.contains(times)) {
-                return true;
+            for (int j = 0; j < newStartTimes.size(); j++) {
+                Time newStart = newStartTimes.get(j);
+                Time newEnd = newEndTimes.get(j);
+
+                // Check for overlap: (start1 < end2) && (start2 < end1)
+                if (existingStart.before(newEnd) && newStart.before(existingEnd)) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
+
 
 
     /**
