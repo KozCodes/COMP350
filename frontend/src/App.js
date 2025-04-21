@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginSignup from "./LoginSignup";
 //import Home from "./Home";
 import Schedule from "./components/Schedule/schedule";
+import SchedulerPage from "./components/SchedulerPage/SchedulerPage"; // npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+import 'bootstrap/dist/css/bootstrap.min.css'; // npm install bootstrap
 
 function Home() {
     const load = async () => {
@@ -40,6 +42,9 @@ const App = () => {
           path="/schedule/:scheduleId"
           element={<Schedule />}
         />
+        <Route
+        path="/auto-scheduler"
+        element={<SchedulerPage />} />
       </Routes>
     </BrowserRouter>
   );

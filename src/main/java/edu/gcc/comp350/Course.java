@@ -56,6 +56,27 @@ public class Course {
         this.taken = taken;
     }
 
+    protected boolean hasTimeConflict(Course course) {
+        // Check if the course days overlap
+        for (RefactoredMain.Days day : this.courseDays) {
+            if (course.courseDays.contains(day)) {
+                // Check if the start and end times overlap
+                for (int i = 0; i < this.startTime.size(); i++) {
+                    Time thisStart = this.startTime.get(i);
+                    Time thisEnd = this.endTime.get(i);
+                    for (int j = 0; j < course.startTime.size(); j++) {
+                        Time courseStart = course.startTime.get(j);
+                        Time courseEnd = course.endTime.get(j);
+                        if ((thisStart.before(courseEnd) && thisEnd.after(courseStart))) {
+                            return true; // Conflict found
+                        }
+                    }
+                }
+            }
+        }
+        return false; // No conflict found
+    }
+
     protected String getCourseTitle() {
         return courseTitle;
     }

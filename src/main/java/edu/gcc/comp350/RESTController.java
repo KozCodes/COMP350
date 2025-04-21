@@ -45,6 +45,22 @@ public class RESTController {
         return "Database Connected.";
     }
 
+@PostMapping("/generateSchedule")
+public ResponseEntity<?> generateSchedule(@RequestBody ArrayList<String> enteredCourses) {
+    ArrayList<Course> allCourses = (ArrayList<Course>) RefactoredMain.courses;
+    AutoScheduler autoScheduler = new AutoScheduler(10);
+    System.out.println("Generating schedule...");
+
+    // Generate sections
+    autoScheduler = autoScheduler.generateSections(allCourses, enteredCourses);
+
+    if(!autoScheduler.conflictingCourses.isEmpty()) {
+        return ResponseEntity.ok(autoScheduler.conflictingCourses);
+    } else {
+        return ResponseEntity.ok(autoScheduler.schedules);
+    }
+}
+
     /* Load Database Functions */
 
     protected static void onLoad() throws SQLException, ClassNotFoundException {
