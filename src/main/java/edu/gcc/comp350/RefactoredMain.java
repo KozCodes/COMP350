@@ -53,8 +53,9 @@ public class RefactoredMain {
 //        db.resetProfessorsInDatabase();
 //        db.populateProfessorsInDatabase();
 //        db.setProfessorsInDatabase();
+//        db.ProfRatings();
 //        db.disconnect();
-        SpringApplication.run(RefactoredMain.class, args);
-    }
 
+       SpringApplication.run(RefactoredMain.class, args);
+    }
 }
