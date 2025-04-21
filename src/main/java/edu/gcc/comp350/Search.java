@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,18 +127,37 @@ public class Search {
         //more that are not default values, it will wait to add a course until it can be determined that the course sufficiently meets
         //all requirements.
 
-            for (Course course : searchResults) {
-                filteredResults.add(course);
-            }
+        for (Course course : searchResults) {
+            filteredResults.add(course);
+        }
 
-            //code generated with the assistance of Github Copilot
-
+        //code generated with the assistance of Github Copilot
+        if (!filter.getCourse().contains(RefactoredMain.Days.BLANK)) {
             filteredResults.removeIf(course -> filter.getCourse().contains(course.getCourseDays()));
+        }
+        if (!filter.getStartTime().contains(Time.valueOf("00:00:00"))) {
             filteredResults.removeIf(course -> filter.getStartTime().contains(course.getStartTime()));
+        }
+
+        if (!filter.getEndTime().contains(Time.valueOf("00:00:00"))) {
             filteredResults.removeIf(course -> filter.getEndTime().contains(course.getEndTime()));
+        }
+
+        if (!filter.getCourseSession().equals(RefactoredMain.Session.BLANK)) {
             filteredResults.removeIf(course -> course.getSession().equals(filter.getCourseSession()));
+        }
+
+        if (!filter.getDepartment().equals("")) {
             filteredResults.removeIf(course -> course.getCourseDept().equals(filter.getDepartment()));
+        }
+
+        if (!filter.getCourseCodes().isEmpty()) {
             filteredResults.removeIf(course -> filter.getCourseCodes().contains(course.getCourseCode()));
+        }
+
+        if (filter.getYear() != 0000) {
+            filteredResults.removeIf(course -> course.getYear() != filter.getYear());
+        }
 
         if (filteredResults.isEmpty()) {
             System.out.println("I'm sorry, we're unable to find anything related to your search. Try modifying your filters or query.");

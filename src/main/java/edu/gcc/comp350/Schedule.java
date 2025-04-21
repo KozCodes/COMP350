@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
+
+import static edu.gcc.comp350.RefactoredMain.db;
+
+
 public class Schedule {
 
     private int id;
@@ -136,7 +143,7 @@ public class Schedule {
      * Add a course to the Schedule
      * @param courseID int ID of the course to add
      */
-    protected void addCourse(int courseID) {
+    protected int addCourse(int courseID) {
         for (Course newCourse : RefactoredMain.courses) {
             if (newCourse.getID() == courseID) {
                 for (Course existingCourse : classes) {
@@ -145,15 +152,16 @@ public class Schedule {
                             System.out.println("Error: Course " + newCourse.getCourseTitle() +
                                     " conflicts with " + existingCourse.getCourseTitle() +
                                     " and cannot be added to the schedule.");
-                            return;
+                            return 0;
                         }
                     }
                 }
                 classes.add(newCourse);
                 lastChangedCourses.push(newCourse);
-                return;
+                return 1;
             }
         }
+        return 0;
     }
 
     /**
@@ -232,6 +240,30 @@ public class Schedule {
      */
     protected List<Course> getCourses() {
         return classes;
+    }
+
+
+    protected void saveSchedule() {
+//        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
+//        db.injectSql(scheduleSql);
+
+        String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
+        try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
+            pstmt.setInt(1, this.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        for (Course course : this.getCourses()) {
+            try (var pstmt = db.conn.prepareStatement("INSERT INTO ScheduleCourses (schedule, course) VALUES (?, ?)")) {
+                pstmt.setInt(1, this.getId());
+                pstmt.setInt(2, course.getID());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
 

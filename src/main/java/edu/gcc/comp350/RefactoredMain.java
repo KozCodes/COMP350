@@ -12,7 +12,7 @@ import  java.sql.*;
 public class RefactoredMain {
 
     public static List<Course> courses = new ArrayList<>();
-    protected static List<Professor> professors;
+    protected static List<Professor> professors = new ArrayList<>();
     public static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
@@ -42,6 +42,15 @@ public class RefactoredMain {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
+// If changes are made to the database structure, uncomment these lines and run once to reset the database
+//        db.connect();
+//        db.clearDatabase();
+//        db.createDatabase();
+//        db.resetCoursesInDatabase();
+//        db.resetProfessorsInDatabase();
+//        db.populateProfessorsInDatabase();
+//        db.setProfessorsInDatabase();
+//        db.disconnect();
         SpringApplication.run(RefactoredMain.class, args);
     }
 
