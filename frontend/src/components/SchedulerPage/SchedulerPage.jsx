@@ -1,145 +1,198 @@
-import React, { useState } from "react";
-                      import axios from "axios";
-                      import { DndContext, closestCenter } from "@dnd-kit/core";
-                      import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-                      import { CSS } from "@dnd-kit/utilities";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-                      const SortableItem = ({ id, name }) => {
-                        const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+const SortableItem = ({ id, name }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
-                        const style = {
-                          transform: CSS.Transform.toString(transform),
-                          transition,
-                          padding: "8px",
-                          margin: "4px 0",
-                          backgroundColor: "#f8f9fa",
-                          border: "1px solid #ced4da",
-                          borderRadius: "4px",
-                        };
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    padding: "8px",
+    margin: "4px 0",
+    backgroundColor: "#f8f9fa",
+    border: "1px solid #ced4da",
+    borderRadius: "4px",
+  };
 
-                        return (
-                          <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-                            {name || "Empty Course"}
-                          </div>
-                        );
-                      };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {name || "Empty Course"}
+    </div>
+  );
+};
 
-                      const SchedulerPage = () => {
-                        const [courses, setCourses] = useState([{ id: 1, name: "" }]);
-                        const [error, setError] = useState("");
-                        const [schedule, setSchedule] = useState(null);
-                        const [conflicts, setConflicts] = useState(null);
+const SchedulerPage = () => {
+  const [courses, setCourses] = useState([{ id: 1, name: "" }]);
+  const [allCourses, setAllCourses] = useState([]);
+  const [year, setYear] = useState("");
+  const [session, setSession] = useState("");
+  const [error, setError] = useState("");
+  const [schedule, setSchedule] = useState(null);
+  const [conflicts, setConflicts] = useState(null);
 
-                        const handleInputChange = (index, value) => {
-                          const updatedCourses = [...courses];
-                          updatedCourses[index].name = value;
-                          setCourses(updatedCourses);
-                        };
+  useEffect(() => {
+    // Fetch all possible courses from the backend
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/allCourses");
+        setAllCourses(response.data); // Assuming the backend returns an array of course names
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
 
-                        const addCourseField = () => {
-                          setCourses([...courses, { id: courses.length + 1, name: "" }]);
-                        };
+    fetchCourses();
+  }, []);
 
-                        const handleDragEnd = (event) => {
-                          const { active, over } = event;
+  const handleInputChange = (index, value) => {
+    const updatedCourses = [...courses];
+    updatedCourses[index].name = value;
+    setCourses(updatedCourses);
+  };
 
-                          if (active.id !== over.id) {
-                            const oldIndex = courses.findIndex((course) => course.id === active.id);
-                            const newIndex = courses.findIndex((course) => course.id === over.id);
-                            setCourses((prevCourses) => arrayMove(prevCourses, oldIndex, newIndex));
-                          }
-                        };
+  const addCourseField = () => {
+    setCourses([...courses, { id: courses.length + 1, name: "" }]);
+  };
 
-                        const generateSchedule = async () => {
-                          try {
-                            const response = await axios.post("http://localhost:8080/api/generateSchedule", {
-                              courses: courses.map((course) => course.name),
-                            });
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
 
-                            if (Array.isArray(response.data) && response.data.length > 0) {
-                              if (response.data[0].hasOwnProperty("id")) {
-                                setSchedule(response.data);
-                                setConflicts(null);
-                                setError("");
-                              } else {
-                                setConflicts(response.data);
-                                setSchedule(null);
-                                setError("");
-                              }
-                            } else {
-                              setSchedule(null);
-                              setConflicts(null);
-                              setError("Unexpected response format.");
-                            }
-                          } catch (err) {
-                            setError("Error generating schedule.");
-                            setSchedule(null);
-                            setConflicts(null);
-                          }
-                        };
+    if (active.id !== over.id) {
+      const oldIndex = courses.findIndex((course) => course.id === active.id);
+      const newIndex = courses.findIndex((course) => course.id === over.id);
+      setCourses((prevCourses) => arrayMove(prevCourses, oldIndex, newIndex));
+    }
+  };
 
-                        return (
-                          <div className="container mt-4">
-                            <h1 className="text-center mb-4">Scheduler Page</h1>
-                            <p>Enter potential courses and list them in order of preference:</p>
+  const generateSchedule = async () => {
+    try {
+      const response = await axios.post("http://localhost:8080/api/generateSchedule", {
+        enteredCourses: courses.map((course) => course.name), // Ensure this is an array of strings
+        session,
+        year: parseInt(year, 10), // Ensure year is sent as an integer
+      });
 
-                            {courses.map((course, index) => (
-                              <div key={course.id} className="mb-3">
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  placeholder="Enter potential Course"
-                                  value={course.name}
-                                  onChange={(e) => handleInputChange(index, e.target.value)}
-                                />
-                              </div>
-                            ))}
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].hasOwnProperty("id")) {
+          setSchedule(response.data);
+          setConflicts(null);
+          setError("");
+        } else {
+          setConflicts(response.data);
+          setSchedule(null);
+          setError("");
+        }
+      } else {
+        setSchedule(null);
+        setConflicts(null);
+        setError("Unexpected response format.");
+      }
+    } catch (err) {
+      setError("Error generating schedule.");
+      setSchedule(null);
+      setConflicts(null);
+    }
+  };
 
-                            <button className="btn btn-primary mb-3" onClick={addCourseField}>
-                              Add Another Course
-                            </button>
+  return (
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Scheduler Page</h1>
+      <p>Enter potential courses and list them in order of preference:</p>
 
-                            {error && <p className="text-danger">{error}</p>}
+      {courses.map((course, index) => (
+        <div key={course.id} className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter potential Course"
+            value={course.name}
+            onChange={(e) => handleInputChange(index, e.target.value)}
+            list="courseSuggestions" // Link to the datalist
+          />
+        </div>
+      ))}
 
-                            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                              <SortableContext items={courses} strategy={verticalListSortingStrategy}>
-                                {courses.map((course) => (
-                                  <SortableItem key={course.id} id={course.id} name={course.name} />
-                                ))}
-                              </SortableContext>
-                            </DndContext>
+      <datalist id="courseSuggestions">
+        {allCourses.map((course, index) => (
+          <option key={index} value={course} />
+        ))}
+      </datalist>
 
-                            <button className="btn btn-success" onClick={generateSchedule}>
-                              Generate
-                            </button>
+      <button className="btn btn-primary mb-3" onClick={addCourseField}>
+        Add Another Course
+      </button>
 
-                            {schedule && (
-                              <div className="mt-4">
-                                <h2>Generated Schedule</h2>
-                                <ul className="list-group">
-                                  {schedule.map((item) => (
-                                    <li key={item.id} className="list-group-item">
-                                      {JSON.stringify(item)}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+      <div className="mb-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Enter Year"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        />
+      </div>
 
-                            {conflicts && (
-                              <div className="mt-4">
-                                <h2>Conflicting Courses</h2>
-                                <ul className="list-group">
-                                  {conflicts.map((conflictGroup, index) => (
-                                    <li key={index} className="list-group-item">
-                                      {conflictGroup.map((course) => course.name).join(", ")}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      };
+      <div className="mb-3">
+        <label htmlFor="session" className="form-label">Select Session</label>
+        <select
+          id="session"
+          className="form-select"
+          value={session}
+          onChange={(e) => setSession(e.target.value)}
+        >
+          <option value="">BLANK</option>
+          <option value="FALL">FALL</option>
+          <option value="WINTER">WINTER</option>
+          <option value="SPRING">SPRING</option>
+          <option value="EARLYSUMMER">EARLYSUMMER</option>
+          <option value="LATESUMMER">LATESUMMER</option>
+        </select>
+      </div>
 
-                      export default SchedulerPage;
+      {error && <p className="text-danger">{error}</p>}
+
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={courses} strategy={verticalListSortingStrategy}>
+          {courses.map((course) => (
+            <SortableItem key={course.id} id={course.id} name={course.name} />
+          ))}
+        </SortableContext>
+      </DndContext>
+
+      <button className="btn btn-success" onClick={generateSchedule}>
+        Generate
+      </button>
+
+      {schedule && (
+        <div className="mt-4">
+          <h2>Generated Schedule</h2>
+          <ul className="list-group">
+            {schedule.map((item) => (
+              <li key={item.id} className="list-group-item">
+                {JSON.stringify(item)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {conflicts && (
+        <div className="mt-4">
+          <h2>Conflicting Courses</h2>
+          <ul className="list-group">
+            {conflicts.map((conflictGroup, index) => (
+              <li key={index} className="list-group-item">
+                {conflictGroup.map((course) => course.name).join(", ")}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SchedulerPage;

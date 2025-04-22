@@ -109,6 +109,12 @@ public class Course {
         return courseCode;
     }
 
+    protected String getAmbiguousCourseCode() {
+        // Returns a string of the course code without the last letter of the code
+        // Note: This method will not work properly if the course code's section does not follow typical conventions
+        return courseCode.substring(0, courseCode.length() - 2);
+    }
+
     protected int getID() {
         return id;
     }

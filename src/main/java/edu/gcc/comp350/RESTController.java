@@ -12,6 +12,8 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -46,20 +48,32 @@ public class RESTController {
     }
 
 @PostMapping("/generateSchedule")
-public ResponseEntity<?> generateSchedule(@RequestBody ArrayList<String> enteredCourses) {
-    ArrayList<Course> allCourses = (ArrayList<Course>) RefactoredMain.courses;
-    AutoScheduler autoScheduler = new AutoScheduler(10);
+public ResponseEntity<?> generateSchedule(@RequestBody Map<String, Object> request) {
+    ArrayList<String> enteredCourses = (ArrayList<String>) request.get("enteredCourses");
+    String session = (String) request.get("session");
+    int year = (int) request.get("year");
+    // Process the data...
+    AutoScheduler autoScheduler = new AutoScheduler();
     System.out.println("Generating schedule...");
 
-    // Generate sections
-    autoScheduler = autoScheduler.generateSections(allCourses, enteredCourses);
+    // Convert session string to RefactoredMain.Session enum
+    RefactoredMain.Session sessionEnum = switch (session.toUpperCase()) {
+        case "FALL" -> RefactoredMain.Session.FALL;
+        case "WINTER" -> RefactoredMain.Session.WINTER;
+        case "SPRING" -> RefactoredMain.Session.SPRING;
+        case "EARLYSUMMER" -> RefactoredMain.Session.EARLYSUMMER;
+        case "LATESUMMER" -> RefactoredMain.Session.LATESUMMER;
+        default -> RefactoredMain.Session.BLANK;
+    };
 
-    if(!autoScheduler.conflictingCourses.isEmpty()) {
-        return ResponseEntity.ok(autoScheduler.conflictingCourses);
-    } else {
-        return ResponseEntity.ok(autoScheduler.schedules);
+    // Generate sections
+    Schedule newSchedule = autoScheduler.generateSections(enteredCourses, sessionEnum, year);    // Generate sections
+
+    if (newSchedule == null) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to generate schedule due to invalid courses or time conflicts.");
     }
-}
+    return ResponseEntity.ok(newSchedule.getCourses());
+    }
 
     /* Load Database Functions */
 
@@ -73,6 +87,14 @@ public ResponseEntity<?> generateSchedule(@RequestBody ArrayList<String> entered
         loadProfessors();
         loadCourses();
         System.out.println("onLoad() called");
+    }
+
+    @GetMapping("/allCourses")
+    public ResponseEntity<List<String>> getAllCourses() {
+        List<String> courseNames = RefactoredMain.courses.stream()
+                .map(Course::getAmbiguousCourseCode) // Assuming `getAmbiguousCourseCode` returns the course name
+                .toList();
+        return ResponseEntity.ok(courseNames.stream().distinct().collect(Collectors.toList())); // courseNames.stream().distinct().collect(Collectors.toList())
     }
 
     private static void loadCourses() {
