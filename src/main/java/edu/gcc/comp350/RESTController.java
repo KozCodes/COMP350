@@ -63,12 +63,22 @@ public class RESTController {
 
     private static void loadDictionary() {
         for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-            RefactoredMain.Dictionary.add(RefactoredMain.courses.get(i).getCourseTitle());
+            List<String> word  = Arrays.stream(RefactoredMain.courses.get(i).getCourseTitle().split(" ")).toList();
+            for (String words : word) {
+                if (!RefactoredMain.Dictionary.contains(words)) {
+                    RefactoredMain.Dictionary.add(words);
+                }
+            }
             RefactoredMain.Dictionary.add(RefactoredMain.courses.get(i).getCourseCode());
         }
 
         for (int i = 0; i < RefactoredMain.professors.size(); i++) {
-            RefactoredMain.Dictionary.add(RefactoredMain.professors.get(i).getName());
+            List<String> word  = Arrays.stream(RefactoredMain.professors.get(i).getName().split(", ")).toList();
+            for (String words : word) {
+                if (!RefactoredMain.Dictionary.contains(words)) {
+                    RefactoredMain.Dictionary.add(words);
+                }
+            }
         }
     }
 
