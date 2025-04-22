@@ -57,7 +57,19 @@ public class RESTController {
         RefactoredMain.db.setProfessorsInDatabase();
         loadProfessors();
         loadCourses();
+        loadDictionary();
         System.out.println("onLoad() called");
+    }
+
+    private static void loadDictionary() {
+        for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+            RefactoredMain.Dictionary.add(RefactoredMain.courses.get(i).getCourseTitle());
+            RefactoredMain.Dictionary.add(RefactoredMain.courses.get(i).getCourseCode());
+        }
+
+        for (int i = 0; i < RefactoredMain.professors.size(); i++) {
+            RefactoredMain.Dictionary.add(RefactoredMain.professors.get(i).getName());
+        }
     }
 
     private static void loadCourses() {

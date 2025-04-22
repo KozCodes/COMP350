@@ -185,7 +185,7 @@ public class DatabaseConnect {
              endTime TEXT NOT NULL,
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
-             courseCode TEXT NOT NULL
+             courseCode TEXT NOT NULL,
              numSeats INTEGER NOT NULL DEFAULT 2,
              numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
