@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,8 @@ import java.util.List;
 
 public class RESTController {
 
-    @GetMapping("/test")
-    public static String runFunction() throws SQLException, ClassNotFoundException {
+    @PostConstruct
+    public String runFunction() throws SQLException, ClassNotFoundException {
         onLoad();
         String sql = "SELECT id, name, major, minor FROM Student WHERE id = ?";
         try (var pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
@@ -239,7 +240,7 @@ public class RESTController {
 
     /* Schedule Functions */
     @RequestMapping("/schedule")
-    public ResponseEntity<List<String>> getSchedule(@RequestParam("id") int id) throws SQLException {
+    public ResponseEntity<String> getSchedule(@RequestParam("id") int id) throws SQLException {
 
         if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
             RefactoredMain.db.connect();
@@ -253,11 +254,10 @@ public class RESTController {
             if (rs.next()) {
                 String name = rs.getString("scheduleTitle");
                 Schedule schedule = new Schedule(name, id);
-                ArrayList<String> courseJSONList = new ArrayList<>();
-                for(Course course : schedule.getCourses()) {
-                    courseJSONList.add(course.toJson());
-                }
-                return ResponseEntity.ok(courseJSONList);
+                String ScheduleJSON = schedule.toJson();
+                return ResponseEntity.ok()
+                        .header("Content-Type", "application/json")
+                        .body(ScheduleJSON);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import axios from "axios";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginSignup from "./LoginSignup";
@@ -6,17 +6,6 @@ import LoginSignup from "./LoginSignup";
 import Schedule from "./components/Schedule/schedule";
 
 function Home() {
-    const load = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/test`);
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error fetching schedule data:", error);
-        }
-    };
-
-    load();
-
     return(
         <div>
             <h1>Welcome to the Home Page</h1>
@@ -25,6 +14,19 @@ function Home() {
 }
 
 const App = () => {
+//
+//    const load = async () => {
+//        try {
+//            await axios.get(`http://localhost:8080/api/test`);
+//        } catch (error) {
+//            console.error("Error fetching schedule data:", error);
+//        }
+//    };
+//
+//    useEffect(() => {
+//        load();
+//    }, []);
+
   return (
     <BrowserRouter>
       <Routes>

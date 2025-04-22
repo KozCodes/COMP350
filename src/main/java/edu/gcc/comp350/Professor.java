@@ -1,4 +1,5 @@
 package edu.gcc.comp350;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Professor {
 
@@ -7,7 +8,10 @@ public class Professor {
     private String name;
     private String department;
 
-    public Professor(int id, int score, String name, String department) {
+    // No-args constructor for Jackson
+    public Professor() {}
+
+    public Professor( @JsonProperty int id, @JsonProperty int score, @JsonProperty String name, @JsonProperty String department) {
         this.id = id;
         this.score = score;
         this.name = name;

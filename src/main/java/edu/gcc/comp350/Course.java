@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -9,16 +10,37 @@ import java.util.Random;
 
 public class Course {
 
+    @JsonProperty
     private final int id;
+
+    @JsonProperty
     private String courseTitle;
+
+    @JsonProperty
     private Professor professor;
+
+    @JsonProperty
     private RefactoredMain.Session session;
+
+    @JsonProperty
     private List<Time> startTime;
+
+    @JsonProperty
     private List<Time> endTime;
+
+    @JsonProperty
     private List<RefactoredMain.Days> courseDays;
+
+    @JsonProperty
     private String courseDept;
+
+    @JsonProperty
     private String courseCode;
+
+    @JsonProperty
     private int year;
+
+    @JsonProperty
     private boolean taken;
 
 
@@ -42,7 +64,9 @@ public class Course {
                   List<Time> endTime,
                   List<RefactoredMain.Days> courseDays,
                   String courseDept,
-                  String courseCode, int year, boolean taken) {
+                  String courseCode,
+                  int year,
+                  boolean taken) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -132,8 +156,11 @@ public class Course {
         ObjectMapper om = new ObjectMapper();
         String courseJSON = "";
         try {
+            System.out.println("Converting Course to JSON");
             courseJSON = om.writeValueAsString(this);
+            System.out.println(courseJSON);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             courseJSON = "ERROR";
         }
         return courseJSON;

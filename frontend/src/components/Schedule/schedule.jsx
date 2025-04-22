@@ -9,8 +9,8 @@ const Schedule = () => {
     const fetchScheduleData = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/api/schedule?id=${scheduleId}`);
-            console.log(response.data);
-
+            const data = JSON.parse(response.data);
+            console.log(data);
 
 
 
