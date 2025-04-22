@@ -5,6 +5,7 @@ import axios from 'axios';
 const LoginSignup = () => {
   const [formType, setFormType] = useState('login'); // toggle between login/signup
   const [formData, setFormData] = useState({
+    id: '',
     username: '',
     password: '',
     name: '',
@@ -41,6 +42,7 @@ const LoginSignup = () => {
 
         {formType === 'signup' && (
           <>
+            <input name="id" placeholder="Student ID" onChange={handleChange} required />
             <input name="name" placeholder="Full Name" onChange={handleChange} required />
             <input name="major" placeholder="Major" onChange={handleChange} required />
             <input name="minor" placeholder="Minor" onChange={handleChange} />
