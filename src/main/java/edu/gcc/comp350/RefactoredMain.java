@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import  java.sql.*;
 
@@ -16,6 +17,10 @@ public class RefactoredMain {
     public static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
+    protected static List<String> Dictionary = new ArrayList<>();
+    protected static List<String> stopwordList = Arrays.asList("a", "an", "the", "is", "are", "was", "were", "be", "being", "been",
+            "have", "has", "had", "do", "does", "did", "doing", "will", "shall",
+            "should", "can", "could", "may", "might", "must", "ought");
 
     protected static DatabaseConnect db = new DatabaseConnect();
 
@@ -43,15 +48,15 @@ public class RefactoredMain {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 // If changes are made to the database structure, uncomment these lines and run once to reset the database
-//        db.connect();
-//        db.clearDatabase();
-//        db.createDatabase();
-//        db.resetCoursesInDatabase();
-//        db.resetProfessorsInDatabase();
-//        db.populateProfessorsInDatabase();
-//        db.setProfessorsInDatabase();
-//        db.ProfRatings();
-//        db.disconnect();
+        db.connect();
+        db.clearDatabase();
+        db.createDatabase();
+        db.resetCoursesInDatabase();
+        db.resetProfessorsInDatabase();
+        db.populateProfessorsInDatabase();
+        db.setProfessorsInDatabase();
+        db.ProfRatings();
+        db.disconnect();
 
        SpringApplication.run(RefactoredMain.class, args);
     }
