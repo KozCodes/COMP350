@@ -904,5 +904,74 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
         assertNotEquals(0, search.getFilteredResults().size());
     }
 
+
+
+    @Test
+    void testSpellingMistakes_Missing() throws Exception {
+        onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMSTRY";
+
+        Filter filter = new Filter();
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
+
+    @Test
+    void testSpellingMistakes_Extra() throws Exception {
+        onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTRYX";
+
+        Filter filter = new Filter();
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
+
+    @Test
+    void testSpellingMistakes_Transposed() throws Exception {
+        onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTYR";
+
+        Filter filter = new Filter();
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
+
+    @Test
+    void TestSpellingMistakes_Misspelling() throws Exception {
+        onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTPY";
+
+        Filter filter = new Filter();
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
 }
 

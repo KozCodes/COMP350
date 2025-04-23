@@ -2,10 +2,7 @@ package edu.gcc.comp350;
 
 
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 public class Search {
@@ -68,7 +65,7 @@ public class Search {
 
 
         if (isCourseCode || isProf || isKeyword) {
-            TFIDFSearch(isCourseCode, isProf, isKeyword);
+            TFIDFSearch(isCourseCode, isProf, isKeyword, query);
         }
         //if search results is still empty, don't call it quits just yet, use NLP
         //to parse the query and check the dictionary and collect any close
@@ -88,23 +85,18 @@ public class Search {
 
             //if proof of concept works, this method can be expanded to include multiple letter manipulations
 
-
+            
             //missing letters - add a letter to the query
             for (int i = 0; i < query.toUpperCase().length(); i++) {
-                StringBuilder sb = new StringBuilder(query);
                 for (int j = 0; j < 26; j++) {
+                    StringBuilder sb = new StringBuilder(query);
                     sb.insert(i, (char) ('A' + j));
                     if (!manipulations.contains(sb.toString())) {
                         manipulations.add(sb.toString());
                     }
                 }
                 //subsection: as last resort, try adding spaces to query
-                sb.insert(i, " ");
-                if (!manipulations.contains(sb.toString())) {
-                    manipulations.add(sb.toString());
-                }
             }
-
 
             //extra letters - remove a letter from the query
             //Github copilot generated code for these manipulations
@@ -119,15 +111,21 @@ public class Search {
             }
 
 
+
+
             //swapped letters - swap two letters in the query
 
 
-            for (int i = 0; i < query.length(); i++) {
+            for (int i = 0; i < query.toUpperCase().length(); i++) {
+                char temp = query.charAt(i);
                 for (int j = 0; j < query.length(); j++) {
-                    char temp = query.charAt(i);
-                    query.replace(query.charAt(i), query.charAt(j));
-                    query.replace(query.charAt(j), temp);
-                    manipulations.add(query);
+                   char temp2 = query.charAt(j);
+                    StringBuilder sb = new StringBuilder(query);
+                    sb.setCharAt(i, temp2);
+                    sb.setCharAt(j, temp);
+                    if (!manipulations.contains(sb.toString())) {
+                        manipulations.add(sb.toString());
+                    }
                 }
             }
 
@@ -136,34 +134,32 @@ public class Search {
 
 
             for (int i = 0; i < query.toUpperCase().length(); i++) {
-                StringBuilder sb = new StringBuilder(query);
                 for (int j = 0; j < 26; j++) {
-                    sb.replace(i, i+ 1, ('A' + j) + "");
+                    StringBuilder sb = new StringBuilder(query);
+                    sb.replace(i, i+ 1, (char) ('A' + j) + "");
                     if (!manipulations.contains(sb.toString())) {
                         manipulations.add(sb.toString());
                     }
                 }
-                //subsection: as last resort, try adding spaces to query
-                sb.replace(i, i+ 1, " ");
-                if (!manipulations.contains(sb.toString())) {
-                    manipulations.add(sb.toString());
-                }
             }
 
+            System.out.println(manipulations);
 
             //remove any manipulations that are gibberish, or, anything not in our vocabulary
-            manipulations.removeIf(man -> RefactoredMain.Dictionary.contains(man));
-
+            manipulations.replaceAll(s -> s.replaceAll("\\s+", "").trim());
+            RefactoredMain.Dictionary.replaceAll(s -> s.replaceAll("\\s+", "").trim());
+            Set<String> dictionarySet = new HashSet<>(RefactoredMain.Dictionary);
+            manipulations.removeIf(item -> !dictionarySet.contains(item));
 
             //if there are manipulations not gibberish, try searching for them
             if (!manipulations.isEmpty()) {
                 for (int i = 0; i < manipulations.size(); i++) {
-                    if (Character.isDigit(query.charAt(0)) || Character.isDigit(query.charAt(5))) {
+                    if (Character.isDigit(manipulations.get(i).charAt(0)) || Character.isDigit(manipulations.get(i).charAt(5))) {
                         isCourseCode = true;
                     } else {
                         //harder - if the query contains a professor name, then it is a professor query
                         for (int j = 0; j < RefactoredMain.professors.size(); j++) {
-                            if (RefactoredMain.professors.get(j).getName().contains(query)) {
+                            if (RefactoredMain.professors.get(j).getName().contains(manipulations.get(i))) {
                                 isProf = true;
                                 break;
                             }
@@ -172,13 +168,14 @@ public class Search {
 
                         //if still nothing, do the same thing but for course titles
                         for (int j = 0; j < RefactoredMain.courses.size(); j++) {
-                            if (RefactoredMain.courses.get(j).getCourseTitle().contains(query)) {
+                            if (RefactoredMain.courses.get(j).getCourseTitle().contains(manipulations.get(i))) {
                                 isKeyword = true;
                                 break;
                             }
                         }
                     }
-                    TFIDFSearch(isCourseCode, isProf, isKeyword);
+
+                    TFIDFSearch(isCourseCode, isProf, isKeyword, manipulations.get(i));
                 }
             }
         }
@@ -195,11 +192,11 @@ public class Search {
     }
 
 
-    protected void TFIDFSearch(boolean isCourseCode, boolean isProf, boolean isKeyword) {
+    protected void TFIDFSearch(boolean isCourseCode, boolean isProf, boolean isKeyword, String newquery) {
 
 
         if (isKeyword) {
-            List<String> splitQuery = Arrays.asList(query.split(" "));
+            List<String> splitQuery = Arrays.asList(newquery.split(" "));
             splitQuery.removeIf(num -> RefactoredMain.stopwordList.contains(num));
 
 
@@ -290,7 +287,7 @@ public class Search {
                 }
             }
         } else if (isProf) {
-            List<String> splitQuery = Arrays.asList(query.split(" "));
+            List<String> splitQuery = Arrays.asList(newquery.split(" "));
             splitQuery.removeIf(num -> RefactoredMain.stopwordList.contains(num));
 
 
@@ -382,7 +379,7 @@ public class Search {
                 }
             }
         } else if (isCourseCode) {
-            List<String> splitQuery = Arrays.asList(query.split(" "));
+            List<String> splitQuery = Arrays.asList(newquery.split(" "));
             splitQuery.removeIf(num -> RefactoredMain.stopwordList.contains(num));
 
 
