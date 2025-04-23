@@ -1,20 +1,10 @@
-import React, {useEffect} from "react";
-import axios from "axios";
+import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginSignup from "./components/LoginPage/LoginPage";
 import Schedule from "./components/Schedule/schedule";
 import ProfessorRatingPage from "./components/ProfessorRater/ProfessorRatingPage";
 import HomePage from "./components/HomePage/HomePage";
 import SearchPage from './components/SearchPage/SearchPage';
-
-
-function Home() {
-    return(
-        <div>
-            <h1>Welcome to the Home Page</h1>
-        </div>
-    );
-}
 
 const App = () => {
 //
