@@ -68,12 +68,22 @@ public class RESTController {
 
     private static void loadDictionary() {
         for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-            RefactoredMain.Dictionary.add(RefactoredMain.courses.get(i).getCourseTitle());
+            List<String> word  = Arrays.stream(RefactoredMain.courses.get(i).getCourseTitle().split(" ")).toList();
+            for (String words : word) {
+                if (!RefactoredMain.Dictionary.contains(words)) {
+                    RefactoredMain.Dictionary.add(words);
+                }
+            }
             RefactoredMain.Dictionary.add(RefactoredMain.courses.get(i).getCourseCode());
         }
 
         for (int i = 0; i < RefactoredMain.professors.size(); i++) {
-            RefactoredMain.Dictionary.add(RefactoredMain.professors.get(i).getName());
+            List<String> word  = Arrays.stream(RefactoredMain.professors.get(i).getName().split(", ")).toList();
+            for (String words : word) {
+                if (!RefactoredMain.Dictionary.contains(words)) {
+                    RefactoredMain.Dictionary.add(words);
+                }
+            }
         }
     }
 
@@ -124,12 +134,15 @@ public class RESTController {
             }
 
             //session
-            String cutSession = session.split("_")[1];
+            String cutSession = session.split("_")[1].toUpperCase();
+            if(session.split("_").length > 2) {
+                cutSession += session.split("_")[2];
+            }
             int year = Integer.parseInt(session.split("_")[0]);
             RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
             switch(cutSession) {
                 case "FALL" -> finalSession = RefactoredMain.Session.FALL;
-                case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                case "WINTERONLINE" -> finalSession = RefactoredMain.Session.WINTER;
                 case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
                 case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
                 case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
