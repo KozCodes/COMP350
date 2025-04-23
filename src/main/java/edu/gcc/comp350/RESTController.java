@@ -129,12 +129,15 @@ public class RESTController {
             }
 
             //session
-            String cutSession = session.split("_")[1];
+            String cutSession = session.split("_")[1].toUpperCase();
+            if(session.split("_").length > 2) {
+                cutSession += session.split("_")[2];
+            }
             int year = Integer.parseInt(session.split("_")[0]);
             RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
             switch(cutSession) {
                 case "FALL" -> finalSession = RefactoredMain.Session.FALL;
-                case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                case "WINTERONLINE" -> finalSession = RefactoredMain.Session.WINTER;
                 case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
                 case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
                 case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;
