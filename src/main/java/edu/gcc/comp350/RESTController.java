@@ -59,6 +59,10 @@ public class RESTController {
         loadProfessors();
         loadCourses();
         loadDictionary();
+        RefactoredMain.currentStudent = new Student("John Doe", "Undeclared", new ArrayList<>());
+        RefactoredMain.currentSchedule = new Schedule();
+        RefactoredMain.currentSchedule.addCourse(1);
+        RefactoredMain.currentSchedule.saveSchedule();
         System.out.println("onLoad() called");
     }
 
