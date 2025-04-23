@@ -958,6 +958,20 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
     }
 
     @Test
-    void TestSpellingMistakes_
+    void TestSpellingMistakes_Misspelling() throws Exception {
+        onLoad();
+
+        // Sample inputs
+        String testQuery = "CHEMISTPY";
+
+        Filter filter = new Filter();
+
+        Search search = new Search(testQuery, filter);
+
+        search.search(search.getQuery());
+
+        // Assertions
+        assertNotEquals(0, search.getSearchResults().size());
+    }
 }
 

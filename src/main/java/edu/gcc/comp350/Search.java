@@ -85,6 +85,7 @@ public class Search {
 
             //if proof of concept works, this method can be expanded to include multiple letter manipulations
 
+            
             //missing letters - add a letter to the query
             for (int i = 0; i < query.toUpperCase().length(); i++) {
                 for (int j = 0; j < 26; j++) {
@@ -115,7 +116,7 @@ public class Search {
             //swapped letters - swap two letters in the query
 
 
-            for (int i = 0; i < query.length(); i++) {
+            for (int i = 0; i < query.toUpperCase().length(); i++) {
                 char temp = query.charAt(i);
                 for (int j = 0; j < query.length(); j++) {
                    char temp2 = query.charAt(j);
@@ -128,24 +129,21 @@ public class Search {
                 }
             }
 
+
             //incorrect letters - replace a letter in the query with another letter
 
 
             for (int i = 0; i < query.toUpperCase().length(); i++) {
-                StringBuilder sb = new StringBuilder(query);
                 for (int j = 0; j < 26; j++) {
-                    sb.replace(i, i+ 1, ('A' + j) + "");
+                    StringBuilder sb = new StringBuilder(query);
+                    sb.replace(i, i+ 1, (char) ('A' + j) + "");
                     if (!manipulations.contains(sb.toString())) {
                         manipulations.add(sb.toString());
                     }
                 }
-                //subsection: as last resort, try adding spaces to query
-                sb.replace(i, i+ 1, " ");
-                if (!manipulations.contains(sb.toString())) {
-                    manipulations.add(sb.toString());
-                }
             }
-             
+
+            System.out.println(manipulations);
 
             //remove any manipulations that are gibberish, or, anything not in our vocabulary
             manipulations.replaceAll(s -> s.replaceAll("\\s+", "").trim());
