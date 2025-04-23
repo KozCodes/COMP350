@@ -77,6 +77,31 @@ public class Course {
         return false; // No conflict found
     }
 
+    /**
+     * Checks if two courses have overlapping days and times.
+     *
+     * @param course The course to check against.
+     * @return First time of conflict if found, null otherwise.
+     */
+    protected Time getTimeConflict(Course course) {
+        for (RefactoredMain.Days day : this.courseDays) {
+            if (course.courseDays.contains(day)) {
+                for (int i = 0; i < this.startTime.size(); i++) {
+                    Time thisStart = this.startTime.get(i);
+                    Time thisEnd = this.endTime.get(i);
+                    for (int j = 0; j < course.startTime.size(); j++) {
+                        Time courseStart = course.startTime.get(j);
+                        Time courseEnd = course.endTime.get(j);
+                        if (thisStart.before(courseEnd) && thisEnd.after(courseStart)) {
+                            return thisStart.after(courseStart) ? thisStart : courseStart;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     protected String getCourseTitle() {
         return courseTitle;
     }
@@ -147,7 +172,7 @@ public class Course {
     public String toString() {
         return String.format(
                         "| %-2d | %-20s |  Professor: %-14s | %-7s | StartTime: %-5s | EndTime: %-5s | Days: %-7s| %-4s | Code: %-10s |\n",
-                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode
+                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode, year, taken
         );
     }
 

@@ -47,32 +47,43 @@ public class RESTController {
         return "Database Connected.";
     }
 
-@PostMapping("/generateSchedule")
-public ResponseEntity<?> generateSchedule(@RequestBody Map<String, Object> request) {
-    ArrayList<String> enteredCourses = (ArrayList<String>) request.get("enteredCourses");
-    String session = (String) request.get("session");
-    int year = (int) request.get("year");
-    // Process the data...
-    AutoScheduler autoScheduler = new AutoScheduler();
-    System.out.println("Generating schedule...");
+    @PostMapping("/generateSchedule")
+    public ResponseEntity<?> generateSchedule(@RequestBody Map<String, Object> request) {
+        ArrayList<String> enteredCourses = (ArrayList<String>) request.get("enteredCourses");
+        String session = (String) request.get("session");
+        Integer year = (Integer) request.get("year");
+        // Check if the year is valid
+        if (year == null || year <= 0) {
+            System.out.println("Invalid year entered: " + year);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Invalid year entered: " + year);
+        }
+        // Process the data...
+        AutoScheduler autoScheduler = new AutoScheduler();
+        System.out.println("Generating schedule...");
+        // Generate sections
+        enteredCourses.removeIf(String::isEmpty);
+        // Check if the courses are valid. I.e. all entered courses are in the allCourses list
+        if(!autoScheduler.isValid(enteredCourses)) {
+            System.out.println("Invalid courses entered: " + enteredCourses);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Invalid courses entered: " + enteredCourses);
+        }
 
-    // Convert session string to RefactoredMain.Session enum
-    RefactoredMain.Session sessionEnum = switch (session.toUpperCase()) {
-        case "FALL" -> RefactoredMain.Session.FALL;
-        case "WINTER" -> RefactoredMain.Session.WINTER;
-        case "SPRING" -> RefactoredMain.Session.SPRING;
-        case "EARLYSUMMER" -> RefactoredMain.Session.EARLYSUMMER;
-        case "LATESUMMER" -> RefactoredMain.Session.LATESUMMER;
-        default -> RefactoredMain.Session.BLANK;
-    };
+        // Convert session string to RefactoredMain.Session enum
+        RefactoredMain.Session sessionEnum = switch (session.toUpperCase()) {
+            case "FALL" -> RefactoredMain.Session.FALL;
+            case "WINTERONLINE" -> RefactoredMain.Session.WINTER;
+            case "SPRING" -> RefactoredMain.Session.SPRING;
+            case "EARLYSUMMER" -> RefactoredMain.Session.EARLYSUMMER;
+            case "LATESUMMER" -> RefactoredMain.Session.LATESUMMER;
+            default -> RefactoredMain.Session.BLANK;
+        };
 
-    // Generate sections
-    Schedule newSchedule = autoScheduler.generateSections(enteredCourses, sessionEnum, year);    // Generate sections
+        Schedule newSchedule = autoScheduler.generateSections(enteredCourses, sessionEnum, year);    // Generate sections
 
-    if (newSchedule == null) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to generate schedule due to invalid courses or time conflicts.");
-    }
-    return ResponseEntity.ok(newSchedule.getCourses());
+        if (newSchedule == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: No courses match entered session.");
+        }
+        return ResponseEntity.ok("Courses have been Generated"); // newSchedule.getCourses()
     }
 
     /* Load Database Functions */
@@ -89,12 +100,20 @@ public ResponseEntity<?> generateSchedule(@RequestBody Map<String, Object> reque
         System.out.println("onLoad() called");
     }
 
-    @GetMapping("/allCourses")
-    public ResponseEntity<List<String>> getAllCourses() {
+    @GetMapping("/allAmbiguousCourses")
+    public ResponseEntity<List<String>> getAllAmbiguousCourses() {
         List<String> courseNames = RefactoredMain.courses.stream()
                 .map(Course::getAmbiguousCourseCode) // Assuming `getAmbiguousCourseCode` returns the course name
                 .toList();
-        return ResponseEntity.ok(courseNames.stream().distinct().collect(Collectors.toList())); // courseNames.stream().distinct().collect(Collectors.toList())
+        return ResponseEntity.ok(courseNames.stream().distinct().collect(Collectors.toList()));
+    }
+
+    @GetMapping("/allCourses")
+    public ResponseEntity<List<String>> getAllCourses() {
+        List<String> courseNames = RefactoredMain.courses.stream()
+                .map(Course::getCourseCode) // Assuming `getCourseCode` returns the course name
+                .toList();
+        return ResponseEntity.ok(courseNames);
     }
 
     private static void loadCourses() {
@@ -145,11 +164,14 @@ public ResponseEntity<?> generateSchedule(@RequestBody Map<String, Object> reque
 
             //session
             String cutSession = session.split("_")[1];
+            if(session.split("_").length > 2) {
+                cutSession += session.split("_")[2];
+            }
             int year = Integer.parseInt(session.split("_")[0]);
             RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
-            switch(cutSession) {
+            switch(cutSession.toUpperCase()) {
                 case "FALL" -> finalSession = RefactoredMain.Session.FALL;
-                case "WINTER" -> finalSession = RefactoredMain.Session.WINTER;
+                case "WINTERONLINE" -> finalSession = RefactoredMain.Session.WINTER;
                 case "SPRING" -> finalSession = RefactoredMain.Session.SPRING;
                 case "EARLYSUMMER" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
                 case "LATESUMMER" -> finalSession = RefactoredMain.Session.LATESUMMER;

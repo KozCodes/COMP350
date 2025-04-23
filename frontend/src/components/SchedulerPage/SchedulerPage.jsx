@@ -37,7 +37,7 @@ const SchedulerPage = () => {
     // Fetch all possible courses from the backend
     const fetchCourses = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/allCourses");
+        const response = await axios.get("http://localhost:8080/api/allAmbiguousCourses");
         setAllCourses(response.data); // Assuming the backend returns an array of course names
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -145,10 +145,10 @@ const SchedulerPage = () => {
         >
           <option value="">BLANK</option>
           <option value="FALL">FALL</option>
-          <option value="WINTER">WINTER</option>
+          <option value="WINTERONLINE">WINTER ONLINE</option>
           <option value="SPRING">SPRING</option>
-          <option value="EARLYSUMMER">EARLYSUMMER</option>
-          <option value="LATESUMMER">LATESUMMER</option>
+          <option value="EARLYSUMMER">EARLY SUMMER</option>
+          <option value="LATESUMMER">LATE SUMMER</option>
         </select>
       </div>
 
