@@ -6,26 +6,8 @@ import Schedule from "./components/Schedule/schedule";
 import ProfessorRatingPage from "./components/ProfessorRater/ProfessorRatingPage";
 import HomePage from "./components/HomePage/HomePage";
 import SearchPage from './components/SearchPage/SearchPage';
-
-
-function Home() {
-    const load = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/test`);
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error fetching schedule data:", error);
-        }
-    };
-
-    load();
-
-    return(
-        <div>
-            <h1>Welcome to the Home Page</h1>
-        </div>
-    );
-}
+import Home from './components/Home/Home';
+import Results from './components/ResultsandDescriptionPages/ResultsandDescriptionPages';
 
 const App = () => {
   return (
@@ -47,7 +29,18 @@ const App = () => {
           path="/rate-professors"
           element={<ProfessorRatingPage />}
         />
-         <Route path="/search" element={<SearchPage />} />
+         <Route
+         path="/search"
+         element={<SearchPage />}
+         />
+          <Route
+                   path="/home"
+                   element={<Home />}
+          />
+          <Route
+                   path="/results"
+                   element={<Results />}
+          />
       </Routes>
     </BrowserRouter>
   );

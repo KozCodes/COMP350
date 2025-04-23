@@ -355,6 +355,15 @@ public class RESTController {
         }
     }
 
+    @GetMapping("/search/{query}")
+    public ResponseEntity<List<Course>> HandleSearch(@PathVariable String query) {
+        Filter filter = new Filter();
+        Search search = new Search(query, filter);
+        search.search(query);
+        List<Course> courses = search.getSearchResults();
+
+        return ResponseEntity.ok(courses);
+    }
 
     // Fetch Professor Rating
     @GetMapping("/professor/{id}/rating")
