@@ -20,6 +20,9 @@ public class Course {
     private String courseCode;
     private int year;
     private boolean taken;
+    private int numSeats;
+    private int numRegistered;
+
 
 
     /**
@@ -42,7 +45,7 @@ public class Course {
                   List<Time> endTime,
                   List<RefactoredMain.Days> courseDays,
                   String courseDept,
-                  String courseCode, int year, boolean taken) {
+                  String courseCode, int year, boolean taken, int numSeats, int numRegistered) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -115,6 +118,15 @@ public class Course {
     protected void setYear(int year) {
         this.year = year;
     }
+
+    protected int getNumSeats() { return numSeats; }
+
+    protected void setNumSeats(int numSeats) { this.numSeats = numSeats; }
+
+    protected int getNumRegistered() { return numRegistered; }
+
+    protected void setNumRegistered(int numRegistered) { this.numRegistered = numRegistered; }
+
 
     @Override
     public String toString() {

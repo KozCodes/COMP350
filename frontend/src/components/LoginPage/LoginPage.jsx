@@ -1,10 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const logout = async () => {
+      try {
+        await axios.post('http://localhost:8080/api/logout', {}, { withCredentials: true });
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    };
+
+    logout();
+
+    // Prevent back navigation
+    window.history.pushState(null, '', window.location.href);
+    const handlePopState = () => window.history.go(1);
+    window.addEventListener('popstate', handlePopState);
+
+    // Optional: clear localStorage
+    localStorage.clear();
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   const [formData, setFormData] = useState({
     id: '',
@@ -32,7 +56,12 @@ const LoginPage = () => {
     try {
       const response = await axios.post(url, formData, { withCredentials: true });
       setMessage(response.data);
-      navigate('/home');
+
+      if (isLogin) {
+        navigate('/home');
+      } else {
+        window.location.reload(); // Force page reload after signup
+      }
     } catch (error) {
       setMessage(error.response?.data || 'An error occurred.');
     }
@@ -68,7 +97,7 @@ const LoginPage = () => {
         maxWidth: '450px',
         boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)'
       }}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           {!isLogin && (
             <>
               <div style={{ marginBottom: '1rem' }}>
@@ -77,6 +106,7 @@ const LoginPage = () => {
                   type="text"
                   name="id"
                   onChange={handleChange}
+                  autoComplete="off"
                   required
                   style={inputStyle}
                 />
@@ -88,6 +118,7 @@ const LoginPage = () => {
                   type="text"
                   name="name"
                   onChange={handleChange}
+                  autoComplete="off"
                   required
                   style={inputStyle}
                 />
@@ -99,6 +130,7 @@ const LoginPage = () => {
                   type="text"
                   name="major"
                   onChange={handleChange}
+                  autoComplete="off"
                   required
                   style={inputStyle}
                 />
@@ -110,6 +142,7 @@ const LoginPage = () => {
                   type="text"
                   name="minor"
                   onChange={handleChange}
+                  autoComplete="off"
                   style={inputStyle}
                 />
               </div>
@@ -122,6 +155,7 @@ const LoginPage = () => {
               type="text"
               name="username"
               onChange={handleChange}
+              autoComplete="off"
               required
               style={inputStyle}
             />
@@ -133,6 +167,7 @@ const LoginPage = () => {
               type="password"
               name="password"
               onChange={handleChange}
+              autoComplete="new-password"
               required
               style={inputStyle}
             />
@@ -149,7 +184,18 @@ const LoginPage = () => {
           <p style={{ fontSize: '1rem', color: '#333' }}>
             {isLogin ? "Don't have an account?" : 'Already registered?'}{' '}
             <button
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                setFormData({
+                  id: '',
+                  username: '',
+                  password: '',
+                  name: '',
+                  major: '',
+                  minor: ''
+                });
+                setIsLogin(!isLogin);
+                setMessage('');
+              }}
               style={{ color: '#990000', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold' }}
             >
               {isLogin ? 'Sign Up' : 'Login'}

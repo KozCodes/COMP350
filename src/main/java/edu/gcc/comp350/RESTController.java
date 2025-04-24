@@ -154,7 +154,7 @@ public class RESTController {
                 }
             }
 
-            Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false);
+            Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false,0, 0);
             RefactoredMain.courses.add(course);
         }
     }
@@ -201,6 +201,13 @@ public class RESTController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return ResponseEntity.ok("Logged out");
+    }
+
 
     static class LoginRequest {
         private String username;
