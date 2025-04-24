@@ -6,7 +6,6 @@ import Schedule from "./components/Schedule/schedule";
 import ProfessorRatingPage from "./components/ProfessorRater/ProfessorRatingPage";
 import HomePage from "./components/HomePage/HomePage";
 import SearchPage from './components/SearchPage/SearchPage';
-
 import SchedulerPage from "./components/SchedulerPage/SchedulerPage"; // npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 import 'bootstrap/dist/css/bootstrap.min.css'; // npm install bootstrap
 
