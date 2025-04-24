@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Random;
 
+//
 /**
  * DatabaseConnect class that connects to the database and injects SQL.
  */
@@ -100,6 +101,7 @@ public class DatabaseConnect {
         injectSql("DROP TABLE IF EXISTS Schedule");
         injectSql("DROP TABLE IF EXISTS ScheduleCourses");
         injectSql("DROP TABLE IF EXISTS Professors");
+        injectSql("DROP TABLE IF EXISTS StudentRatings");
     }
 
     protected void clearCoursesFromDatabase() {
@@ -121,14 +123,16 @@ public class DatabaseConnect {
              endTime TEXT NOT NULL,
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
-             courseCode TEXT NOT NULL
+             courseCode TEXT NOT NULL,
+             numSeats INTEGER NOT NULL DEFAULT 2,
+             numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
         injectSql(sql);
 
         // student table
         sql = """
             CREATE TABLE IF NOT EXISTS Student (
-             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             id INTEGER PRIMARY KEY,
              name TEXT NOT NULL,
              major TEXT NOT NULL,
              minor TEXT,
@@ -181,7 +185,9 @@ public class DatabaseConnect {
              endTime TEXT NOT NULL,
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
-             courseCode TEXT NOT NULL
+             courseCode TEXT NOT NULL,
+             numSeats INTEGER NOT NULL DEFAULT 2,
+             numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
         injectSql(sql);
     }
@@ -267,7 +273,6 @@ public class DatabaseConnect {
         // populateStudentsInDatabase();
         // populateSchedulesInDatabase();
         populateProfessorsInDatabase();
-        // TODO: Add method to populate data within database
     }
 
     public void resetCoursesInDatabase() {
@@ -288,7 +293,7 @@ public class DatabaseConnect {
 
 
             JSONArray coursesArray = jsonObject.getJSONArray("classes");
-            String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode, numSeats, numRegistered) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement courseStmt = conn.prepareStatement(courseSql)) {
                 for (int i = 0; i < coursesArray.length(); i++) {
                     JSONObject course = coursesArray.getJSONObject(i);
@@ -314,6 +319,8 @@ public class DatabaseConnect {
                     courseStmt.setString(6, day.toString()); // Use the accumulated days
                     courseStmt.setString(7, course.getString("subject"));
                     courseStmt.setString(8, course.getString("subject") + " " + course.getInt("number") + " " + course.getString("section"));
+                    courseStmt.setInt(9, 2);
+                    courseStmt.setInt(10, 0);
                     courseStmt.executeUpdate();
                 }
             }
@@ -347,15 +354,20 @@ public class DatabaseConnect {
                         String professorName = facultyArray.getString(j);
                         String department = course.getString("subject");
 
-                        if (!seenProfessors.contains(professorName)) {
-                            seenProfessors.add(professorName);
-
-                            int randomScore = random.nextInt(5) + 1; // Generates a number from 1 to 5
-
-                            stmt.setString(1, professorName);
-                            stmt.setString(2, department);
-                            stmt.setInt(3, randomScore);
-                            stmt.executeUpdate();
+                        // Check if this professor already exists in the database
+                        String checkSql = "SELECT COUNT(*) FROM Professors WHERE professorName = ? AND department = ?";
+                        try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                            checkStmt.setString(1, professorName);
+                            checkStmt.setString(2, department);
+                            ResultSet rs = checkStmt.executeQuery();
+                            if (rs.next() && rs.getInt(1) == 0) {
+                                // Insert professor if not already present
+                                int randomScore = random.nextInt(5) + 1; // Random score from 1 to 5
+                                stmt.setString(1, professorName);
+                                stmt.setString(2, department);
+                                stmt.setInt(3, randomScore);
+                                stmt.executeUpdate();
+                            }
                         }
                     }
                 }
@@ -366,6 +378,8 @@ public class DatabaseConnect {
             System.err.println("Error parsing JSON data: " + e.getMessage());
         }
     }
+
+
 
 
     public List<Professor> getAllProfessors() {
@@ -384,5 +398,96 @@ public class DatabaseConnect {
             System.out.println(e.getMessage());
         }
         return professors;
+    }
+
+    /**
+     * Rates a professor by a student.
+     *
+     * @param studentId   the ID of the current user
+     * @param professorId the ID of the professor
+     * @param newRating   the new rating to be given
+     * @return true if the rating was successful, false otherwise
+     */
+    public boolean rateProfessor(int studentId, int professorId, double newRating) {
+        try {
+            // Check if the student already rated this professor
+            String checkSql = "SELECT COUNT(*) FROM StudentRatings WHERE studentId = ? AND professorId = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setInt(1, studentId);
+                checkStmt.setInt(2, professorId);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    System.out.println("Student has already rated this professor.");
+                    return false;
+                }
+            }
+
+            String getProfSql = "SELECT score, numRatings FROM Professors WHERE id = ?";
+            int numRatings = 0;
+            double oldAvg = 0;
+            try (PreparedStatement getStmt = conn.prepareStatement(getProfSql)) {
+                getStmt.setInt(1, professorId);
+                ResultSet rs = getStmt.executeQuery();
+                if (rs.next()) {
+                    oldAvg = rs.getDouble("score");
+                    numRatings = rs.getInt("numRatings");
+                }
+            }
+
+            double newAvg = Math.round(((oldAvg * numRatings) + newRating) / (numRatings + 1) * 100.0) / 100.0;
+
+            String updateProfSql = "UPDATE Professors SET score = ?, numRatings = ? WHERE id = ?";
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateProfSql)) {
+                updateStmt.setDouble(1, newAvg);
+                updateStmt.setInt(2, numRatings + 1);
+                updateStmt.setInt(3, professorId);
+                updateStmt.executeUpdate();
+            }
+
+            String insertRatingSql = "INSERT INTO StudentRatings (studentId, professorId, rating) VALUES (?, ?, ?)";
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertRatingSql)) {
+                insertStmt.setInt(1, studentId);
+                insertStmt.setInt(2, professorId);
+                insertStmt.setDouble(3, newRating);
+                insertStmt.executeUpdate();
+            }
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error rating professor: " + e.getMessage());
+            return false;
+        }
+    }
+
+    //For creating the needed professor rating tables
+    public void ProfRatings() {
+        try {
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet rs = meta.getColumns(null, null, "Professors", "numRatings");
+            if (!rs.next()) {
+                injectSql("ALTER TABLE Professors ADD COLUMN numRatings INTEGER DEFAULT 0;");
+                System.out.println("Added numRatings column to Professors table.");
+            }
+
+            String checkSql = "SELECT name FROM sqlite_master WHERE type='table' AND name='StudentRatings'";
+            try (var stmt = conn.createStatement(); ResultSet checkRs = stmt.executeQuery(checkSql)) {
+                if (!checkRs.next()) {
+                    injectSql("""
+                    CREATE TABLE IF NOT EXISTS StudentRatings (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        studentId INTEGER NOT NULL,
+                        professorId INTEGER NOT NULL,
+                        rating REAL NOT NULL,
+                        UNIQUE(studentId, professorId),
+                        FOREIGN KEY (studentId) REFERENCES Student(id),
+                        FOREIGN KEY (professorId) REFERENCES Professors(id)
+                    );
+                """);
+                    System.out.println("Created StudentRatings table.");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error ensuring rating schema: " + e.getMessage());
+        }
     }
 }
