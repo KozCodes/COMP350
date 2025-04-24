@@ -9,25 +9,6 @@ import SearchPage from './components/SearchPage/SearchPage';
 import SchedulerPage from "./components/SchedulerPage/SchedulerPage"; // npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 import 'bootstrap/dist/css/bootstrap.min.css'; // npm install bootstrap
 
-function Home() {
-    const load = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/test`);
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error fetching schedule data:", error);
-        }
-    };
-
-    load();
-
-    return(
-        <div>
-            <h1>Welcome to the Home Page</h1>
-        </div>
-    );
-}
-
 const App = () => {
   return (
     <BrowserRouter>
@@ -51,7 +32,18 @@ const App = () => {
           path="/rate-professors"
           element={<ProfessorRatingPage />}
         />
-         <Route path="/search" element={<SearchPage />} />
+         <Route
+         path="/search"
+         element={<SearchPage />}
+         />
+          <Route
+                   path="/home"
+                   element={<Home />}
+          />
+          <Route
+                   path="/results"
+                   element={<Results />}
+          />
       </Routes>
     </BrowserRouter>
   );
