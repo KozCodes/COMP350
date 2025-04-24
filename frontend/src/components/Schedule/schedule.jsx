@@ -28,7 +28,6 @@ const fetchScheduleData = async (scheduleId, setData, setSchedule) => {
         const response = await axios.get(`http://localhost:8080/api/schedule?id=${scheduleId}`);
         setData(response.data);
         setSchedule(<Calendar schedule={response.data}/>);
-        console.log(response.data);
     } catch (error) {
         console.error("Error fetching schedule data:", error);
     }
