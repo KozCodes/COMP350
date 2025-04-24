@@ -1,13 +1,10 @@
 package edu.gcc.comp350;
 
-import java.sql.Time;
 import java.util.*;
 
 public class AutoScheduler {
 
     boolean validCourses;
-    Schedule schedule;
-    ArrayList<ArrayList<Course>> conflictingCourses = new ArrayList<>();
 
     protected AutoScheduler() {
         this.validCourses = true;
@@ -25,9 +22,9 @@ public class AutoScheduler {
     }
 
     protected Schedule generateSections(ArrayList<String> enteredCourses, RefactoredMain.Session session, int year) {
-        System.out.println(enteredCourses);
-        System.out.println(session);
-        System.out.println(year);
+//        System.out.println(enteredCourses);
+//        System.out.println(session);
+//        System.out.println(year);
 
         // If courses are valid, add the courses to the schedule (excluding courses that are not in the entered session and year)
         HashMap<String, ArrayList<Course>> courseSections = getCourseSections(enteredCourses, session, year);
@@ -36,7 +33,6 @@ public class AutoScheduler {
             return null;
         }
         // Then check the schedule for time conflicts
-//        HashMap<Time, ArrayList<Course>> conflictMap = getConflictMap(potentialSchedule);
         Schedule potentialSchedule = resolveConflicts(courseSections, enteredCourses);
 
         // Format for temporary string formatting
@@ -98,14 +94,14 @@ public class AutoScheduler {
                 if (course.getAmbiguousCourseCode().equals(enteredCourse) && course.getSession().equals(session) && course.getYear() == year) {
                     courseSections.putIfAbsent(course.getAmbiguousCourseCode(), new ArrayList<>());
                     courseSections.get(course.getAmbiguousCourseCode()).add(course);
-                    System.err.println("Course added: " + course.getCourseCode() + " " + course.getSession() + " " + course.getYear());
+                    //System.err.println("Course added: " + course.getCourseCode() + " " + course.getSession() + " " + course.getYear());
                 }
                 else {
                     if (course.getCourseCode().contains(enteredCourse) && course.getYear() != year) {
-                        System.out.println("Course year does not match: " + course.getCourseCode() + " " + course.getYear());
+                        //System.out.println("Course year does not match: " + course.getCourseCode() + " " + course.getYear());
                     }
                     if (course.getCourseCode().contains(enteredCourse) && course.getYear() == year && !course.getSession().equals(session)) {
-                        System.out.println("Course session does not match in selected year: " + course.getCourseCode() + " " + course.getSession());
+                        //System.out.println("Course session does not match in selected year: " + course.getCourseCode() + " " + course.getSession());
                     }
                 }
             }

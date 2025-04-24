@@ -139,6 +139,61 @@ public class RESTController {
         public void setId(int id) { this.id = id; }
     }
 
+    @PostMapping("/generateSchedule")
+    public ResponseEntity<?> generateSchedule(@RequestBody Map<String, Object> request) {
+        ArrayList<String> enteredCourses = (ArrayList<String>) request.get("enteredCourses");
+        String session = (String) request.get("session");
+        Integer year = (Integer) request.get("year");
+        // Check if the year is valid
+        if (year == null || year <= 0) {
+            System.out.println("Invalid year entered: " + year);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Invalid year entered: " + year);
+        }
+        // Process the data...
+        AutoScheduler autoScheduler = new AutoScheduler();
+        System.out.println("Generating schedule...");
+        // Generate sections
+        enteredCourses.removeIf(String::isEmpty);
+        // Check if the courses are valid. I.e. all entered courses are in the allCourses list
+        if(!autoScheduler.isValid(enteredCourses)) {
+            System.out.println("Invalid courses entered: " + enteredCourses);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Invalid courses entered: " + enteredCourses);
+        }
+
+        // Convert session string to RefactoredMain.Session enum
+        RefactoredMain.Session sessionEnum = switch (session.toUpperCase()) {
+            case "FALL" -> RefactoredMain.Session.FALL;
+            case "WINTERONLINE" -> RefactoredMain.Session.WINTER;
+            case "SPRING" -> RefactoredMain.Session.SPRING;
+            case "EARLYSUMMER" -> RefactoredMain.Session.EARLYSUMMER;
+            case "LATESUMMER" -> RefactoredMain.Session.LATESUMMER;
+            default -> RefactoredMain.Session.BLANK;
+        };
+
+        Schedule newSchedule = autoScheduler.generateSections(enteredCourses, sessionEnum, year);    // Generate sections
+
+        if (newSchedule == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: No courses match entered session.");
+        }
+        return ResponseEntity.ok("Courses have been Generated"); // newSchedule.getCourses()
+    }
+
+    @GetMapping("/allAmbiguousCourses")
+    public ResponseEntity<List<String>> getAllAmbiguousCourses() {
+        List<String> courseNames = RefactoredMain.courses.stream()
+                .map(Course::getAmbiguousCourseCode) // Assuming `getAmbiguousCourseCode` returns the course name
+                .toList();
+        return ResponseEntity.ok(courseNames.stream().distinct().collect(Collectors.toList()));
+    }
+
+    @GetMapping("/allCourses")
+    public ResponseEntity<List<String>> getAllCourses() {
+        List<String> courseNames = RefactoredMain.courses.stream()
+                .map(Course::getCourseCode) // Assuming `getCourseCode` returns the course name
+                .toList();
+        return ResponseEntity.ok(courseNames);
+    }
+
     /* Schedule Functions */
     @RequestMapping("/schedule")
     public ResponseEntity<List<String>> getSchedule(@RequestParam("id") int id) throws SQLException {
