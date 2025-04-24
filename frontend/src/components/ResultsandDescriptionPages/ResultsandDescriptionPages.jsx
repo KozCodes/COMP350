@@ -1,14 +1,15 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-const initialCourses = [
-  { id: 1, title: 'Intro to Programming', numSeats: 2, numRegistered: 0 },
-  { id: 2, title: 'Data Structures', numSeats: 2, numRegistered: 1 },
-  { id: 3, title: 'Operating Systems', numSeats: 2, numRegistered: 2 },
-];
-
 const Results = () => {
-  const [courses, setCourses] = useState(initialCourses);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const data = location.state;
+
+    const [courses, setCourses] = useState(data);
 
   const handleAddCourse = (courseId) => {
     setCourses((prevCourses) =>
@@ -22,14 +23,14 @@ const Results = () => {
 
   return (
     <div className="p-4 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Course Search Results (Mock)</h2>
+      <h2 className="text-2xl font-bold mb-4">Course Search Results </h2>
       {courses.length === 0 ? (
         <p>No courses available.</p>
       ) : (
         <ul className="space-y-4">
           {courses.map((course) => (
             <li key={course.id} className="p-4 border rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold">{course.title}</h3>
+              <h3 className="text-lg font-semibold">{course}</h3>
               <p className="text-sm text-gray-600">
                 Seats: {course.numRegistered}/{course.numSeats}
               </p>
@@ -43,6 +44,7 @@ const Results = () => {
             </li>
           ))}
         </ul>
+        
       )}
     </div>
   );
