@@ -8,6 +8,8 @@ import HomePage from "./components/HomePage/HomePage";
 import SearchPage from './components/SearchPage/SearchPage';
 import Home from './components/Home/Home';
 import Results from './components/ResultsandDescriptionPages/ResultsandDescriptionPages';
+import SchedulerPage from "./components/SchedulerPage/SchedulerPage"; // npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+import 'bootstrap/dist/css/bootstrap.min.css'; // npm install bootstrap
 
 const App = () => {
   return (
@@ -25,6 +27,9 @@ const App = () => {
           path="/schedule/:scheduleId"
           element={<Schedule />}
         />
+        <Route
+        path="/auto-scheduler"
+        element={<SchedulerPage />} />
         <Route
           path="/rate-professors"
           element={<ProfessorRatingPage />}
