@@ -80,6 +80,52 @@ public class Course {
         this.taken = taken;
     }
 
+    protected boolean hasTimeConflict(Course course) {
+        // Check if the course days overlap
+        for (RefactoredMain.Days day : this.courseDays) {
+            if (course.courseDays.contains(day)) {
+                // Check if the start and end times overlap
+                for (int i = 0; i < this.startTime.size(); i++) {
+                    Time thisStart = this.startTime.get(i);
+                    Time thisEnd = this.endTime.get(i);
+                    for (int j = 0; j < course.startTime.size(); j++) {
+                        Time courseStart = course.startTime.get(j);
+                        Time courseEnd = course.endTime.get(j);
+                        if ((thisStart.before(courseEnd) && thisEnd.after(courseStart))) {
+                            return true; // Conflict found
+                        }
+                    }
+                }
+            }
+        }
+        return false; // No conflict found
+    }
+
+    /**
+     * Checks if two courses have overlapping days and times.
+     *
+     * @param course The course to check against.
+     * @return First time of conflict if found, null otherwise.
+     */
+    protected Time getTimeConflict(Course course) {
+        for (RefactoredMain.Days day : this.courseDays) {
+            if (course.courseDays.contains(day)) {
+                for (int i = 0; i < this.startTime.size(); i++) {
+                    Time thisStart = this.startTime.get(i);
+                    Time thisEnd = this.endTime.get(i);
+                    for (int j = 0; j < course.startTime.size(); j++) {
+                        Time courseStart = course.startTime.get(j);
+                        Time courseEnd = course.endTime.get(j);
+                        if (thisStart.before(courseEnd) && thisEnd.after(courseStart)) {
+                            return thisStart.after(courseStart) ? thisStart : courseStart;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     protected String getCourseTitle() {
         return courseTitle;
     }
@@ -110,6 +156,12 @@ public class Course {
 
     protected String getCourseCode() {
         return courseCode;
+    }
+
+    protected String getAmbiguousCourseCode() {
+        // Returns a string of the course code without the last letter of the code
+        // Note: This method will not work properly if the course code's section does not follow typical conventions
+        return courseCode.substring(0, courseCode.length() - 2);
     }
 
     protected int getID() {
@@ -143,8 +195,8 @@ public class Course {
     @Override
     public String toString() {
         return String.format(
-                        "| %-2d | %-20s |  Professor: %-14s | %-7s | StartTime: %-5s | EndTime: %-5s | Days: %-7s| %-4s | Code: %-10s |\n",
-                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode
+                        "| %-2d | %-20s |  Professor: %-14s | %-7s | StartTime: %-5s | EndTime: %-5s | Days: %-7s| %-4s | Code: %-10s | Year: %-4s | %-5s |\n",
+                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode, year, taken
         );
     }
 
