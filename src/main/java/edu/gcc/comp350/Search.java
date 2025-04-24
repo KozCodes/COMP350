@@ -27,7 +27,6 @@ public class Search {
         //database, returning a list of courses that are sorted by weight
         //of relevance to the query.
 
-
         //3 main search queries usually - course title, course code, professor name
         boolean isKeyword = false;
         boolean isCourseCode = false;
@@ -62,7 +61,6 @@ public class Search {
                 }
             }
         }
-
 
         if (isCourseCode || isProf || isKeyword) {
             TFIDFSearch(isCourseCode, isProf, isKeyword, query);
@@ -142,8 +140,6 @@ public class Search {
                     }
                 }
             }
-
-            System.out.println(manipulations);
 
             //remove any manipulations that are gibberish, or, anything not in our vocabulary
             manipulations.replaceAll(s -> s.replaceAll("\\s+", "").trim());
