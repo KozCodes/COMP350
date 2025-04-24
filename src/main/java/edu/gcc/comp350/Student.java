@@ -20,10 +20,12 @@ public class Student {
         this.minors = minors;
 
         // put this student in db
-        try (var pstmt = db.conn.prepareStatement("INSERT INTO Student (name, major, minor) VALUES (?, ?, ?)")) {
+        try (var pstmt = db.conn.prepareStatement("INSERT INTO Student (name, major, minor, username, password) VALUES (?, ?, ?, ?, ?)")) {
             pstmt.setString(1, this.name);
             pstmt.setString(2, major);
             pstmt.setString(3, minors.toString());
+            pstmt.setString(4, this.name);
+            pstmt.setString(5, this.name);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
