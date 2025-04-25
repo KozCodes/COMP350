@@ -41,9 +41,18 @@ public class Search {
 
 
         //easiest tell - if theres recognizable digits somewhere, then its a course code query
-        if (Character.isDigit(query.charAt(0)) || Character.isDigit(query.charAt(5))) {
+        if (Character.isDigit(query.charAt(0))) {
+           //check for only numbers
             isCourseCode = true;
-        } else {
+        } else if (query.length() > 5) {
+            //check for full course code
+            if (Character.isDigit(query.charAt(5))) {
+                isCourseCode = true;
+            }
+        } else if (RefactoredMain.codesonly.contains(query)) {
+            //extraneous common case - if course code is only the department code
+            isCourseCode = true;
+        }else {
             //harder - if the query contains a professor name, then it is a professor query
             for (int i = 0; i < RefactoredMain.professors.size(); i++) {
                 if (RefactoredMain.professors.get(i).getName().contains(query)) {
@@ -150,7 +159,16 @@ public class Search {
             //if there are manipulations not gibberish, try searching for them
             if (!manipulations.isEmpty()) {
                 for (int i = 0; i < manipulations.size(); i++) {
-                    if (Character.isDigit(manipulations.get(i).charAt(0)) || Character.isDigit(manipulations.get(i).charAt(5))) {
+                    if (Character.isDigit(query.charAt(0))) {
+                        //check for only numbers
+                        isCourseCode = true;
+                    } else if (query.length() > 5) {
+                        //check for full course code
+                        if (Character.isDigit(query.charAt(5))) {
+                            isCourseCode = true;
+                        }
+                    } else if (RefactoredMain.codesonly.contains(query)) {
+                        //extraneous common case - if course code is only the department code
                         isCourseCode = true;
                     } else {
                         //harder - if the query contains a professor name, then it is a professor query
@@ -160,7 +178,6 @@ public class Search {
                                 break;
                             }
                         }
-
 
                         //if still nothing, do the same thing but for course titles
                         for (int j = 0; j < RefactoredMain.courses.size(); j++) {
