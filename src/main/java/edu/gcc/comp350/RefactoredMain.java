@@ -17,7 +17,6 @@ public class RefactoredMain {
     public static Student currentStudent;
     protected static Search search;
     protected static Schedule currentSchedule;
-    protected static List<Schedule> schedules = new ArrayList<>();
     protected static List<String> Dictionary = new ArrayList<>();
     protected static List<String> stopwordList = Arrays.asList("a", "an", "the", "is", "are", "was", "were", "be", "being", "been",
             "have", "has", "had", "do", "does", "did", "doing", "will", "shall",
@@ -101,21 +100,7 @@ public class RefactoredMain {
         loadProfessors();
         loadCourses();
         loadDictionary();
-        loadSchedules();
         System.out.println("onLoad() called");
-    }
-
-    private static void loadSchedules() {
-        ArrayList<Object> scheduleList = RefactoredMain.db.select("id, scheduleTitle, student", "Schedule");
-        int currentId = -1;
-        for (int i = 0; i < scheduleList.size(); i+=3) {
-            currentId = (int) scheduleList.get(i);
-            String scheduleTitle = (String) scheduleList.get(i+1);
-            int student = (int) scheduleList.get(i+2);
-
-            Schedule schedule = new Schedule(scheduleTitle, currentId);
-            RefactoredMain.schedules.add(schedule);
-        }
     }
 
     private static void loadDictionary() {

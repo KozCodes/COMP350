@@ -36,20 +36,15 @@ public class RESTController {
         int studentId = RefactoredMain.currentStudent.getId();
 
         // Filter schedules belonging to the current student
-        List<Map<String, Object>> studentSchedules = RefactoredMain.schedules.stream()
-        .filter(schedule -> {
-            System.out.println("Processing schedule with student ID: " + schedule.getStudentID());
-            return schedule.getStudentID() == studentId;
-        })
-        .map(schedule -> {
-            Map<String, Object> scheduleMap = new HashMap<>();
-            scheduleMap.put("id", schedule.getId());
-            scheduleMap.put("name", schedule.getName());
-            return scheduleMap;
-        })
-        .toList();
+        List<Map<String, Object>> studentSchedules = RefactoredMain.currentStudent.getSchedules().stream()
+            .map(schedule -> {
+                Map<String, Object> scheduleMap = new HashMap<>();
+                scheduleMap.put("id", schedule.getId());
+                scheduleMap.put("name", schedule.getName());
+                return scheduleMap;
+            })
+            .toList();
 
-        System.out.println("Current student ID: " + RefactoredMain.currentStudent.getId());
         System.out.println("Student schedules: " + studentSchedules);
 
         return ResponseEntity.ok(studentSchedules);
