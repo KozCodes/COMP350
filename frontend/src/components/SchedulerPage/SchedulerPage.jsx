@@ -73,6 +73,7 @@ import React, { useState, useEffect } from "react";
       const [schedule, setSchedule] = useState(null);
       const [conflicts, setConflicts] = useState(null);
       const [scheduleLink, setScheduleLink] = useState(null);
+      const [isAdvancedPanelOpen, setIsAdvancedPanelOpen] = useState(false);
 
       useEffect(() => {
         const fetchCourses = async () => {
@@ -175,6 +176,58 @@ import React, { useState, useEffect } from "react";
               Enter potential courses and list them in order of preference.
             </p>
           </div>
+          <button
+                  onClick={() => setIsAdvancedPanelOpen(!isAdvancedPanelOpen)}
+                  style={{
+                    position: "absolute",
+                    top: "1rem",
+                    right: "1rem",
+                    backgroundColor: "#990000",
+                    color: "white",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    fontSize: "1rem",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  {isAdvancedPanelOpen ? "Close Advanced Features" : "Open Advanced Features"}
+                </button>
+
+                {isAdvancedPanelOpen && (
+                  <div
+                    style={{
+                      position: "fixed",
+                      top: 0,
+                      right: 0,
+                      width: "300px",
+                      height: "100%",
+                      backgroundColor: "#fff",
+                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
+                      padding: "1rem",
+                      zIndex: 1000,
+                    }}
+                  >
+                    <button
+                      onClick={() => setIsAdvancedPanelOpen(false)}
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        backgroundColor: "#990000",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Close
+                    </button>
+                    <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#990000" }}>Advanced Features</h2>
+                    <p>Advanced scheduling options are enabled.</p>
+                  </div>
+                )}
 
           <div style={{
             backgroundColor: "white",
