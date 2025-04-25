@@ -116,7 +116,7 @@ const CourseSearch = () => {
         if (Days.includes(ids.target.id)) {
             setDays(Days.filter((day) => day === ids));
         } else {
-            Days.push(ids.target.id);
+            Days.push(ids.target.value);
        }
     }
 
@@ -152,8 +152,6 @@ const CourseSearch = () => {
 
 <div style={{textAlign: 'center', padding: '4rem', minHeight: '100vh', color: 'black' }}>
    <h2 style = {{ fontWeight: 'bold', color: '#990000'}}> Course Search </h2>
-
-    <h3 style = {{ fontWeight: 'bold', color: '#990000'}}> {Days} </h3>
 
  <div style= {{textAlign: 'center', padding: '2rem'}}>
    <input style = {{}}

@@ -48,27 +48,27 @@ public class Search {
             //check for full course code
             if (Character.isDigit(query.charAt(5))) {
                 isCourseCode = true;
+            } else {
+                //harder - if the query contains a professor name, then it is a professor query
+                for (int i = 0; i < RefactoredMain.professors.size(); i++) {
+                    if (RefactoredMain.professors.get(i).getName().contains(query)) {
+                        isProf = true;
+                        break;
+                    }
+                }
+
+
+                //if still nothing, do the same thing but for course titles
+                for (int i = 0; i < RefactoredMain.courses.size(); i++) {
+                    if (RefactoredMain.courses.get(i).getCourseTitle().contains(query)) {
+                        isKeyword = true;
+                        break;
+                    }
+                }
             }
         } else if (RefactoredMain.codesonly.contains(query)) {
             //extraneous common case - if course code is only the department code
             isCourseCode = true;
-        }else {
-            //harder - if the query contains a professor name, then it is a professor query
-            for (int i = 0; i < RefactoredMain.professors.size(); i++) {
-                if (RefactoredMain.professors.get(i).getName().contains(query)) {
-                    isProf = true;
-                    break;
-                }
-            }
-
-
-            //if still nothing, do the same thing but for course titles
-            for (int i = 0; i < RefactoredMain.courses.size(); i++) {
-                if (RefactoredMain.courses.get(i).getCourseTitle().contains(query)) {
-                    isKeyword = true;
-                    break;
-                }
-            }
         }
 
         if (isCourseCode || isProf || isKeyword) {
@@ -166,26 +166,26 @@ public class Search {
                         //check for full course code
                         if (Character.isDigit(query.charAt(5))) {
                             isCourseCode = true;
+                        } else {
+                            //harder - if the query contains a professor name, then it is a professor query
+                            for (int j = 0; j < RefactoredMain.professors.size(); j++) {
+                                if (RefactoredMain.professors.get(j).getName().contains(manipulations.get(i))) {
+                                    isProf = true;
+                                    break;
+                                }
+                            }
+
+                            //if still nothing, do the same thing but for course titles
+                            for (int j = 0; j < RefactoredMain.courses.size(); j++) {
+                                if (RefactoredMain.courses.get(j).getCourseTitle().contains(manipulations.get(i))) {
+                                    isKeyword = true;
+                                    break;
+                                }
+                            }
                         }
                     } else if (RefactoredMain.codesonly.contains(query)) {
                         //extraneous common case - if course code is only the department code
                         isCourseCode = true;
-                    } else {
-                        //harder - if the query contains a professor name, then it is a professor query
-                        for (int j = 0; j < RefactoredMain.professors.size(); j++) {
-                            if (RefactoredMain.professors.get(j).getName().contains(manipulations.get(i))) {
-                                isProf = true;
-                                break;
-                            }
-                        }
-
-                        //if still nothing, do the same thing but for course titles
-                        for (int j = 0; j < RefactoredMain.courses.size(); j++) {
-                            if (RefactoredMain.courses.get(j).getCourseTitle().contains(manipulations.get(i))) {
-                                isKeyword = true;
-                                break;
-                            }
-                        }
                     }
 
                     TFIDFSearch(isCourseCode, isProf, isKeyword, manipulations.get(i));

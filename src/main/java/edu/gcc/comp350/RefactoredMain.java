@@ -202,7 +202,7 @@ public class RefactoredMain {
             }
 
             if (codesonly.contains(courseCode)) {
-                codesonly.add(courseCode);
+                codesonly.add(courseDept);
             }
 
             Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false);
