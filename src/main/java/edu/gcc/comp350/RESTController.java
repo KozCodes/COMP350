@@ -37,17 +37,34 @@ public class RESTController {
 
         // Filter schedules belonging to the current student
         List<Map<String, Object>> studentSchedules = RefactoredMain.currentStudent.getSchedules().stream()
-            .map(schedule -> {
-                Map<String, Object> scheduleMap = new HashMap<>();
-                scheduleMap.put("id", schedule.getId());
-                scheduleMap.put("name", schedule.getName());
-                return scheduleMap;
-            })
-            .toList();
+        .map(schedule -> {
+            Map<String, Object> scheduleMap = new HashMap<>();
+            scheduleMap.put("id", schedule.getId());
+            scheduleMap.put("name", schedule.getName());
+            if (!schedule.getCourses().isEmpty()) {
+                Course firstCourse = schedule.getCourses().get(0);
+                scheduleMap.put("session", firstCourse.getSession());
+                scheduleMap.put("year", firstCourse.getYear());
+            } else {
+                scheduleMap.put("session", "Empty");
+                scheduleMap.put("year", 0);
+            }
+            return scheduleMap;
+        })
+        .toList();
 
         System.out.println("Student schedules: " + studentSchedules);
 
         return ResponseEntity.ok(studentSchedules);
+    }
+
+    @PostMapping("/setCurrentSchedule")
+    public void setCurrentSchedule(@RequestBody Schedule schedule) {
+        if (schedule != null) {
+            RefactoredMain.currentSchedule = schedule;
+        } else {
+            throw new IllegalArgumentException("Schedule cannot be null");
+        }
     }
 
     /* Login Functions */
