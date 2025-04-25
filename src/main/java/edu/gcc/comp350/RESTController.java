@@ -197,7 +197,7 @@ public class RESTController {
 
     /* Schedule Functions */
     @RequestMapping("/schedule")
-    public ResponseEntity<List<String>> getSchedule(@RequestParam("id") int id) throws SQLException {
+    public ResponseEntity<String> getSchedule(@RequestParam("id") int id) throws SQLException {
 
         if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
             RefactoredMain.db.connect();
@@ -211,11 +211,8 @@ public class RESTController {
             if (rs.next()) {
                 String name = rs.getString("scheduleTitle");
                 Schedule schedule = new Schedule(name, id);
-                ArrayList<String> courseJSONList = new ArrayList<>();
-                for(Course course : schedule.getCourses()) {
-                    courseJSONList.add(course.toJson());
-                }
-                return ResponseEntity.ok(courseJSONList);
+                String scheduleJSON = schedule.toJson();
+                return ResponseEntity.ok(scheduleJSON);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
