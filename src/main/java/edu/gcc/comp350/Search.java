@@ -27,7 +27,6 @@ public class Search {
         //database, returning a list of courses that are sorted by weight
         //of relevance to the query.
 
-
         //3 main search queries usually - course title, course code, professor name
         boolean isKeyword = false;
         boolean isCourseCode = false;
@@ -62,7 +61,6 @@ public class Search {
                 }
             }
         }
-
 
         if (isCourseCode || isProf || isKeyword) {
             TFIDFSearch(isCourseCode, isProf, isKeyword, query);
@@ -142,8 +140,6 @@ public class Search {
                     }
                 }
             }
-
-            System.out.println(manipulations);
 
             //remove any manipulations that are gibberish, or, anything not in our vocabulary
             manipulations.replaceAll(s -> s.replaceAll("\\s+", "").trim());
@@ -488,30 +484,30 @@ public class Search {
 
         //code generated with the assistance of Github Copilot
         if (!filter.getCourse().contains(RefactoredMain.Days.BLANK)) {
-            filteredResults.removeIf(course -> filter.getCourse().contains(course.getCourseDays()));
+            filteredResults.removeIf(course -> !filter.getCourse().contains(course.getCourseDays()));
         }
         if (!filter.getStartTime().contains(Time.valueOf("00:00:00"))) {
-            filteredResults.removeIf(course -> filter.getStartTime().contains(course.getStartTime()));
+            filteredResults.removeIf(course -> !filter.getStartTime().contains(course.getStartTime()));
         }
 
 
         if (!filter.getEndTime().contains(Time.valueOf("00:00:00"))) {
-            filteredResults.removeIf(course -> filter.getEndTime().contains(course.getEndTime()));
+            filteredResults.removeIf(course -> !filter.getEndTime().contains(course.getEndTime()));
         }
 
 
         if (!filter.getCourseSession().equals(RefactoredMain.Session.BLANK)) {
-            filteredResults.removeIf(course -> course.getSession().equals(filter.getCourseSession()));
+            filteredResults.removeIf(course -> !course.getSession().equals(filter.getCourseSession()));
         }
 
 
         if (!filter.getDepartment().equals("")) {
-            filteredResults.removeIf(course -> course.getCourseDept().equals(filter.getDepartment()));
+            filteredResults.removeIf(course -> !course.getCourseDept().equals(filter.getDepartment()));
         }
 
 
         if (!filter.getCourseCodes().isEmpty()) {
-            filteredResults.removeIf(course -> filter.getCourseCodes().contains(course.getCourseCode()));
+            filteredResults.removeIf(course -> !filter.getCourseCodes().contains(course.getCourseCode()));
         }
 
 

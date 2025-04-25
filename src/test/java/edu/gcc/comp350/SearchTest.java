@@ -2,7 +2,7 @@ package edu.gcc.comp350;
 
 import org.junit.jupiter.api.Test;
 
-import static edu.gcc.comp350.RESTController.onLoad;
+import static edu.gcc.comp350.RefactoredMain.onLoad;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Time;
@@ -368,6 +368,8 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
         Search search = new Search(testQuery, filter);
 
         search.search(search.getQuery());
+
+        System.out.println(search.getFilteredResults());
 
         // Assertions
         assertNotEquals(0, search.getFilteredResults().size());

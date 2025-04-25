@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -9,20 +10,38 @@ import java.util.Random;
 
 public class Course {
 
+    @JsonProperty
     private final int id;
-    private String courseTitle;
-    private Professor professor;
-    private RefactoredMain.Session session;
-    private List<Time> startTime;
-    private List<Time> endTime;
-    private List<RefactoredMain.Days> courseDays;
-    private String courseDept;
-    private String courseCode;
-    private int year;
-    private boolean taken;
-    private int numSeats;
-    private int numRegistered;
 
+    @JsonProperty
+    private String courseTitle;
+
+    @JsonProperty
+    private Professor professor;
+
+    @JsonProperty
+    private RefactoredMain.Session session;
+
+    @JsonProperty
+    private List<Time> startTime;
+
+    @JsonProperty
+    private List<Time> endTime;
+
+    @JsonProperty
+    private List<RefactoredMain.Days> courseDays;
+
+    @JsonProperty
+    private String courseDept;
+
+    @JsonProperty
+    private String courseCode;
+
+    @JsonProperty
+    private int year;
+
+    @JsonProperty
+    private boolean taken;
 
 
     /**
@@ -45,7 +64,9 @@ public class Course {
                   List<Time> endTime,
                   List<RefactoredMain.Days> courseDays,
                   String courseDept,
-                  String courseCode, int year, boolean taken, int numSeats, int numRegistered) {
+                  String courseCode,
+                  int year,
+                  boolean taken) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -57,6 +78,52 @@ public class Course {
         this.courseCode = courseCode;
         this.year = year;
         this.taken = taken;
+    }
+
+    protected boolean hasTimeConflict(Course course) {
+        // Check if the course days overlap
+        for (RefactoredMain.Days day : this.courseDays) {
+            if (course.courseDays.contains(day)) {
+                // Check if the start and end times overlap
+                for (int i = 0; i < this.startTime.size(); i++) {
+                    Time thisStart = this.startTime.get(i);
+                    Time thisEnd = this.endTime.get(i);
+                    for (int j = 0; j < course.startTime.size(); j++) {
+                        Time courseStart = course.startTime.get(j);
+                        Time courseEnd = course.endTime.get(j);
+                        if ((thisStart.before(courseEnd) && thisEnd.after(courseStart))) {
+                            return true; // Conflict found
+                        }
+                    }
+                }
+            }
+        }
+        return false; // No conflict found
+    }
+
+    /**
+     * Checks if two courses have overlapping days and times.
+     *
+     * @param course The course to check against.
+     * @return First time of conflict if found, null otherwise.
+     */
+    protected Time getTimeConflict(Course course) {
+        for (RefactoredMain.Days day : this.courseDays) {
+            if (course.courseDays.contains(day)) {
+                for (int i = 0; i < this.startTime.size(); i++) {
+                    Time thisStart = this.startTime.get(i);
+                    Time thisEnd = this.endTime.get(i);
+                    for (int j = 0; j < course.startTime.size(); j++) {
+                        Time courseStart = course.startTime.get(j);
+                        Time courseEnd = course.endTime.get(j);
+                        if (thisStart.before(courseEnd) && thisEnd.after(courseStart)) {
+                            return thisStart.after(courseStart) ? thisStart : courseStart;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     protected String getCourseTitle() {
@@ -91,6 +158,12 @@ public class Course {
         return courseCode;
     }
 
+    protected String getAmbiguousCourseCode() {
+        // Returns a string of the course code without the last letter of the code
+        // Note: This method will not work properly if the course code's section does not follow typical conventions
+        return courseCode.substring(0, courseCode.length() - 2);
+    }
+
     protected int getID() {
         return id;
     }
@@ -119,20 +192,11 @@ public class Course {
         this.year = year;
     }
 
-    protected int getNumSeats() { return numSeats; }
-
-    protected void setNumSeats(int numSeats) { this.numSeats = numSeats; }
-
-    protected int getNumRegistered() { return numRegistered; }
-
-    protected void setNumRegistered(int numRegistered) { this.numRegistered = numRegistered; }
-
-
     @Override
     public String toString() {
         return String.format(
-                        "| %-2d | %-20s |  Professor: %-14s | %-7s | StartTime: %-5s | EndTime: %-5s | Days: %-7s| %-4s | Code: %-10s |\n",
-                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode
+                        "| %-2d | %-20s |  Professor: %-14s | %-7s | StartTime: %-5s | EndTime: %-5s | Days: %-7s| %-4s | Code: %-10s | Year: %-4s | %-5s |\n",
+                id, courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode, year, taken
         );
     }
 
@@ -144,8 +208,11 @@ public class Course {
         ObjectMapper om = new ObjectMapper();
         String courseJSON = "";
         try {
+            System.out.println("Converting Course to JSON");
             courseJSON = om.writeValueAsString(this);
+            System.out.println(courseJSON);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             courseJSON = "ERROR";
         }
         return courseJSON;
