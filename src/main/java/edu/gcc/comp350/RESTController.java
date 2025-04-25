@@ -175,7 +175,8 @@ public class RESTController {
         if (newSchedule == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: No courses match entered session.");
         }
-        return ResponseEntity.ok("Courses have been Generated"); // newSchedule.getCourses()
+        newSchedule.saveSchedule();
+        return ResponseEntity.ok("/schedule/"+newSchedule.getId());
     }
 
     @GetMapping("/allAmbiguousCourses")
