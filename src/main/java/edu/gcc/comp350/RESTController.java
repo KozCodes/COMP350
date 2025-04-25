@@ -20,6 +20,40 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 
 public class RESTController {
+    @GetMapping("/currentStudentName")
+    public String getCurrentStudentName() {
+        return RefactoredMain.currentStudent != null ? RefactoredMain.currentStudent.getName() : "Guest";
+    }
+
+    @GetMapping("/studentSchedules")
+    public ResponseEntity<List<Map<String, Object>>> getStudentSchedules() {
+        // Check if the current student is set
+        if (RefactoredMain.currentStudent == null || RefactoredMain.currentStudent.getId() == 0) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Get the current student's ID
+        int studentId = RefactoredMain.currentStudent.getId();
+
+        // Filter schedules belonging to the current student
+        List<Map<String, Object>> studentSchedules = RefactoredMain.schedules.stream()
+        .filter(schedule -> {
+            System.out.println("Processing schedule with student ID: " + schedule.getStudentID());
+            return schedule.getStudentID() == studentId;
+        })
+        .map(schedule -> {
+            Map<String, Object> scheduleMap = new HashMap<>();
+            scheduleMap.put("id", schedule.getId());
+            scheduleMap.put("name", schedule.getName());
+            return scheduleMap;
+        })
+        .toList();
+
+        System.out.println("Current student ID: " + RefactoredMain.currentStudent.getId());
+        System.out.println("Student schedules: " + studentSchedules);
+
+        return ResponseEntity.ok(studentSchedules);
+    }
 
     /* Login Functions */
 

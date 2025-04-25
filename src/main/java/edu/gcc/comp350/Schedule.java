@@ -30,6 +30,8 @@ public class Schedule {
     @JsonIgnore
     private Stack<Course> lastChangedCourses;
 
+    private int studentID;
+
     /**
      * Schedule Constructor
      * Class variable id is the id assigned by the database
@@ -42,6 +44,7 @@ public class Schedule {
         this.lastChangedCourses = new Stack<>();
         this.name = "Schedule " + (RefactoredMain.currentStudent.getSchedules().isEmpty() ? 1 : RefactoredMain.currentStudent.getSchedules().size() + 1);
         this.id = addScheduleToDatabase();
+        this.studentID = RefactoredMain.currentStudent.getId();
     }
 
     /**
@@ -145,6 +148,12 @@ public class Schedule {
     protected void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Get the student ID associated with this Schedule
+     * @return int student ID
+     */
+    protected int getStudentID() { return studentID; }
 
     /**
      * Add a course to the Schedule
