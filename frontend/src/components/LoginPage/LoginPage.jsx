@@ -32,7 +32,7 @@ const LoginPage = () => {
     try {
       const response = await axios.post(url, formData, { withCredentials: true });
       setMessage(response.data);
-      navigate('/home');
+      navigate('/home', { state: response.data });
     } catch (error) {
       setMessage(error.response?.data || 'An error occurred.');
     }

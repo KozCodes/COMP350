@@ -231,7 +231,7 @@ public class RESTController {
 
     /* Schedule Functions */
     @RequestMapping("/schedule")
-    public ResponseEntity<List<String>> getSchedule(@RequestParam("id") int id) throws SQLException {
+    public ResponseEntity<String> getSchedule(@RequestParam("id") int id) throws SQLException {
 
         if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
             RefactoredMain.db.connect();
@@ -245,11 +245,8 @@ public class RESTController {
             if (rs.next()) {
                 String name = rs.getString("scheduleTitle");
                 Schedule schedule = new Schedule(name, id);
-                ArrayList<String> courseJSONList = new ArrayList<>();
-                for(Course course : schedule.getCourses()) {
-                    courseJSONList.add(course.toJson());
-                }
-                return ResponseEntity.ok(courseJSONList);
+                String scheduleJSON = schedule.toJson();
+                return ResponseEntity.ok(scheduleJSON);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -292,18 +289,93 @@ public class RESTController {
         }
     }
 
-    @GetMapping("/search/{query}")
-    public ResponseEntity<List<String>> HandleSearch(@PathVariable String query) throws SQLException, ClassNotFoundException {
-
+    @GetMapping("/search/{query}/{Days}/{Times}/{EndTimes}/{Session}/{Year}/{CourseCode}/{CourseDepartment}")
+    public ResponseEntity<List<String>> HandleSearch(@PathVariable String query, @PathVariable String[] Days, @PathVariable String[] Times,
+                                                     @PathVariable String[] EndTimes, @PathVariable String Session, @PathVariable String Year, @PathVariable String CourseCode,
+                                                     @PathVariable String CourseDepartment) throws SQLException, ClassNotFoundException {
         Filter filter = new Filter();
-        Search search = new Search(query, filter);
+
+        List<RefactoredMain.Days> daysList = new ArrayList<>();
+
+        if (!Days[0].equals("Empty")) {
+            for (int i = 0; i < Days.length; i++) {
+                switch(Days[i]) {
+                    case "Monday" -> daysList.add(RefactoredMain.Days.M);
+                    case "Tuesday" -> daysList.add(RefactoredMain.Days.T);
+                    case "Wednesday" -> daysList.add(RefactoredMain.Days.W);
+                    case "Thursday" -> daysList.add(RefactoredMain.Days.R);
+                    case "Friday" -> daysList.add(RefactoredMain.Days.F);
+                }
+
+            }
+        } else {
+            daysList.add(RefactoredMain.Days.BLANK);
+        }
+
+        filter.setCourse(daysList);
+
+        List<Time> startTimes = new ArrayList<>();
+
+        if (!Times[0].equals("Empty")) {
+            for (int i = 0; i < Times.length; i++) {
+                startTimes.add(Time.valueOf(Times[i]));
+            }
+        } else {
+            startTimes.add(Time.valueOf("00:00:00"));
+        }
+
+        filter.setStartTime(startTimes);
+
+        List<Time> endTimes = new ArrayList<>();
+
+        if (!EndTimes[0].equals("Empty")) {
+            for (int i = 0; i < EndTimes.length; i++) {
+                endTimes.add(Time.valueOf(EndTimes[i]));
+            }
+        } else {
+            endTimes.add(Time.valueOf("00:00:00"));
+        }
+
+        filter.setEndTime(endTimes);
+
+        RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
+
+        switch(Session) {
+            case "Fall" -> finalSession = RefactoredMain.Session.FALL;
+            case "Winter" -> finalSession = RefactoredMain.Session.WINTER;
+            case "Spring" -> finalSession = RefactoredMain.Session.SPRING;
+            case "Early Summer" -> finalSession = RefactoredMain.Session.EARLYSUMMER;
+            case "Late Summer" -> finalSession = RefactoredMain.Session.LATESUMMER;
+            case "Blank" -> finalSession = RefactoredMain.Session.BLANK;
+        }
+
+        filter.setCourseSession(finalSession);
+
+        Search search = new Search(Session, filter);
         search.search(query);
-        List<Course> courses = search.getSearchResults();
+        List<Course> courses;
+        if (search.getFilteredResults().isEmpty()) {
+          courses = search.getSearchResults();
+        } else {
+            courses = search.getFilteredResults();
+        }
+
+        List<String> codes = new ArrayList<>();
+
+        if (!CourseCode.equals("None")) {
+            codes.add(CourseCode);
+        }
+
+        filter.setCourseCodes(codes);
+
+        filter.setDepartment(CourseDepartment);
+
+        filter.setYear(Integer.valueOf(Year));
 
         List<String> courseJSON = new ArrayList<>();
 
-        for (int i = 0; i < courses.size(); i++) {
-            courseJSON.add(courses.get(i).getCourseTitle());
+        for (Course course : courses) {
+            courseJSON.add(course.toJson());
         }
 
         return ResponseEntity.ok(courseJSON);
