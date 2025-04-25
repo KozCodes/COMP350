@@ -201,7 +201,7 @@ public class RefactoredMain {
                 }
             }
 
-            if (codesonly.contains(courseCode)) {
+            if (!codesonly.contains(courseDept)) {
                 codesonly.add(courseDept);
             }
 
