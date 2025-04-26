@@ -57,6 +57,14 @@ const CourseSearch = () => {
         { value: '21:00:00', label: '21:00:00' }
      ];
 
+    const dropdownDayOptions = [
+        { value: 'Monday', label: 'Monday' },
+        { value: 'Tuesday', label: 'Tuesday' },
+        { value: 'Wednesday', label: 'Wednesday' },
+        { value: 'Thursday', label: 'Thursday' },
+        { value: 'Friday', label: 'Friday' }
+        ];
+
     const dropdownEndOptions = [
         { value: '08:50:00', label: '08:50:00' },
         { value: '09:15:00', label: '09:15:00' },
@@ -104,8 +112,12 @@ const CourseSearch = () => {
         { value: '2025', label: '2025' }
     ];
 
-    const handleDaysChange = (id) => {
-       //todo
+    const handleDaysChangeAdd = (ids) => {
+        if (Days.includes(ids.target.id)) {
+            setDays(Days.filter((day) => day === ids));
+        } else {
+            Days.push(ids.target.value);
+       }
     }
 
     const handleSessionChange = (e) => {
@@ -140,7 +152,6 @@ const CourseSearch = () => {
 <div style={{textAlign: 'center', padding: '4rem', minHeight: '100vh', color: 'black' }}>
    <h2 style = {{ fontWeight: 'bold', color: '#990000'}}> Course Search </h2>
 
-
  <div style= {{textAlign: 'center', padding: '2rem'}}>
    <input style = {{}}
    name = "Search..."
@@ -162,21 +173,18 @@ const CourseSearch = () => {
 
        <div style={{display: 'grid', placeItems: 'center'}}>
           <label> Filter by Days </label>
-           <label>
-           <input type="checkbox" id="Monday" name="Monday" value="Monday"/> Monday
-           </label>
-           <label>
-                   <input type="checkbox" id="Tuesday" name="Tuesday" value="Tuesday"/> Tuesday
-           </label>
-           <label>
-                   <input type="checkbox" id="Wednesday" name="Wednesday" value="Wednesday"/> Wednesday
-           </label>
-              <label>
-                     <input type="checkbox" id="Thursday" name="Thursday" value="Thursday"/> Thursday
-              </label>
-              <label>
-                  <input type="checkbox" id="Friday" name="Friday" value="Friday"/> Friday
-         </label>
+            <select
+            name = "days"
+            onChange = {e => handleDaysChangeAdd(e)}
+            value={Days}
+            >
+            <option value= ""> Days </option>
+            {dropdownDayOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+            </select>
       </div>
 
       <div style={{display: 'grid', placeItems: 'center'}}>

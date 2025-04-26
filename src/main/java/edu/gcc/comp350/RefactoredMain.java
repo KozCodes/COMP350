@@ -21,6 +21,7 @@ public class RefactoredMain {
     protected static List<String> stopwordList = Arrays.asList("a", "an", "the", "is", "are", "was", "were", "be", "being", "been",
             "have", "has", "had", "do", "does", "did", "doing", "will", "shall",
             "should", "can", "could", "may", "might", "must", "ought");
+    protected static List<String> codesonly = new ArrayList<>();
 
     protected static DatabaseConnect db = new DatabaseConnect();
 
@@ -198,6 +199,10 @@ public class RefactoredMain {
                 if (professor.equals(RefactoredMain.professors.get(j).getName())) {
                     prof = RefactoredMain.professors.get(j);
                 }
+            }
+
+            if (!codesonly.contains(courseDept)) {
+                codesonly.add(courseDept);
             }
 
             Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false);
