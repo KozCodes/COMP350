@@ -44,7 +44,7 @@ const Results = () => {
             </li>
           ))}
         </ul>
-        
+
       )}
     </div>
   );

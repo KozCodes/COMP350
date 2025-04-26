@@ -70,6 +70,12 @@ public class RESTController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return ResponseEntity.ok("Logged out");
+    }
+
     /* Sign Up Functions */
 
     @PostMapping("/signup")
