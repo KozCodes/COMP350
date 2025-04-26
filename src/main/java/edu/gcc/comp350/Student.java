@@ -79,7 +79,7 @@ public class Student {
     }
 
     protected int getId() {
-        return 1;
+        return id;
     }
 
     protected String getName() {

@@ -68,7 +68,6 @@ public class RESTController {
     }
 
     /* Login Functions */
-
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) throws SQLException {
         String username = loginRequest.getUsername();
@@ -94,6 +93,49 @@ public class RESTController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
+
+    //Use this for setting refactored main currentStudent
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) throws SQLException {
+//        String username = loginRequest.getUsername();
+//        String password = loginRequest.getPassword();
+//
+//        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+//            RefactoredMain.db.connect();
+//        }
+//
+//        String sql = "SELECT * FROM Student WHERE username = ? AND password = ?";
+//        try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
+//            pstmt.setString(1, username);
+//            pstmt.setString(2, password);
+//            ResultSet rs = pstmt.executeQuery();
+//            if (rs.next()) {
+//                HttpSession session = request.getSession(true);
+//                session.setAttribute("studentId", rs.getInt("id"));
+//
+//                // FIX: wrap minor string into a List<String>
+//                List<String> minors = new ArrayList<>();
+//                String minorField = rs.getString("minor");
+//                if (minorField != null && !minorField.isEmpty()) {
+//                    minors.add(minorField);
+//                }
+//
+//                RefactoredMain.currentStudent = new Student(
+//                        rs.getInt("id"),
+//                        rs.getString("name"),
+//                        rs.getString("major"),
+//                        minors
+//                );
+//
+//                return ResponseEntity.ok("Login successful");
+//            } else {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+//            }
+//        } catch (SQLException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+//        }
+//    }
+
 
     static class LoginRequest {
         private String username;

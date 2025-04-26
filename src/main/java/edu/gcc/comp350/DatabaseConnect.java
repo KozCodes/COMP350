@@ -102,6 +102,7 @@ public class DatabaseConnect {
         injectSql("DROP TABLE IF EXISTS ScheduleCourses");
         injectSql("DROP TABLE IF EXISTS Professors");
         injectSql("DROP TABLE IF EXISTS StudentRatings");
+        injectSql("DROP TABLE IF EXISTS CourseRegistrations");
     }
 
     protected void clearCoursesFromDatabase() {
@@ -171,6 +172,17 @@ public class DatabaseConnect {
              department TEXT NOT NULL
              );""";
         injectSql(sql);
+
+        // Create the CourseRegistrations table
+        sql = """
+        CREATE TABLE IF NOT EXISTS CourseRegistrations (
+         courseId INTEGER,
+         studentId INTEGER,
+         FOREIGN KEY (courseId) REFERENCES Courses(id),
+         FOREIGN KEY (studentId) REFERENCES Student(id),
+         PRIMARY KEY (courseId, studentId)
+        );""";
+        injectSql(sql);
     }
 
     protected void createCoursesTableInDatabase() {
@@ -204,6 +216,8 @@ public class DatabaseConnect {
          department TEXT NOT NULL
          );""";
         injectSql(sql);
+
+
     }
 //    /**
 //     * If the database Courses table does not exist, reset it. Else, it already exists.

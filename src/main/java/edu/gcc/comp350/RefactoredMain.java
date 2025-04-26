@@ -14,7 +14,7 @@ public class RefactoredMain {
 
     public static List<Course> courses = new ArrayList<>();
     protected static List<Professor> professors = new ArrayList<>();
-    public static Student currentStudent;
+    public static Student currentStudent = null;
     protected static Search search;
     protected static Schedule currentSchedule;
     protected static List<String> Dictionary = new ArrayList<>();
@@ -48,16 +48,16 @@ public class RefactoredMain {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-// If changes are made to the database structure, uncomment these lines and run once to reset the database
-       // db.connect();
-       // db.clearDatabase();
-       // db.createDatabase();
-      //  db.resetCoursesInDatabase();
-       // db.resetProfessorsInDatabase();
-       // db.populateProfessorsInDatabase();
-      //  db.setProfessorsInDatabase();
-      //  db.ProfRatings();
-      //  db.disconnect();
+//// If changes are made to the database structure, uncomment these lines and run once to reset the database
+//        db.connect();
+//        db.clearDatabase();
+//        db.createDatabase();
+//        db.resetCoursesInDatabase();
+//        db.resetProfessorsInDatabase();
+//        db.populateProfessorsInDatabase();
+//        db.setProfessorsInDatabase();
+//        db.ProfRatings();
+//        db.disconnect();
 
         runFunction();
 
@@ -205,7 +205,7 @@ public class RefactoredMain {
                 codesonly.add(courseDept);
             }
 
-            Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false);
+            Course course = new Course(currentId, courseTitle, prof, finalSession, start, end, days, courseDept, courseCode, year, false, 0, 2);
             RefactoredMain.courses.add(course);
         }
     }
