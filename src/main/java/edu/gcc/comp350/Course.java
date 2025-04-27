@@ -47,7 +47,7 @@ public class Course {
     private int numRegistered = 0;  // Default value to avoid null in JSON
 
     @JsonProperty
-    private int numSeats = 2;  // Default value (you can change this based on your logic)
+    private int numSeats = 32;  // Default value (you can change this based on your logic)
 
 
 
@@ -88,8 +88,14 @@ public class Course {
         this.courseCode = courseCode;
         this.year = year;
         this.taken = taken;
-        this.numRegistered = numRegistered;
         this.numSeats = numSeats;
+
+        if (numRegistered == 0) {
+            Random random = new Random();
+            this.numRegistered = random.nextInt(33);
+        } else {
+            this.numRegistered = numRegistered;
+        }
     }
 
     protected boolean hasTimeConflict(Course course) {

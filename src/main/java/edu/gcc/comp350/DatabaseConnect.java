@@ -125,7 +125,7 @@ public class DatabaseConnect {
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
              courseCode TEXT NOT NULL,
-             numSeats INTEGER NOT NULL DEFAULT 2,
+             numSeats INTEGER NOT NULL DEFAULT 32,
              numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
         injectSql(sql);
@@ -198,7 +198,7 @@ public class DatabaseConnect {
              courseDays TEXT NOT NULL,
              courseDept TEXT NOT NULL,
              courseCode TEXT NOT NULL,
-             numSeats INTEGER NOT NULL DEFAULT 2,
+             numSeats INTEGER NOT NULL DEFAULT 32,
              numRegistered INTEGER NOT NULL DEFAULT 0
             );""";
         injectSql(sql);
@@ -301,13 +301,15 @@ public class DatabaseConnect {
     protected void populateCoursesInDatabase() {
         createCoursesTableInDatabase();
         String filePath = "Database/data_wolfe.json";
+        Random random = new Random(); // Initialize random object
+
         try {
             String content = new String(Files.readAllBytes(Paths.get(filePath)));
             JSONObject jsonObject = new JSONObject(content);
 
-
             JSONArray coursesArray = jsonObject.getJSONArray("classes");
             String courseSql = "INSERT INTO Courses (courseTitle, professor, session, startTime, endTime, courseDays, courseDept, courseCode, numSeats, numRegistered) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
             try (PreparedStatement courseStmt = conn.prepareStatement(courseSql)) {
                 for (int i = 0; i < coursesArray.length(); i++) {
                     JSONObject course = coursesArray.getJSONObject(i);
@@ -315,6 +317,7 @@ public class DatabaseConnect {
                     StringBuilder day = new StringBuilder();
                     StringBuilder startTime = new StringBuilder();
                     StringBuilder endTime = new StringBuilder();
+
                     for (Object time : timeData) {
                         JSONObject timeObj = (JSONObject) time;
                         if (!day.isEmpty()) day.append(", ");
@@ -333,8 +336,9 @@ public class DatabaseConnect {
                     courseStmt.setString(6, day.toString()); // Use the accumulated days
                     courseStmt.setString(7, course.getString("subject"));
                     courseStmt.setString(8, course.getString("subject") + " " + course.getInt("number") + " " + course.getString("section"));
-                    courseStmt.setInt(9, 2);
-                    courseStmt.setInt(10, 0);
+                    courseStmt.setInt(9, 32);
+                    int numRegistered = random.nextInt(33);
+                    courseStmt.setInt(10, numRegistered);
                     courseStmt.executeUpdate();
                 }
             }

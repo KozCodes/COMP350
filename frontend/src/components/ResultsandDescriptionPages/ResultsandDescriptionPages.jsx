@@ -36,21 +36,6 @@ const Results = () => {
     fetchRatings();
   }, [courses]);
 
-  // Handle course registration
-  const handleAddCourse = async (courseId) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/register-course',
-        null, // No body, since we're passing `courseId` as a URL parameter
-        { params: { courseId } } // This sends `courseId=139` as the query parameter
-      );
-      alert(response.data); // Success message from backend
-    } catch (error) {
-      const errorMessage = error.response ? error.response.data : error.message;
-      alert(`Error: ${errorMessage}`); // Display error from backend
-    }
-  };
-
   const renderStars = (score) => {
     if (score === null || score === undefined) return 'No rating yet';
     const fullStars = Math.floor(score);
@@ -94,7 +79,14 @@ const Results = () => {
           ) : (
             courses.map((courseJson, index) => {
               const course = JSON.parse(courseJson);
+
+              console.log('Parsed Course:', course);
+
               const profRating = ratings[course.professor.id];
+
+              const numRegistered = course.numRegistered || 0;
+              const numSeats = course.numSeats || 0;
+              const seatsAvailable = numSeats - numRegistered;
 
               return (
                 <div key={index} style={courseCardStyle}>
@@ -119,24 +111,23 @@ const Results = () => {
                   </p>
                   <p style={infoStyle}><strong>Session:</strong> {course.session} {course.year}</p>
                   <p style={{ margin: '0.25rem 0', color: '#666' }}>
-                    <strong>Seats:</strong> {course.numRegistered || 0}/{course.numSeats || 0}
+                    <strong>Seats Available:</strong> {seatsAvailable}
                   </p>
 
                   <button
-                    onClick={() => handleAddCourse(course.id)}
-                    disabled={course.numRegistered >= course.numSeats}
+                    onClick={() => {}}
                     style={{
                       marginTop: '1rem',
-                      backgroundColor: course.numRegistered >= course.numSeats ? '#ccc' : '#0070f3',
+                      backgroundColor: '#0070f3',
                       color: 'white',
                       padding: '0.6rem 1.2rem',
                       border: 'none',
                       borderRadius: '8px',
                       fontWeight: 'bold',
-                      cursor: course.numRegistered >= course.numSeats ? 'not-allowed' : 'pointer'
+                      cursor: 'pointer'
                     }}
                   >
-                    {course.numRegistered >= course.numSeats ? 'Full' : 'Add to Schedule'}
+                    Add to Schedule
                   </button>
                 </div>
               );
