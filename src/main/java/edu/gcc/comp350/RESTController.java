@@ -221,7 +221,7 @@ public class RESTController {
         if (newSchedule == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: No courses match entered session.");
         }
-        newSchedule.saveSchedule();
+        //newSchedule.saveSchedule();  Schedule is now automatically saved when course is added
         return ResponseEntity.ok("/schedule/"+newSchedule.getId());
     }
 

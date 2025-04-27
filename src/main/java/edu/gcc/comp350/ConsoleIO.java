@@ -157,8 +157,7 @@ public class ConsoleIO {
      * saves current schedule to database
      */
     private void save() {
-        currentSchedule.saveSchedule();
-        System.out.println("Saved schedule");
+        System.out.println("Schedule is now automatically saved");
     }
 
     /**

@@ -30,6 +30,11 @@ public class Schedule {
     @JsonIgnore
     private Stack<Course> lastChangedCourses;
 
+
+    // No-argument constructor for JSON serialization
+    public Schedule() {}
+
+
     /**
      * Schedule Constructor
      * Class variable id is the id assigned by the database
@@ -61,6 +66,13 @@ public class Schedule {
         this.lastChangedCourses = new Stack<>();
         this.name = name;
         this.id = addScheduleToDatabase(student_id);
+
+        // testing only TODO remove when done
+        if (classes.isEmpty()) {
+            Course course = RefactoredMain.courses.get(112);
+            addCourse(course.getID());
+            System.out.println(toJson());
+        }
     }
 
     /**
@@ -199,6 +211,7 @@ public class Schedule {
                     System.out.println("Error updating registered count: " + e.getMessage());
                 }
 
+                saveSchedule();
                 return 1;
             }
         }
@@ -270,6 +283,8 @@ public class Schedule {
                 return;
             }
         }
+
+        saveSchedule();
     }
 
 
@@ -281,9 +296,9 @@ public class Schedule {
     protected void undo() {
         Course course = lastChangedCourses.pop();
         if (classes.contains(course)) {
-            classes.remove(course);
+            removeCourse(course.getID());
         } else {
-            classes.add(course);
+            addCourse(course.getID());
         }
     }
 
@@ -292,11 +307,11 @@ public class Schedule {
      * @return List<Course> list of courses in the Schedule
      */
     protected List<Course> getCourses() {
-        return classes;
+        return new ArrayList<>(classes);
     }
 
 
-    protected void saveSchedule() {
+    private void saveSchedule() {
 //        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
 //        db.injectSql(scheduleSql);
 
