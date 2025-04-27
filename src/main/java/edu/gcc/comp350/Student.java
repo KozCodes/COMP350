@@ -14,6 +14,37 @@ public class Student {
     private List<String> minors;
     private List<Schedule> schedules = new ArrayList<>();
 
+    protected Student(String name, String major, List<String> minors) {
+        this.name = name;
+        this.major = major;
+        this.minors = minors;
+
+        // put this student in db
+        try (var pstmt = db.conn.prepareStatement("INSERT INTO Student (name, major, minor, username, password) VALUES (?, ?, ?, ?, ?)")) {
+            pstmt.setString(1, this.name);
+            pstmt.setString(2, major);
+            pstmt.setString(3, minors.toString());
+            pstmt.setString(4, this.name);
+            pstmt.setString(5, this.name);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // get id assigned from db
+        String sql = "SELECT id FROM Student WHERE name = '" + this.name + "'";
+
+        try (var stmt = RefactoredMain.db.conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            this.id = rs.getInt("id");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        this.schedules = getSchedulesFromDatabase();
+
+    }
+
     protected Student(int id, String name, String major, List<String> minors) {
         this.name = name;
         this.major = major;
