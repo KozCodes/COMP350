@@ -80,55 +80,55 @@ const Schedule = () => {
     return (
         <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white', color: 'black' }}>
             {/* Sidebar */}
-            <div style={{
+             <div style={{
                 width: '20%',
                 backgroundColor: '#f8f9fa',
                 padding: '1rem',
                 borderRight: '1px solid #ddd',
                 overflowY: 'auto'
             }}>
-                <h2 style={{ fontSize: '1.5rem', color: '#990000', marginBottom: '1rem' }}>Courses</h2>
-                {schedule && schedule.classes ? (
-                    <ul style={{ listStyleType: 'none', padding: 0 }}>
-                        {schedule.classes.map((course, index) => (
-                            <li key={index} style={{
-                                marginBottom: '1rem',
-                                padding: '0.5rem',
-                                backgroundColor: '#ffffff',
-                                border: '1px solid #ddd',
-                                borderRadius: '5px',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease'
-                            }}
-                                onMouseOver={(e) => e.target.style.backgroundColor = '#eaf2f8'}
-                                onMouseOut={(e) => e.target.style.backgroundColor = '#ffffff'}
-                                onClick={() => handleCellClick(course)}
-                            >
-                            <div style={{ flex: 1 }}>
-                                <strong>{course.courseCode}</strong>
-                                <p style={{ margin: 0 }}>{course.courseTitle}</p>
-                            </div>
-                            <button
-                                onClick={() => handleDeleteCourse(course.id)}
-                                 style={{
-                                    padding: '0.3rem 0.5rem',
-                                    backgroundColor: 'white',
-                                    color: '#dc3545',
-                                    border: '2px solid #dc3545',
-                                    borderColor: '#dc3545',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.8rem'
-                                }}
-                                onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
-                                onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
-                            >
-                                Delete
-                            </button>
-                            </li>
-                        ))}
-                    </ul>
-                ) : <p>Loading courses...</p>}
+                 <h2 style={{ fontSize: '1.5rem', color: '#990000', marginBottom: '1rem' }}>Courses</h2>
+                 {schedule && schedule.classes ? (
+                     <ul style={{ listStyleType: 'none', padding: 0 }}>
+                         {schedule.classes.map((course, index) => (
+                             <li key={index} style={{
+                                 marginBottom: '1rem',
+                                 padding: '0.5rem',
+                                 backgroundColor: '#ffffff',
+                                 border: '1px solid #ddd',
+                                 borderRadius: '5px',
+                                 cursor: 'pointer',
+                                 transition: 'all 0.3s ease'
+                             }}
+                                 onMouseOver={(e) => e.target.style.backgroundColor = '#eaf2f8'}
+                                 onMouseOut={(e) => e.target.style.backgroundColor = '#ffffff'}
+                                 onClick={() => handleCellClick(course)}
+                             >
+                             <div style={{ flex: 1 }}>
+                                 <strong>{course.courseCode}</strong>
+                                 <p style={{ margin: 0 }}>{course.courseTitle}</p>
+                             </div>
+                             <button
+                                 onClick={() => handleDeleteCourse(course.id)}
+                                  style={{
+                                     padding: '0.3rem 0.5rem',
+                                     backgroundColor: 'white',
+                                     color: '#dc3545',
+                                     border: '2px solid #dc3545',
+                                     borderColor: '#dc3545',
+                                     borderRadius: '5px',
+                                     cursor: 'pointer',
+                                     fontSize: '0.8rem'
+                                 }}
+                                 onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
+                                 onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
+                             >
+                                 Delete
+                             </button>
+                             </li>
+                         ))}
+                     </ul>
+                 ) : <p>Loading courses...</p>}
             </div>
 
 
@@ -186,22 +186,22 @@ const Schedule = () => {
                     <Calendar schedule={schedule} onCellClick={handleCellClick} />
                    ) : <p> Loading... </p>}
 
-        </div>
-           {isModalOpen && selectedCourse ? (
-               <ReactModal       isOpen={isModalOpen}
-                                 contentLabel="Example Modal"
-                                 className="ReactModal__Content"
-                                 overlayClassName="ReactModal__Overlay">
-                       <h2>{selectedCourse.courseTitle}</h2>
-                       <p><strong>Course Code:</strong> {selectedCourse.courseCode}</p>
-                       <div><strong>Times:</strong> {formatTime(selectedCourse)}</div>
-                       <br></br>
-                       <p><strong>Instructor:</strong> {selectedCourse.professor.name}</p>
-                       <p><strong>Occupancy:</strong> {selectedCourse.numRegistered}/{selectedCourse.numSeats}</p>
+               {isModalOpen && selectedCourse ? (
+                   <ReactModal       isOpen={isModalOpen}
+                                     contentLabel="Course Details"
+                                     className="ReactModal__Content"
+                                     overlayClassName="ReactModal__Overlay">
+                           <h2>{selectedCourse.courseTitle}</h2>
+                           <p><strong>Course Code:</strong> {selectedCourse.courseCode}</p>
+                           <div><strong>Times:</strong> {formatTime(selectedCourse)}</div>
+                           <br></br>
+                           <p><strong>Instructor:</strong> {selectedCourse.professor.name}</p>
+                           <p><strong>Occupancy:</strong> {selectedCourse.numRegistered}/{selectedCourse.numSeats}</p>
 
-                       <button onClick={closeModal}>Close</button>
-               </ReactModal>
-           ) : null}
+                           <button onClick={closeModal}>Close</button>
+                   </ReactModal>
+               ) : null}
+            </div>
         </div>
     );
 }
@@ -223,3 +223,34 @@ const formatTime = (course) => {
 
 
 export default Schedule;
+
+/*
+<div>
+           { data ? (
+               <>
+               <h1>{data.name}</h1>
+               <button onClick={handleRename}>Rename Schedule</button>
+               </>
+               ) : (<p> Loading... </p>)}
+
+           { schedule ? (
+                <Calendar schedule={schedule} onCellClick={handleCellClick} />
+               ) : <p> Loading... </p>}
+
+           {isModalOpen && selectedCourse ? (
+               <ReactModal       isOpen={isModalOpen}
+                                 contentLabel="Example Modal"
+                                 className="ReactModal__Content"
+                                 overlayClassName="ReactModal__Overlay">
+                       <h2>{selectedCourse.courseTitle}</h2>
+                       <p><strong>Course Code:</strong> {selectedCourse.courseCode}</p>
+                       <div><strong>Times:</strong> {formatTime(selectedCourse)}</div>
+                       <br></br>
+                       <p><strong>Instructor:</strong> {selectedCourse.professor.name}</p>
+                       <p><strong>Occupancy:</strong> {selectedCourse.numRegistered}/{selectedCourse.numSeats}</p>
+
+                       <button onClick={closeModal}>Close</button>
+               </ReactModal>
+           ) : null}
+        </div>
+        */
