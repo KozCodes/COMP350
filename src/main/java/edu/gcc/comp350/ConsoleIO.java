@@ -157,8 +157,7 @@ public class ConsoleIO {
      * saves current schedule to database
      */
     private void save() {
-        currentStudent.saveSchedule(currentSchedule);
-        System.out.println("Saved schedule");
+        System.out.println("Schedule is now automatically saved");
     }
 
     /**
@@ -185,7 +184,7 @@ public class ConsoleIO {
      * this schedule becomes current schedule
      */
     private void newSchedule() {
-        currentSchedule = currentStudent.addSchedule(new Schedule());
+        currentSchedule = currentStudent.addSchedule(new Schedule(currentSchedule.getId()));
         System.out.println("Now working in new schedule");
     }
 

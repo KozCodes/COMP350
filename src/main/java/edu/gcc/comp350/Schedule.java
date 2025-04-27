@@ -30,18 +30,25 @@ public class Schedule {
     @JsonIgnore
     private Stack<Course> lastChangedCourses;
 
+
+    // No-argument constructor for JSON serialization
+    public Schedule() {}
+
+
     /**
      * Schedule Constructor
      * Class variable id is the id assigned by the database
      * Class variable classes is initialized to an empty ArrayList
      * Class variable lastChangedCourses is initialized to a new Stack
      * Class variable name is initialized to "Schedule " + 1 + the number of schedules the current student currently has
+     *
+     * @param student_id int database specified id for the student this Schedule belongs to
      */
-    protected Schedule() {
+    protected Schedule(int student_id) {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = "Schedule " + (RefactoredMain.currentStudent.getSchedules().isEmpty() ? 1 : RefactoredMain.currentStudent.getSchedules().size() + 1);
-        this.id = addScheduleToDatabase();
+        this.id = addScheduleToDatabase(student_id);
     }
 
     /**
@@ -52,12 +59,20 @@ public class Schedule {
      * Class variable name is initialized to param name
      *
      * @param name String specified name for this Schedule
+     * @param student_id int database specified id for the student this Schedule belongs to
      */
-    protected Schedule(String name) {
+    protected Schedule(String name, int student_id) {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.name = name;
-        this.id = addScheduleToDatabase();
+        this.id = addScheduleToDatabase(student_id);
+
+        // testing only TODO remove when done
+        if (classes.isEmpty()) {
+            Course course = RefactoredMain.courses.get(112);
+            addCourse(course.getID());
+            System.out.println(toJson());
+        }
     }
 
     /**
@@ -69,8 +84,9 @@ public class Schedule {
      *
      * @param name String specified name for this Schedule
      * @param id int database specified id for this Schedule
+     * @param student_id int database specified id for the student this Schedule belongs to
      */
-    protected Schedule(String name, int id) {
+    protected Schedule(String name, int id, int student_id) {
         this.classes = new ArrayList<>();
         this.lastChangedCourses = new Stack<>();
         this.id = id;
@@ -95,12 +111,13 @@ public class Schedule {
 
     /**
      * Add the Schedule to the database
+     * @param student_id int id of the student this Schedule belongs to
      * @return int id assigned to the Schedule
      */
-    protected int addScheduleToDatabase() {
+    protected int addScheduleToDatabase(int student_id) {
         try (var pstmt = RefactoredMain.db.conn.prepareStatement("INSERT INTO Schedule (scheduleTitle, student) VALUES (?, ?)")) {
             pstmt.setString(1, this.name);
-            pstmt.setInt(2, RefactoredMain.currentStudent.getId());
+            pstmt.setInt(2, student_id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -109,7 +126,7 @@ public class Schedule {
         String sql = "SELECT id FROM Schedule WHERE scheduleTitle = ? AND student = ?";
         try (var pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
             pstmt.setString(1, this.name);
-            pstmt.setInt(2, RefactoredMain.currentStudent.getId());
+            pstmt.setInt(2, student_id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
@@ -194,6 +211,7 @@ public class Schedule {
                     System.out.println("Error updating registered count: " + e.getMessage());
                 }
 
+                saveSchedule();
                 return 1;
             }
         }
@@ -265,6 +283,8 @@ public class Schedule {
                 return;
             }
         }
+
+        saveSchedule();
     }
 
 
@@ -276,9 +296,9 @@ public class Schedule {
     protected void undo() {
         Course course = lastChangedCourses.pop();
         if (classes.contains(course)) {
-            classes.remove(course);
+            removeCourse(course.getID());
         } else {
-            classes.add(course);
+            addCourse(course.getID());
         }
     }
 
@@ -287,11 +307,11 @@ public class Schedule {
      * @return List<Course> list of courses in the Schedule
      */
     protected List<Course> getCourses() {
-        return classes;
+        return new ArrayList<>(classes);
     }
 
 
-    protected void saveSchedule() {
+    private void saveSchedule() {
 //        String scheduleSql = "INSERT INTO Schedule (scheduleTitle, student) VALUES ('" + schedule.getName() + "', " + id + ")";
 //        db.injectSql(scheduleSql);
 
