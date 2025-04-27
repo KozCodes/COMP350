@@ -151,11 +151,13 @@ import React, { useState, useEffect } from "react";
             setConflicts(null);
             setError("Unexpected response format.");
           }
-        } catch (err) {
-          setError("Error generating schedule.");
-          setSchedule(null);
-          setConflicts(null);
-        }
+        } catch (error) {
+              // Extract and display the error message
+              const errorMessage = error.response?.data || "An unknown error occurred.";
+              setError(errorMessage); // Assuming `setError` is a state setter for displaying errors
+              setSchedule(null);
+              setConflicts(null);
+          }
       };
 
       return (
@@ -283,7 +285,11 @@ import React, { useState, useEffect } from "react";
               </div>
             </div>
 
-            {error && <p style={{ color: "#990000", marginBottom: "1rem" }}>{error}</p>}
+            {error && (
+                <p style={{ color: "red" }}>
+                    {typeof error === "object" ? JSON.stringify(error) : error}
+                </p>
+            )}
 
             <button onClick={generateSchedule} style={buttonStyle}>
               Generate

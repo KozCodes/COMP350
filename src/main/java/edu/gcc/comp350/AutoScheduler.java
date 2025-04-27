@@ -32,6 +32,11 @@ public class AutoScheduler {
         if(courseSections.isEmpty()) {
             return null;
         }
+
+        // Then remove all courses that are not in the entered session and year from enteredCourses
+        enteredCourses.removeIf(s -> !courseSections.containsKey(s));
+
+
         // Then check the schedule for time conflicts
         Schedule potentialSchedule = resolveConflicts(courseSections, enteredCourses);
 
