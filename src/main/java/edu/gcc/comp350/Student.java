@@ -14,38 +14,6 @@ public class Student {
     private List<String> minors;
     private List<Schedule> schedules = new ArrayList<>();
 
-    protected Student(String name, String major, List<String> minors) {
-        this.name = name;
-        this.major = major;
-        this.minors = minors;
-
-        // put this student in db
-        try (var pstmt = db.conn.prepareStatement("INSERT INTO Student (name, major, minor, username, password) VALUES (?, ?, ?, ?, ?)")) {
-            pstmt.setString(1, this.name);
-            pstmt.setString(2, major);
-            pstmt.setString(3, minors.toString());
-            pstmt.setString(4, this.name);
-            pstmt.setString(5, this.name);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        // get id assigned from db
-        String sql = "SELECT id FROM Student WHERE name = '" + this.name + "'";
-
-        try (var stmt = RefactoredMain.db.conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-                this.id = rs.getInt("id");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        this.schedules = getSchedulesFromDatabase();
-
-    }
-
-
     protected Student(int id, String name, String major, List<String> minors) {
         this.name = name;
         this.major = major;
@@ -53,6 +21,10 @@ public class Student {
         this.id = id;
 
         schedules = getSchedulesFromDatabase();
+        if (schedules.isEmpty()) {
+            Schedule schedule = new Schedule("New Schedule", this.id);
+            schedules.add(schedule);
+        }
     }
 
     /**
@@ -68,7 +40,7 @@ public class Student {
             while (rs.next()) {
                 int scheduleId = rs.getInt("id");
                 String scheduleTitle = rs.getString("scheduleTitle");
-                Schedule schedule = new Schedule(scheduleTitle, scheduleId);
+                Schedule schedule = new Schedule(scheduleTitle, scheduleId, this.id);
                 schedules.add(schedule);
             }
         } catch (SQLException e) {
@@ -123,23 +95,5 @@ public class Student {
             return null;
         }
     }
-    protected void saveSchedule(Schedule schedule) {
-        String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
-                try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
-                    pstmt.setInt(1, schedule.getId());
-                    pstmt.executeUpdate();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
 
-        for (Course course : schedule.getCourses()) {
-            try (var pstmt = db.conn.prepareStatement("INSERT INTO ScheduleCourses (schedule, course) VALUES (?, ?)")) {
-                pstmt.setInt(1, schedule.getId());
-                pstmt.setInt(2, course.getID());
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
 }

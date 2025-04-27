@@ -256,7 +256,7 @@ public class RESTController {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 String name = rs.getString("scheduleTitle");
-                Schedule schedule = new Schedule(name, id);
+                Schedule schedule = new Schedule(name, id, RefactoredMain.currentStudent.getId());
                 String scheduleJSON = schedule.toJson();
                 return ResponseEntity.ok(scheduleJSON);
             }
