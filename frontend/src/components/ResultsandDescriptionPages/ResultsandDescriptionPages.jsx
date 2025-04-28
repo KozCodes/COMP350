@@ -9,6 +9,7 @@ const Results = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState(location.state);
   const [ratings, setRatings] = useState({});
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -48,6 +49,12 @@ const Results = () => {
       </div>
     );
   };
+
+  const handleAddToSchedule = (course) => {
+      const response = axios.get(`http://localhost:8080/api/register-course/${course.Id}`);
+      setMessage(response.data);
+  };
+
 
   return (
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
@@ -114,8 +121,10 @@ const Results = () => {
                     <strong>Seats Available:</strong> {seatsAvailable}
                   </p>
 
+                  <p> {message} </p>
+
                   <button
-                    onClick={() => {}}
+                    onClick={(e) => {handleAddToSchedule(e)}}
                     style={{
                       marginTop: '1rem',
                       backgroundColor: '#0070f3',
