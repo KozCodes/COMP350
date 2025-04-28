@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const Home = () => {
-    const [studentName, setStudentName] = useState("Guest");
+    const [studentName, setStudentName] = useState(null);
     const [schedules, setSchedules] = useState([]);
     const [selectedScheduleId, setSelectedScheduleId] = useState(null);
     const [selectedScheduleName, setSelectedScheduleName] = useState(""); // New state for selected schedule name
+    const location = useLocation();
 
     const fetchSchedules = async () => {
         try {
@@ -31,6 +32,11 @@ const Home = () => {
         fetchSchedules();
     }, []);
 
+    useEffect(() => {
+        // Re-fetch schedules whenever the user navigates back to the Home page
+        fetchSchedules();
+    }, [location.key]); // Trigger when the location changes
+
     const handleScheduleClick = async (scheduleId) => {
         try {
             await axios.post("http://localhost:8080/api/setCurrentSchedule", scheduleId,
@@ -38,8 +44,7 @@ const Home = () => {
             setSelectedScheduleId(scheduleId);
 
             // Fetch the current schedule to ensure the selected schedule is reflected
-            const response = await axios.get("http://localhost:8080/api/currentSchedule");
-            console.log(response.data)
+            await axios.get("http://localhost:8080/api/currentSchedule");
             // Find the selected schedule name
             const selectedSchedule = schedules.find(schedule => schedule.id === scheduleId);
             setSelectedScheduleName(selectedSchedule ? selectedSchedule.name : ""); // Update the name

@@ -14,6 +14,7 @@ public class Student {
     private List<String> minors;
     private List<Schedule> schedules = new ArrayList<>();
 
+    // Constructor for Signup / creation of new student
     protected Student(String name, String major, List<String> minors) {
         this.name = name;
         this.major = major;
@@ -45,6 +46,7 @@ public class Student {
 
     }
 
+    // Constructor for loading existing student
     protected Student(int id, String name, String major, List<String> minors) {
         this.name = name;
         this.major = major;

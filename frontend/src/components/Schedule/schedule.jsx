@@ -126,51 +126,51 @@ const Schedule = () => {
             {/* Main Content */}
             <div style={{ padding: '2rem', flex: 1 }}>
                 <div className="schedule-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                        { data ? (
-                            <>
-                            <h1 style={{
-                                fontSize: '3rem',
-                                fontWeight: 'bold',
-                                color: '#990000',
-                                marginBottom: '0'
-                            }}>
-                                {data.name}
-                            </h1>
-                            <div style={{ display: 'flex', gap: '1rem' }}>
-                                <button onClick={handleRename}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            backgroundColor: '#dc3545',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '5px',
-                                            cursor: 'pointer',
-                                            fontSize: '1rem'
-                                        }}
-                                        onMouseOver={(e) => e.target.style.backgroundColor = '#a71d2a'}
-                                        onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
-                                >
-                                    Rename Schedule
-                                </button>
-                                <button onClick={handleDelete}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            backgroundColor: 'white',
-                                            color: '#dc3545',
-                                            border: '2px solid #dc3545',
-                                            borderColor: '#dc3545',
-                                            borderRadius: '5px',
-                                            cursor: 'pointer',
-                                            fontSize: '1rem'
-                                        }}
-                                        onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
-                                        onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
-                                >
-                                    Delete Schedule
-                                </button>
-                            </div>
-                            </>
-                        ) : (<p> Loading... </p>)}
+                    { data ? (
+                        <>
+                        <h1 style={{
+                            fontSize: '3rem',
+                            fontWeight: 'bold',
+                            color: '#990000',
+                            marginBottom: '0'
+                        }}>
+                            {data.name}
+                        </h1>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button onClick={handleRename}
+                                    style={{
+                                        padding: '0.5rem 1rem',
+                                        backgroundColor: '#dc3545',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '1rem'
+                                    }}
+                                    onMouseOver={(e) => e.target.style.backgroundColor = '#a71d2a'}
+                                    onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
+                            >
+                                Rename Schedule
+                            </button>
+                            <button onClick={handleDelete}
+                                    style={{
+                                        padding: '0.5rem 1rem',
+                                        backgroundColor: 'white',
+                                        color: '#dc3545',
+                                        border: '2px solid #dc3545',
+                                        borderColor: '#dc3545',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '1rem'
+                                    }}
+                                    onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
+                                    onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
+                            >
+                                Delete Schedule
+                            </button>
+                        </div>
+                        </>
+                    ) : (<p> Loading... </p>)}
                 </div>
 
                { schedule ? (
