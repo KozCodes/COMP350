@@ -138,7 +138,6 @@ const CourseSearch = () => {
            }
   }
 
-
   return (
 
 <div>
