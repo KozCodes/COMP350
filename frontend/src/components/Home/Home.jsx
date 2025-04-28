@@ -3,14 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const Home = () => {
-    const [studentName, setStudentName] = useState("Guest");
+    const [studentName, setStudentName] = useState(null);
     const [schedules, setSchedules] = useState([]);
     const [selectedScheduleId, setSelectedScheduleId] = useState(null);
     const [selectedScheduleName, setSelectedScheduleName] = useState(""); // New state for selected schedule name
     const location = useLocation();
 
     const fetchSchedules = async () => {
-        console.log("getting schedules");
         try {
             const response = await axios.get("http://localhost:8080/api/studentSchedules");
             setSchedules(response.data);
@@ -45,7 +44,7 @@ const Home = () => {
             setSelectedScheduleId(scheduleId);
 
             // Fetch the current schedule to ensure the selected schedule is reflected
-            const response = await axios.get("http://localhost:8080/api/currentSchedule");
+            await axios.get("http://localhost:8080/api/currentSchedule");
             // Find the selected schedule name
             const selectedSchedule = schedules.find(schedule => schedule.id === scheduleId);
             setSelectedScheduleName(selectedSchedule ? selectedSchedule.name : ""); // Update the name
