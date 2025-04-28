@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
     import { DndContext, closestCenter } from "@dnd-kit/core";
     import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
     import { CSS } from "@dnd-kit/utilities";
+    import Papa from "papaparse"; // Install with `npm install papaparse`
+    import { FaSpinner } from "react-icons/fa"; // Install with `npm install react-icons`
+    import './SchedulerPage.css';
 
     const SortableItem = ({ id, name, onChange, allCourses, removeCourse }) => {
       const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
@@ -74,6 +77,7 @@ import React, { useState, useEffect } from "react";
       const [conflicts, setConflicts] = useState(null);
       const [scheduleLink, setScheduleLink] = useState(null);
       const [isAdvancedPanelOpen, setIsAdvancedPanelOpen] = useState(false);
+      const [loading, setLoading] = useState(false);
 
       useEffect(() => {
         const fetchCourses = async () => {
@@ -88,6 +92,31 @@ import React, { useState, useEffect } from "react";
 
         fetchCourses();
       }, []);
+
+      const saveToCSV = () => {
+          const csvContent = "data:text/csv;charset=utf-8," + courses.map((c) => c.name).join("\n");
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "courses.csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+
+        const loadFromCSV = (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            Papa.parse(file, {
+              complete: (result) => {
+                const loadedCourses = result.data
+                  .filter((row) => row[0]) // Filter out empty rows
+                  .map((name, index) => ({ id: index + 1, name: name[0] }));
+                setCourses(loadedCourses);
+              },
+            });
+          }
+        };
 
       useEffect(() => {
         localStorage.setItem("courses", JSON.stringify(courses));
@@ -126,6 +155,7 @@ import React, { useState, useEffect } from "react";
       };
 
       const generateSchedule = async () => {
+        setLoading(true); // Start loading
         try {
           const response = await axios.post("http://localhost:8080/api/generateSchedule", {
             enteredCourses: courses.map((course) => course.name),
@@ -151,11 +181,15 @@ import React, { useState, useEffect } from "react";
             setConflicts(null);
             setError("Unexpected response format.");
           }
-        } catch (err) {
-          setError("Error generating schedule.");
-          setSchedule(null);
-          setConflicts(null);
-        }
+        } catch (error) {
+              // Extract and display the error message
+              const errorMessage = error.response?.data || "An unknown error occurred.";
+              setError(errorMessage); // Assuming `setError` is a state setter for displaying errors
+              setSchedule(null);
+              setConflicts(null);
+          } finally {
+            setLoading(false); // Stop loading
+          }
       };
 
       return (
@@ -176,6 +210,18 @@ import React, { useState, useEffect } from "react";
               Enter potential courses and list them in order of preference.
             </p>
           </div>
+          <div>
+                <button onClick={saveToCSV} style={{ margin: "10px" }}>
+                  Save to CSV
+                </button>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={loadFromCSV}
+                  style={{ margin: "10px" }}
+                />
+                {/* Rest of the SchedulerPage code */}
+              </div>
           <button
                   onClick={() => setIsAdvancedPanelOpen(!isAdvancedPanelOpen)}
                   style={{
@@ -283,11 +329,21 @@ import React, { useState, useEffect } from "react";
               </div>
             </div>
 
-            {error && <p style={{ color: "#990000", marginBottom: "1rem" }}>{error}</p>}
+            {error && (
+                <p style={{ color: "red" }}>
+                    {typeof error === "object" ? JSON.stringify(error) : error}
+                </p>
+            )}
 
-            <button onClick={generateSchedule} style={buttonStyle}>
-              Generate
-            </button>
+            <button onClick={generateSchedule} style={buttonStyle} disabled={loading}>
+                    {loading ? "Generating..." : "Generate"}
+                  </button>
+
+                  {loading && (
+                    <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                      <FaSpinner className="spinner" style={{ fontSize: "2rem", color: "#990000", animation: "spin 1s linear infinite" }} />
+                    </div>
+                  )}
 
             {scheduleLink && (
               <a
