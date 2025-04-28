@@ -8,6 +8,8 @@ const CourseSearch = () => {
 
     const navigate = useNavigate();
 
+    const isDisabled = query === '';
+
     const [Days, setDays] = useState(['Empty']);
 
     const [Times, setStartTimes] = useState(['Start Time']);
@@ -25,20 +27,88 @@ const CourseSearch = () => {
       const [message, setMessage] = useState('');
 
       const handleTimeChange = (e) => {
-       ;
+          const value = e.target.value;
+           if (Times.includes('Start Time')) {
+            setStartTimes((prevTimes) => prevTimes.filter((time) => time !== 'Start Time'));
+           }
+            if (!Times.includes(value)) {
+          setStartTimes((prevTimes) => [...prevTimes, value]);
+          } else {
+            setStartTimes((prevTimes) => prevTimes.filter((time) => time !== value));
+          }
       }
 
     const handleEndTimeChange = (e) => {
-        ;
+         const value = e.target.value;
+                        //filter out empty
+                        if (EndTimes.includes('End Time')) {
+                            setEndTimes((prevEndTimes) => prevEndTimes.filter((endTime) => endTime !== 'End Time'));
+                        }
+                    if (!EndTimes.includes(value)) {
+                        setEndTimes((prevEndTimes) => [...prevEndTimes, value]);
+                    } else {
+                        setEndTimes((prevEndTimes) => prevEndTimes.filter((endTime) => endTime !== value));
+                    }
     }
 
-    const dropdownDayOptions = [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday'
+    const dropdownEndOptions = [
+        { value: '08:50:00', label: '08:50:00' },
+        { value: '09:15:00', label: '09:15:00' },
+        { value: '09:50:00', label: '09:50:00' },
+        { value: '10:15:00', label: '10:15:00' },
+        { value: '10:50:00', label: '10:50:00' },
+        { value: '11:15:00', label: '11:15:00' },
+        { value: '11:50:00', label: '11:50:00' },
+        { value: '12:15:00', label: '12:15:00' },
+        { value: '12:50:00', label: '12:50:00' },
+        { value: '13:15:00', label: '13:15:00' },
+        { value: '13:50:00', label: '13:50:00' },
+        { value: '14:15:00', label: '14:15:00' },
+        { value:'14:50:00', label:'14:50:00'},
+        { value: '15:15:00', label: '15:15:00' },
+        { value: '15:50:00', label: '15:50:00' },
+        { value: '16:15:00', label: '16:15:00' },
+        { value: '16:50:00', label: '16:50:00'},
+        { value:'17:15:00', label:'17:15:00'},
+        { value:'17:50:00', label:'17:50:00'},
+        { value:'18:15:00', label:'18:15:00'},
+        { value:'18:50:00', label:'18:50:00'},
+        { value:'19:15:00', label:'19:15:00'},
+        { value:'19:50:00', label:'19:50:00'},
+        { value:'20:15:00', label:'20:15:00'},
+        { value:'20:50:00', label:'20:50:00'}
     ];
+
+
+    const dropdownStartOptions = [
+        { value: '08:00:00', label: '08:00:00' },
+        { value: '09:00:00', label: '09:00:00' },
+        { value: '09:30:00', label: '09:30:00' },
+         { value: '10:00:00', label: '10:00:00' },
+        { value: '10:30:00', label: '10:30:00' },
+        { value: '11:00:00', label: '11:00:00' },
+        { value: '11:30:00', label: '11:30:00' },
+        { value: '12:00:00', label: '12:00:00' },
+        { value: '12:30:00', label: '12:30:00' },
+        { value: '13:00:00', label: '13:00:00' },
+        { value: '13:30:00', label: '13:30:00' },
+        { value: '14:00:00', label: '14:00:00' },
+        { value: '14:30:00', label: '14:30:00' },
+        { value: '15:00:00', label: '15:00:00' },
+        { value: '15:30:00', label: '15:30:00' },
+        { value: '16:00:00', label: '16:00:00' },
+        { value: '16:30:00', label: '16:30:00' },
+        { value: '17:00:00', label: '17:00:00' },
+        { value: '17:30:00', label: '17:30:00' },
+        { value: '18:00:00', label: '18:00:00' },
+        { value: '18:30:00', label: '18:30:00' },
+        { value: '19:00:00', label: '19:00:00' },
+        { value: '19:30:00', label: '19:30:00' },
+        { value: '20:00:00', label: '20:00:00' },
+        { value: '20:30:00', label: '20:30:00' },
+        { value: '21:00:00', label: '21:00:00' }
+     ];
+
 
 
 
@@ -104,8 +174,10 @@ const CourseSearch = () => {
    />
    <button style= {{fontWeight: 'bold', backgroundColor: '#990000', color: 'white'}}
         type= "submit"
+        disabled = {isDisabled}
         onClick={() =>
             handleSearch()}> Search
+
    </button>
    <h1> {message}</h1>
 
@@ -116,7 +188,6 @@ const CourseSearch = () => {
 
        <div style={{display: 'grid', placeItems: 'center'}}>
           <label> Filter by Days </label>
-          <h1> {Days}</h1>
                     <label>
                       <input
                         type="checkbox"
@@ -169,12 +240,37 @@ const CourseSearch = () => {
 
       <div style={{display: 'grid', placeItems: 'center'}}>
         <label> Filter by Times </label>
-        <input type={{}} id="time" onChange = {(e) =>  setStartTimes(e.target.value)}
-               name="time" value= {Times}/>
-               <button onClick= {(e) => handleTimeChange(e)}>Add Start Time</button>
-               <input type={{}} id="time" onChange = {(e) => setEndTimes(e.target.value)}
-                      name="time" value= {EndTimes}/>
-                        <button onClick= {(e) => handleEndTimeChange(e)}>Add End Time</button>
+        <select
+                     name = "Start Time"
+                     onChange = {e => handleTimeChange(e)}
+                     value={Times}
+                     >
+                     <option value= ""> Start Time </option>
+                     {dropdownStartOptions.map((option) => (
+                       <option key={option.value} value={option.value}>
+                         {option.label}
+                       </option>
+                     ))}
+                     </select>
+                     <p> {Times}</p>
+                     <button onClick= {(e) => setStartTimes([])}> Clear
+                         </button>
+
+        <select
+                        name = "End Time"
+                        onChange = {e => handleEndTimeChange(e)}
+                        value={EndTimes}
+                        >
+                        <option value= ""> End Time </option>
+                        {dropdownEndOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                        ))}
+                        </select>
+                        <p> {EndTimes}</p>
+                        <button onClick= {(e) => setEndTimes([])}> Clear </button>
+
       </div>
 
       <div style={{display: 'grid', placeItems: 'center'}}>

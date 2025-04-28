@@ -582,11 +582,9 @@ public class RESTController {
         Search search = new Search(Session, filter);
         search.search(query);
         List<Course> courses;
-        if (search.getFilteredResults().isEmpty()) {
-          courses = search.getSearchResults();
-        } else {
-            courses = search.getFilteredResults();
-        }
+
+        courses = search.getSearchResults();
+
 
         List<String> courseJSON = new ArrayList<>();
 
