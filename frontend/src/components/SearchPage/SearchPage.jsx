@@ -205,7 +205,7 @@ const CourseSearch = () => {
        <select
                name = "endTime"
                onChange = {e => handleTimeChange(e)}
-               value={Times}
+               value={endTime}
                >
                <option value= ""> EndTime </option>
                {dropdownEndOptions.map((option) => (
@@ -237,7 +237,7 @@ const CourseSearch = () => {
         <select
                      name = "Year"
                      onChange = {e => handleYearChange(e)}
-                     value={Times}
+                     value={Year}
                      >
                      <option value= ""> Year </option>
                      {dropdownYearOptions.map((option) => (
@@ -252,13 +252,13 @@ const CourseSearch = () => {
      <label> Filter by Course Code </label>
      <input type= {{}} id="time"
      onChange = {(e) => setCourseCode(e.target.value)}
-     name="time" value="Course Code"/>
+     name="time" value= {courseCode}/>
      </div>
 
      <div style={{display: 'grid', placeItems: 'center'}}>
        <label> Filter by Course Department </label>
-       <input type={{}} id="time" onChange = {(e) => setCourseCode(e.target.value)}
-       name="time" value="Course Department"/>
+       <input type={{}} id="time" onChange = {(e) => setCourseDepartment(e.target.value) }
+       name="time" value= {courseDept}/>
      </div>
    </div>
   </div>
