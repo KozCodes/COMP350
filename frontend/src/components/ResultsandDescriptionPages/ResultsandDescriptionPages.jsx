@@ -50,9 +50,15 @@ const Results = () => {
     );
   };
 
-  const handleAddToSchedule = (course) => {
-      const response = axios.get(`http://localhost:8080/api/register-course/${course.Id}`);
-      setMessage(response.data);
+  const handleAddToSchedule = async (course) => {
+      console.log(course.target.value);
+    try {
+      const response = await axios.post('http://localhost:8080/api/register-course', {
+         Id: course.target.value
+     });
+    } catch (error) {
+      setMessage('Failed to add course to schedule. Please try again.');
+    }
   };
 
 
@@ -87,8 +93,6 @@ const Results = () => {
             courses.map((courseJson, index) => {
               const course = JSON.parse(courseJson);
 
-              console.log('Parsed Course:', course);
-
               const profRating = ratings[course.professor.id];
 
               const numRegistered = course.numRegistered || 0;
@@ -118,13 +122,13 @@ const Results = () => {
                   </p>
                   <p style={infoStyle}><strong>Session:</strong> {course.session} {course.year}</p>
                   <p style={{ margin: '0.25rem 0', color: '#666' }}>
-                    <strong>Seats Available:</strong> {seatsAvailable}
                   </p>
 
                   <p> {message} </p>
 
                   <button
-                    onClick={(e) => {handleAddToSchedule(e)}}
+                    value={course.id}
+                    onClick={handleAddToSchedule}
                     style={{
                       marginTop: '1rem',
                       backgroundColor: '#0070f3',

@@ -596,10 +596,11 @@ public class RESTController {
     }
 
 
-   @GetMapping("/register-course/{course.Id}")
-  public ResponseEntity<String> registerForCourse(@RequestParam("courseId") int courseId) {
-           RefactoredMain.currentSchedule.addCourse(courseId);
 
+    @RequestMapping("/register-course")
+  public ResponseEntity<String> registerForCourse(@RequestBody Map<String, Integer> request) {
+        int courseId = request.get("Id");
+           RefactoredMain.currentSchedule.addCourse(courseId);
 
            return ResponseEntity.ok("Successfully registered for the course.");
   }

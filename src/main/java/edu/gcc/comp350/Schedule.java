@@ -181,25 +181,6 @@ public class Schedule {
                     }
                 }
 
-                String seatCheckSql = "SELECT numSeats, numRegistered FROM Courses WHERE id = ?";
-                try (var pstmt = db.conn.prepareStatement(seatCheckSql)) {
-                    pstmt.setInt(1, courseID);
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        if (rs.next()) {
-                            int numSeats = rs.getInt("numSeats");
-                            int numRegistered = rs.getInt("numRegistered");
-
-                            if (numRegistered >= numSeats) {
-                                System.out.println("Course is full. Cannot add " + newCourse.getCourseTitle());
-                                return 0;
-                            }
-                        }
-                    }
-                } catch (SQLException e) {
-                    System.out.println("Error checking course seats: " + e.getMessage());
-                    return 0;
-                }
-
                 classes.add(newCourse);
                 lastChangedCourses.push(newCourse);
 
