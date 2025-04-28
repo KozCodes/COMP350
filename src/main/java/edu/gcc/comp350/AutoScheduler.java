@@ -1,5 +1,6 @@
 package edu.gcc.comp350;
 
+import java.sql.Ref;
 import java.util.*;
 
 public class AutoScheduler {
@@ -44,7 +45,7 @@ public class AutoScheduler {
     }
 
     private Schedule resolveConflicts(HashMap<String, ArrayList<Course>> courseSections, ArrayList<String> orderOfPreference) {
-        Schedule schedule = new Schedule();
+        Schedule schedule = new Schedule(RefactoredMain.currentStudent.getId());
         while (true) {
             HashMap<String, ArrayList<Course>> result = backtrack(courseSections, orderOfPreference, 0, schedule);
             if (result != null) {
