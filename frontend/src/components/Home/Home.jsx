@@ -11,7 +11,6 @@ const Home = () => {
     const fetchSchedules = async () => {
         try {
             const response = await axios.get("http://localhost:8080/api/studentSchedules");
-            console.log("Schedules:", response.data);  // Log schedules to ensure proper data structure
             setSchedules(response.data);
         } catch (error) {
             console.error("Error fetching schedules:", error);
@@ -34,9 +33,13 @@ const Home = () => {
 
     const handleScheduleClick = async (scheduleId) => {
         try {
-            await axios.post("http://localhost:8080/api/setCurrentSchedule", { scheduleId });
+            await axios.post("http://localhost:8080/api/setCurrentSchedule", scheduleId,
+                { headers: { 'Content-Type': 'application/json' } });
             setSelectedScheduleId(scheduleId);
 
+            // Fetch the current schedule to ensure the selected schedule is reflected
+            const response = await axios.get("http://localhost:8080/api/currentSchedule");
+            console.log(response.data)
             // Find the selected schedule name
             const selectedSchedule = schedules.find(schedule => schedule.id === scheduleId);
             setSelectedScheduleName(selectedSchedule ? selectedSchedule.name : ""); // Update the name
