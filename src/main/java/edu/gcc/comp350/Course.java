@@ -43,6 +43,13 @@ public class Course {
     @JsonProperty
     private boolean taken;
 
+    @JsonProperty
+    private int numRegistered = 0;  // Default value to avoid null in JSON
+
+    @JsonProperty
+    private int numSeats = 32;  // Default value (you can change this based on your logic)
+
+
 
     /**
      * Course Constructor
@@ -66,7 +73,10 @@ public class Course {
                   String courseDept,
                   String courseCode,
                   int year,
-                  boolean taken) {
+                  boolean taken,
+                  int numRegistered,
+                  int numSeat
+                ) {
         this.id = id;
         this.courseTitle = courseTitle;
         this.professor = professor;
@@ -78,6 +88,14 @@ public class Course {
         this.courseCode = courseCode;
         this.year = year;
         this.taken = taken;
+        this.numSeats = numSeats;
+
+        if (numRegistered == 0) {
+            Random random = new Random();
+            this.numRegistered = random.nextInt(33);
+        } else {
+            this.numRegistered = numRegistered;
+        }
     }
 
     protected boolean hasTimeConflict(Course course) {

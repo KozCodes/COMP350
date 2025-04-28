@@ -1,90 +1,200 @@
-import React, {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
+
 const Results = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [courses, setCourses] = useState(location.state);
+  const [ratings, setRatings] = useState({});
 
+  useEffect(() => {
+    const fetchRatings = async () => {
+      const professorIds = new Set();
+      courses.forEach(courseJson => {
+        const course = JSON.parse(courseJson);
+        professorIds.add(course.professor.id);
+      });
 
-    const data = location.state;
+      const ratingPromises = Array.from(professorIds).map(id =>
+        axios.get(`http://localhost:8080/api/professor/${id}/rating`)
+          .then(res => ({ id, score: res.data }))
+          .catch(err => ({ id, score: null }))
+      );
 
-   const [courses, setCourses] = useState(data);
+      const ratingResults = await Promise.all(ratingPromises);
+      const newRatings = {};
+      ratingResults.forEach(({ id, score }) => {
+        newRatings[id] = score;
+      });
 
-  const handleAddCourse = (courseId) => {
-    setCourses((prevCourses) =>
-      prevCourses.map((course) =>
-        course.id === courseId && course.numRegistered < course.numSeats
-          ? { ...course, numRegistered: course.numRegistered + 1 }
-          : course
-      )
+      setRatings(newRatings);
+    };
+
+    fetchRatings();
+  }, [courses]);
+
+  const renderStars = (score) => {
+    if (score === null || score === undefined) return 'No rating yet';
+    const fullStars = Math.floor(score);
+    const hasHalf = score % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+
+    return (
+      <div style={{ fontSize: '1.2rem', color: '#FFD700' }}>
+        {'★'.repeat(fullStars)}{hasHalf ? '½' : ''}{'☆'.repeat(emptyStars)}
+      </div>
     );
   };
 
-
-
   return (
-      <div>
-      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-evenly', gap: '10px', padding: '2rem'}}>
-         <button style = {{fontWeight: 'bold', backgroundColor: '#990000', color: 'white'}} onClick={() => navigate('/Home')}> Home
-         </button>
-         <button style = {{fontWeight: 'bold', backgroundColor: '#990000', color: 'white'}} onClick={() => navigate('/Home')}> See Schedule
-
-          </button>
-           <button style = {{fontWeight: 'bold', backgroundColor: '#990000', color: 'white'}} onClick={() => navigate('/search')}> Search Again
-
-                    </button>
+    <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+      {/* Navigation Bar */}
+      <div style={navBarStyle}>
+        <div
+          style={homeTitleStyle}
+          onClick={() => navigate('/Home')}
+        >
+          GCC Home
+        </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button onClick={() => navigate('/Home')} style={navButtonStyle}>See Schedule</button>
+          <button onClick={() => navigate('/search')} style={navButtonStyle}>Search Again</button>
+        </div>
       </div>
-    <div className="p-4 max-w-xl mx-auto">
-      <h2 style= {{color: '#990000'}} className="text-2xl font-bold mb-4">Course Search Results </h2>
-      {courses.length === 0 ? (
-        <p>No courses available.</p>
-      ) : (
-        <ul className="space-y-4">
-          {courses.map((course) => (
-            <li key={JSON.parse(course).id} className="p-4 border rounded-lg shadow-sm">
-                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', padding: '2rem'}}>
-              <h3 style= {{color: '#990000'}} className="text-lg font-semibold">{JSON.parse(course).courseTitle}</h3>
-                <p className="text-sm text-gray-600">
-                    {JSON.parse(course).courseCode}
-                </p>
-              </div>
-             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-evenly', gap: '10px', padding: '2rem'}}>
-               <p className="text-sm text-gray-600">
-                                  {JSON.parse(course).courseDays}
-               </p>
-              <p className="text-sm text-gray-600">
-                    {JSON.parse(course).startTime.filter((value, index, self) => self.indexOf(value) === index)}
-             </p>
-              <p className="text-sm text-gray-600">
-                  {JSON.parse(course).endTime.filter((value, index, self) => self.indexOf(value) === index)}
-              </p>
-              <p className="text-sm text-gray-600">
-                  {JSON.parse(course).professor.name}, {JSON.parse(course).professor.score}
-              </p>
-               <p className="text-sm text-gray-600">
-                   {JSON.parse(course).session} {JSON.parse(course).year}
-               </p>
-             </div>
-              <p className="text-sm text-gray-600">
-                Seats: {JSON.parse(course).numRegistered}/{JSON.parse(course).numSeats}
-              </p>
-              <button
-                className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
-                disabled={course.numRegistered >= course.numSeats}
-                onClick={() => handleAddCourse(JSON.parse(course).id)}
-              >
-                {JSON.parse(course).numRegistered >= JSON.parse(course).numSeats ? 'Full' : 'Add to Schedule'}
-              </button>
-            </li>
-          ))}
-        </ul>
-        
-      )}
-    </div>
+
+      {/* Page Content */}
+      <div style={pageContentStyle}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#990000' }}>
+            Course Search Results
+          </h1>
+        </div>
+
+        <div style={{ width: '100%', maxWidth: '800px' }}>
+          {courses.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#555' }}>No courses available.</p>
+          ) : (
+            courses.map((courseJson, index) => {
+              const course = JSON.parse(courseJson);
+
+              console.log('Parsed Course:', course);
+
+              const profRating = ratings[course.professor.id];
+
+              const numRegistered = course.numRegistered || 0;
+              const numSeats = course.numSeats || 0;
+              const seatsAvailable = numSeats - numRegistered;
+
+              return (
+                <div key={index} style={courseCardStyle}>
+                  <h2 style={{ marginBottom: '0.5rem', color: '#222' }}>{course.courseTitle}</h2>
+
+                  <p style={infoStyle}><strong>Code:</strong> {course.courseCode}</p>
+
+                  <p style={infoStyle}>
+                    <strong>Professor:</strong> {course.professor.name}
+                    <span style={ratingStyle}>
+                      ({profRating !== null && profRating !== undefined ? profRating.toFixed(2) : 'N/A'})
+                    </span>
+                  </p>
+
+                  <div style={{ marginLeft: '1rem', marginBottom: '0.5rem' }}>
+                    {renderStars(profRating)}
+                  </div>
+
+                  <p style={infoStyle}><strong>Days:</strong> {course.courseDays}</p>
+                  <p style={infoStyle}>
+                    <strong>Time:</strong> {Array.from(new Set(course.startTime)).join(", ")} - {Array.from(new Set(course.endTime)).join(", ")}
+                  </p>
+                  <p style={infoStyle}><strong>Session:</strong> {course.session} {course.year}</p>
+                  <p style={{ margin: '0.25rem 0', color: '#666' }}>
+                    <strong>Seats Available:</strong> {seatsAvailable}
+                  </p>
+
+                  <button
+                    onClick={() => {}}
+                    style={{
+                      marginTop: '1rem',
+                      backgroundColor: '#0070f3',
+                      color: 'white',
+                      padding: '0.6rem 1.2rem',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Add to Schedule
+                  </button>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
     </div>
   );
+};
+
+// Styles
+const navBarStyle = {
+  backgroundColor: '#990000',
+  color: 'white',
+  padding: '1rem 2rem',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  position: 'sticky',
+  top: 0,
+  zIndex: 1000,
+  boxShadow: '0px 2px 5px rgba(0,0,0,0.1)'
+};
+
+const homeTitleStyle = {
+  fontSize: '1.5rem',
+  fontWeight: 'bold',
+  cursor: 'pointer'
+};
+
+const navButtonStyle = {
+  backgroundColor: 'white',
+  color: '#990000',
+  fontWeight: 'bold',
+  padding: '0.5rem 1rem',
+  borderRadius: '6px',
+  border: 'none',
+  cursor: 'pointer'
+};
+
+const pageContentStyle = {
+  padding: '2rem',
+  fontFamily: 'Segoe UI, sans-serif',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
+};
+
+const courseCardStyle = {
+  backgroundColor: 'white',
+  borderRadius: '12px',
+  padding: '1.5rem',
+  marginBottom: '1.5rem',
+  boxShadow: '0px 4px 12px rgba(0,0,0,0.05)'
+};
+
+const infoStyle = {
+  margin: '0.25rem 0',
+  color: '#666'
+};
+
+const ratingStyle = {
+  fontSize: '0.9rem',
+  color: '#990000',
+  fontWeight: 'bold',
+  marginLeft: '0.5rem'
 };
 
 export default Results;

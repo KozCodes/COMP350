@@ -68,7 +68,6 @@ public class RESTController {
     }
 
     /* Login Functions */
-
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) throws SQLException {
         String username = loginRequest.getUsername();
@@ -95,6 +94,49 @@ public class RESTController {
         }
     }
 
+    //Use this for setting refactored main currentStudent
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) throws SQLException {
+//        String username = loginRequest.getUsername();
+//        String password = loginRequest.getPassword();
+//
+//        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+//            RefactoredMain.db.connect();
+//        }
+//
+//        String sql = "SELECT * FROM Student WHERE username = ? AND password = ?";
+//        try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
+//            pstmt.setString(1, username);
+//            pstmt.setString(2, password);
+//            ResultSet rs = pstmt.executeQuery();
+//            if (rs.next()) {
+//                HttpSession session = request.getSession(true);
+//                session.setAttribute("studentId", rs.getInt("id"));
+//
+//                // FIX: wrap minor string into a List<String>
+//                List<String> minors = new ArrayList<>();
+//                String minorField = rs.getString("minor");
+//                if (minorField != null && !minorField.isEmpty()) {
+//                    minors.add(minorField);
+//                }
+//
+//                RefactoredMain.currentStudent = new Student(
+//                        rs.getInt("id"),
+//                        rs.getString("name"),
+//                        rs.getString("major"),
+//                        minors
+//                );
+//
+//                return ResponseEntity.ok("Login successful");
+//            } else {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+//            }
+//        } catch (SQLException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+//        }
+//    }
+
+
     static class LoginRequest {
         private String username;
         private String password;
@@ -114,6 +156,12 @@ public class RESTController {
         public void setPassword(String password) {
             this.password = password;
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return ResponseEntity.ok("Logged out");
     }
 
     /* Sign Up Functions */
@@ -547,52 +595,52 @@ public class RESTController {
     }
 
 
-    @RequestMapping("/register-course")
-    public ResponseEntity<String> registerForCourse(@RequestParam("courseId") int courseId, HttpSession session) throws SQLException {
-        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
-            RefactoredMain.db.connect();
-        }
-
-        Object studentIdObj = session.getAttribute("studentId");
-        if (studentIdObj == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to register for a course.");
-        }
-        int studentId = (int) studentIdObj;
-
-        // Fetch course details
-        String courseSql = "SELECT numSeats, numRegistered FROM Courses WHERE id = ?";
-        try (PreparedStatement courseStmt = RefactoredMain.db.conn.prepareStatement(courseSql)) {
-            courseStmt.setInt(1, courseId);
-            ResultSet rs = courseStmt.executeQuery();
-            if (!rs.next()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
-            }
-
-            int numSeats = rs.getInt("numSeats");
-            int numRegistered = rs.getInt("numRegistered");
-
-            if (numRegistered >= numSeats) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No available seats for this course.");
-            }
-
-            // Insert registration
-            String registerSql = "INSERT INTO CourseRegistrations (courseId, studentId) VALUES (?, ?)";
-            try (PreparedStatement registerStmt = RefactoredMain.db.conn.prepareStatement(registerSql)) {
-                registerStmt.setInt(1, courseId);
-                registerStmt.setInt(2, studentId);
-                registerStmt.executeUpdate();
-            }
-
-            // Update course registration count
-            String updateSql = "UPDATE Courses SET numRegistered = numRegistered + 1 WHERE id = ?";
-            try (PreparedStatement updateStmt = RefactoredMain.db.conn.prepareStatement(updateSql)) {
-                updateStmt.setInt(1, courseId);
-                updateStmt.executeUpdate();
-            }
-
-            return ResponseEntity.ok("Successfully registered for the course.");
-        } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
-        }
-    }
+//    @RequestMapping("/register-course")
+//    public ResponseEntity<String> registerForCourse(@RequestParam("courseId") int courseId, HttpSession session) throws SQLException {
+//        if (RefactoredMain.db.conn == null || RefactoredMain.db.conn.isClosed()) {
+//            RefactoredMain.db.connect();
+//        }
+//
+//        Object studentIdObj = session.getAttribute("studentId");
+//        if (studentIdObj == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to register for a course.");
+//        }
+//        int studentId = (int) studentIdObj;
+//
+//        // Fetch course details
+//        String courseSql = "SELECT numSeats, numRegistered FROM Courses WHERE id = ?";
+//        try (PreparedStatement courseStmt = RefactoredMain.db.conn.prepareStatement(courseSql)) {
+//            courseStmt.setInt(1, courseId);
+//            ResultSet rs = courseStmt.executeQuery();
+//            if (!rs.next()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
+//            }
+//
+//            int numSeats = rs.getInt("numSeats");
+//            int numRegistered = rs.getInt("numRegistered");
+//
+//            if (numRegistered >= numSeats) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No available seats for this course.");
+//            }
+//
+//            // Insert registration
+//            String registerSql = "INSERT INTO CourseRegistrations (courseId, studentId) VALUES (?, ?)";
+//            try (PreparedStatement registerStmt = RefactoredMain.db.conn.prepareStatement(registerSql)) {
+//                registerStmt.setInt(1, courseId);
+//                registerStmt.setInt(2, studentId);
+//                registerStmt.executeUpdate();
+//            }
+//
+//            // Update course registration count
+//            String updateSql = "UPDATE Courses SET numRegistered = numRegistered + 1 WHERE id = ?";
+//            try (PreparedStatement updateStmt = RefactoredMain.db.conn.prepareStatement(updateSql)) {
+//                updateStmt.setInt(1, courseId);
+//                updateStmt.executeUpdate();
+//            }
+//
+//            return ResponseEntity.ok("Successfully registered for the course.");
+//        } catch (SQLException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
+//        }
+//    }
 }
