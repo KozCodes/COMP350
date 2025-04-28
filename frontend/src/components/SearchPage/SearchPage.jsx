@@ -142,13 +142,6 @@ const CourseSearch = () => {
   return (
 
 <div>
-<div style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-evenly', gap: '10px', padding: '2rem'}}>
-   <button style = {{fontWeight: 'bold', backgroundColor: '#990000', color: 'white'}} onClick={() => navigate('/Home')}> Home
-   </button>
-   <button style = {{fontWeight: 'bold', backgroundColor: '#990000', color: 'white'}} onClick={() => navigate('/Home')}> See Schedule
-
-    </button>
-</div>
 
 <div style={{textAlign: 'center', padding: '4rem', minHeight: '100vh', color: 'black' }}>
    <h2 style = {{ fontWeight: 'bold', color: '#990000'}}> Course Search </h2>
@@ -205,7 +198,7 @@ const CourseSearch = () => {
        <select
                name = "endTime"
                onChange = {e => handleTimeChange(e)}
-               value={endTime}
+               value={EndTimes}
                >
                <option value= ""> EndTime </option>
                {dropdownEndOptions.map((option) => (
@@ -252,13 +245,13 @@ const CourseSearch = () => {
      <label> Filter by Course Code </label>
      <input type= {{}} id="time"
      onChange = {(e) => setCourseCode(e.target.value)}
-     name="time" value= {courseCode}/>
+     name="time" value= {CourseCode}/>
      </div>
 
      <div style={{display: 'grid', placeItems: 'center'}}>
        <label> Filter by Course Department </label>
        <input type={{}} id="time" onChange = {(e) => setCourseDepartment(e.target.value) }
-       name="time" value= {courseDept}/>
+       name="time" value= {CourseDepartment}/>
      </div>
    </div>
   </div>
