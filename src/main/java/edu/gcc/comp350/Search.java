@@ -501,8 +501,10 @@ public class Search {
 
         //code generated with the assistance of Github Copilot
         if (!filter.getCourse().contains(RefactoredMain.Days.BLANK)) {
-            filteredResults.removeIf(course -> !filter.getCourse().contains(course.getCourseDays()));
+            //remove all courses who have days that don't match the filter
+                filteredResults.removeIf(course -> !course.getCourseDays().containsAll(filter.getCourse()));
         }
+
         if (!filter.getStartTime().contains(Time.valueOf("00:00:00"))) {
             filteredResults.removeIf(course -> !filter.getStartTime().contains(course.getStartTime()));
         }

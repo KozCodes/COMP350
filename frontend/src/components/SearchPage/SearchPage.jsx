@@ -8,11 +8,11 @@ const CourseSearch = () => {
 
     const navigate = useNavigate();
 
-    const [Days, setDays] = useState(["Empty"]);
+    const [Days, setDays] = useState(['Empty']);
 
-    const [Times, setStartTimes] = useState(["Empty"]);
+    const [Times, setStartTimes] = useState(['Start Time']);
 
-    const [EndTimes, setEndTimes] = useState(["Empty"]);
+    const [EndTimes, setEndTimes] = useState(['End Time']);
 
     const [Session, setSession] = useState('Blank');
 
@@ -25,77 +25,33 @@ const CourseSearch = () => {
       const [message, setMessage] = useState('');
 
       const handleTimeChange = (e) => {
-        Times.push(e.target.value);
+       ;
       }
 
-    const dropdownStartOptions = [
-        { value: '08:00:00', label: '08:00:00' },
-        { value: '09:00:00', label: '09:00:00' },
-        { value: '09:30:00', label: '09:30:00' },
-         { value: '10:00:00', label: '10:00:00' },
-        { value: '10:30:00', label: '10:30:00' },
-        { value: '11:00:00', label: '11:00:00' },
-        { value: '11:30:00', label: '11:30:00' },
-        { value: '12:00:00', label: '12:00:00' },
-        { value: '12:30:00', label: '12:30:00' },
-        { value: '13:00:00', label: '13:00:00' },
-        { value: '13:30:00', label: '13:30:00' },
-        { value: '14:00:00', label: '14:00:00' },
-        { value: '14:30:00', label: '14:30:00' },
-        { value: '15:00:00', label: '15:00:00' },
-        { value: '15:30:00', label: '15:30:00' },
-        { value: '16:00:00', label: '16:00:00' },
-        { value: '16:30:00', label: '16:30:00' },
-        { value: '17:00:00', label: '17:00:00' },
-        { value: '17:30:00', label: '17:30:00' },
-        { value: '18:00:00', label: '18:00:00' },
-        { value: '18:30:00', label: '18:30:00' },
-        { value: '19:00:00', label: '19:00:00' },
-        { value: '19:30:00', label: '19:30:00' },
-        { value: '20:00:00', label: '20:00:00' },
-        { value: '20:30:00', label: '20:30:00' },
-        { value: '21:00:00', label: '21:00:00' }
-     ];
+    const handleEndTimeChange = (e) => {
+        ;
+    }
 
     const dropdownDayOptions = [
-        { value: 'Monday', label: 'Monday' },
-        { value: 'Tuesday', label: 'Tuesday' },
-        { value: 'Wednesday', label: 'Wednesday' },
-        { value: 'Thursday', label: 'Thursday' },
-        { value: 'Friday', label: 'Friday' }
-        ];
-
-    const dropdownEndOptions = [
-        { value: '08:50:00', label: '08:50:00' },
-        { value: '09:15:00', label: '09:15:00' },
-        { value: '09:50:00', label: '09:50:00' },
-        { value: '10:15:00', label: '10:15:00' },
-        { value: '10:50:00', label: '10:50:00' },
-        { value: '11:15:00', label: '11:15:00' },
-        { value: '11:50:00', label: '11:50:00' },
-        { value: '12:15:00', label: '12:15:00' },
-        { value: '12:50:00', label: '12:50:00' },
-        { value: '13:15:00', label: '13:15:00' },
-        { value: '13:50:00', label: '13:50:00' },
-        { value: '14:15:00', label: '14.15.00' },
-        { value:'14.50.00', label:'14.50.00'},
-        { value: '15:15:00', label: '15:15:00' },
-        { value: '15:50:00', label: '15:50:00' },
-        { value: '16:15:00', label: '16:15:00' },
-        { value: '16:50:00', label: '16.50.00'},
-        { value:'17.15.00', label:'17.15.00'},
-        { value:'17.50.00', label:'17.50.00'},
-        { value:'18.15.00', label:'18.15.00'},
-        { value:'18.50.00', label:'18.50.00'},
-        { value:'19.15.00', label:'19.15.00'},
-        { value:'19.50.00', label:'19.50.00'},
-        { value:'20.15.00', label:'20.15.00'},
-        { value:'20.50.00', label:'20.50.00'}
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday'
     ];
 
-    const handleEndTimeChange = (e) => {
-        EndTimes.push(e.target.value);
+
+
+  const handleCheckboxChange = (event) => {
+    const value = event.target.value;
+    const isChecked = event.target.checked;
+
+    if (isChecked) {
+        setDays((prevDays) => [...prevDays, value]);
+    } else {
+        setDays((prevDays) => prevDays.filter((day) => day !== value));
     }
+  };
 
     const dropdownSessionOptions = [
     { value: 'Fall', label: 'Fall' },
@@ -112,13 +68,7 @@ const CourseSearch = () => {
         { value: '2025', label: '2025' }
     ];
 
-    const handleDaysChangeAdd = (ids) => {
-        if (Days.includes(ids.target.id)) {
-            setDays(Days.filter((day) => day === ids));
-        } else {
-            Days.push(ids.target.value);
-       }
-    }
+
 
     const handleSessionChange = (e) => {
         setSession(e.target.value);
@@ -166,46 +116,65 @@ const CourseSearch = () => {
 
        <div style={{display: 'grid', placeItems: 'center'}}>
           <label> Filter by Days </label>
-            <select
-            name = "days"
-            onChange = {e => handleDaysChangeAdd(e)}
-            value={Days}
-            >
-            <option value= ""> Days </option>
-            {dropdownDayOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-            </select>
+          <h1> {Days}</h1>
+                    <label>
+                      <input
+                        type="checkbox"
+                        value="Monday"
+                        checked={Days.includes('Monday')}
+                        onChange={handleCheckboxChange}
+                      />
+                      Monday
+                    </label>
+                      <label>
+                                          <input
+                                            type="checkbox"
+                                            value="Tuesday"
+                                            checked={Days.includes('Tuesday')}
+                                            onChange={handleCheckboxChange}
+                                          />
+                                        Tuesday
+                                        </label>
+
+                                         <label>
+                                             <input
+                                             type="checkbox"
+                                             value="Wednesday"
+                                             checked={Days.includes('Wednesday')}
+                                             onChange={handleCheckboxChange}
+                                             />
+                                             Wednesday
+                                         </label>
+
+                                          <label>
+                                         <input
+                                        type="checkbox"
+                                        value="Thursday"
+                                        checked={Days.includes('Thursday')}
+                                         onChange={handleCheckboxChange}
+                                              />
+                      Thursday
+                                 </label>
+                        <label>
+                            <input
+                            type="checkbox"
+                            value="Friday"
+                            checked={Days.includes('Friday')}
+                            onChange={handleCheckboxChange}
+                            />
+                            Friday
+                        </label>
+
       </div>
 
       <div style={{display: 'grid', placeItems: 'center'}}>
         <label> Filter by Times </label>
-        <select
-        name = "startTime"
-        onChange = {e => handleTimeChange(e)}
-        value={Times}
-        >
-        <option value= ""> StartTime </option>
-        {dropdownStartOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-        </select>
-       <select
-               name = "endTime"
-               onChange = {e => handleTimeChange(e)}
-               value={EndTimes}
-               >
-               <option value= ""> EndTime </option>
-               {dropdownEndOptions.map((option) => (
-                 <option key={option.value} value={option.value}>
-                   {option.label}
-                 </option>
-               ))}
-               </select>
+        <input type={{}} id="time" onChange = {(e) =>  setStartTimes(e.target.value)}
+               name="time" value= {Times}/>
+               <button onClick= {(e) => handleTimeChange(e)}>Add Start Time</button>
+               <input type={{}} id="time" onChange = {(e) => setEndTimes(e.target.value)}
+                      name="time" value= {EndTimes}/>
+                        <button onClick= {(e) => handleEndTimeChange(e)}>Add End Time</button>
       </div>
 
       <div style={{display: 'grid', placeItems: 'center'}}>

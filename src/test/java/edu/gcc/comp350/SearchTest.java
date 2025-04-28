@@ -466,6 +466,8 @@ void testSimpleCompleteCourseCodeSearchWithNoFilters() throws Exception {
 
         search.search(search.getQuery());
 
+        System.out.println(search.getFilteredResults());
+
         // Assertions
         assertNotEquals(0, search.getFilteredResults().size());
     }

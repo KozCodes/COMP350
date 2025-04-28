@@ -529,7 +529,7 @@ public class RESTController {
 
         List<Time> startTimes = new ArrayList<>();
 
-        if (!Times[0].equals("Empty")) {
+        if (!Times[0].equals("Start Time")) {
             for (int i = 0; i < Times.length; i++) {
                 startTimes.add(Time.valueOf(Times[i]));
             }
@@ -539,17 +539,17 @@ public class RESTController {
 
         filter.setStartTime(startTimes);
 
-        List<Time> endTimes = new ArrayList<>();
+        List<Time> endTime = new ArrayList<>();
 
-        if (!EndTimes[0].equals("Empty")) {
+        if (!EndTimes[0].equals("End Time")) {
             for (int i = 0; i < EndTimes.length; i++) {
-                endTimes.add(Time.valueOf(EndTimes[i]));
+                endTime.add(Time.valueOf(EndTimes[i]));
             }
         } else {
-            endTimes.add(Time.valueOf("00:00:00"));
+            endTime.add(Time.valueOf("00:00:00"));
         }
 
-        filter.setEndTime(endTimes);
+        filter.setEndTime(endTime);
 
         RefactoredMain.Session finalSession = RefactoredMain.Session.BLANK;
 
@@ -564,15 +564,6 @@ public class RESTController {
 
         filter.setCourseSession(finalSession);
 
-        Search search = new Search(Session, filter);
-        search.search(query);
-        List<Course> courses;
-        if (search.getFilteredResults().isEmpty()) {
-          courses = search.getSearchResults();
-        } else {
-            courses = search.getFilteredResults();
-        }
-
         List<String> codes = new ArrayList<>();
 
         if (!CourseCode.equals("None")) {
@@ -581,9 +572,21 @@ public class RESTController {
 
         filter.setCourseCodes(codes);
 
-        filter.setDepartment(CourseDepartment);
+        if (!CourseDepartment.equals("None")) {
+            filter.setDepartment(CourseDepartment);
+        }
 
         filter.setYear(Integer.valueOf(Year));
+
+
+        Search search = new Search(Session, filter);
+        search.search(query);
+        List<Course> courses;
+        if (search.getFilteredResults().isEmpty()) {
+          courses = search.getSearchResults();
+        } else {
+            courses = search.getFilteredResults();
+        }
 
         List<String> courseJSON = new ArrayList<>();
 
