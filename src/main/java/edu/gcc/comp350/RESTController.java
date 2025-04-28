@@ -28,7 +28,7 @@ public class RESTController {
     @GetMapping("/studentSchedules")
     public ResponseEntity<List<Map<String, Object>>> getStudentSchedules() {
         // Check if the current student is set
-        if (RefactoredMain.currentStudent == null || RefactoredMain.currentStudent.getId() == 0) {
+        if (RefactoredMain.currentStudent == null) { //|| RefactoredMain.currentStudent.getId() == 0) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
@@ -53,7 +53,7 @@ public class RESTController {
         })
         .toList();
 
-        System.out.println("Student schedules: " + studentSchedules);
+//        System.out.println("Student schedules: " + studentSchedules);
 
         return ResponseEntity.ok(studentSchedules);
     }
@@ -373,6 +373,17 @@ public class RESTController {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting course: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/addSchedule")
+    public ResponseEntity<String> addSchedule(@RequestParam String name) {
+        if (name != null) {
+            System.out.println("Adding schedule: " + name);
+            RefactoredMain.currentStudent.addSchedule(new Schedule(name, RefactoredMain.currentStudent.getId()));
+            return ResponseEntity.ok("Schedule added successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Schedule cannot be null.");
         }
     }
 
