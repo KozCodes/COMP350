@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import Sidebar from './sidebar';
 
 axios.defaults.withCredentials = true;
 
 const Results = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [courses, setCourses] = useState(location.state);
+  const [courses] = useState(location.state);
   const [ratings, setRatings] = useState({});
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -50,33 +49,8 @@ const Results = () => {
     );
   };
 
-  const handleAddToSchedule = async (course) => {
-      console.log(course.target.value);
-    try {
-      const response = await axios.post('http://localhost:8080/api/register-course', {
-         Id: course.target.value
-     });
-    } catch (error) {
-      setMessage('Failed to add course to schedule. Please try again.');
-    }
-  };
-
-
   return (
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
-      {/* Navigation Bar */}
-      <div style={navBarStyle}>
-        <div
-          style={homeTitleStyle}
-          onClick={() => navigate('/Home')}
-        >
-          GCC Home
-        </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button onClick={() => navigate('/Home')} style={navButtonStyle}>See Schedule</button>
-          <button onClick={() => navigate('/search')} style={navButtonStyle}>Search Again</button>
-        </div>
-      </div>
 
       {/* Page Content */}
       <div style={pageContentStyle}>
@@ -86,13 +60,20 @@ const Results = () => {
           </h1>
         </div>
 
+        {/* Sidebar */}
+        <div style={{ display: 'flex' }}>
+          <Sidebar />
+          <div style={{ marginLeft: '250px', flex: 1 }}>
+            {/* Main content here */}
+          </div>
+        </div>
+
         <div style={{ width: '100%', maxWidth: '800px' }}>
           {courses.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#555' }}>No courses available.</p>
           ) : (
             courses.map((courseJson, index) => {
               const course = JSON.parse(courseJson);
-
               const profRating = ratings[course.professor.id];
 
               const numRegistered = course.numRegistered || 0;
@@ -122,13 +103,11 @@ const Results = () => {
                   </p>
                   <p style={infoStyle}><strong>Session:</strong> {course.session} {course.year}</p>
                   <p style={{ margin: '0.25rem 0', color: '#666' }}>
+                    <strong>Seats Available:</strong> {seatsAvailable}
                   </p>
 
-                  <p> {message} </p>
-
                   <button
-                    value={course.id}
-                    onClick={handleAddToSchedule}
+                    onClick={() => {}}
                     style={{
                       marginTop: '1rem',
                       backgroundColor: '#0070f3',
@@ -153,35 +132,6 @@ const Results = () => {
 };
 
 // Styles
-const navBarStyle = {
-  backgroundColor: '#990000',
-  color: 'white',
-  padding: '1rem 2rem',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  position: 'sticky',
-  top: 0,
-  zIndex: 1000,
-  boxShadow: '0px 2px 5px rgba(0,0,0,0.1)'
-};
-
-const homeTitleStyle = {
-  fontSize: '1.5rem',
-  fontWeight: 'bold',
-  cursor: 'pointer'
-};
-
-const navButtonStyle = {
-  backgroundColor: 'white',
-  color: '#990000',
-  fontWeight: 'bold',
-  padding: '0.5rem 1rem',
-  borderRadius: '6px',
-  border: 'none',
-  cursor: 'pointer'
-};
-
 const pageContentStyle = {
   padding: '2rem',
   fontFamily: 'Segoe UI, sans-serif',

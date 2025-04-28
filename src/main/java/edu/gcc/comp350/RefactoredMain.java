@@ -76,7 +76,7 @@ public class RefactoredMain {
                     ArrayList<String> minors = new ArrayList<>(List.of(rs.getString("minor").split(" ")));
                     RefactoredMain.currentStudent = new Student(id, name, major, minors);
                 } else {
-                    RefactoredMain.currentStudent = new Student(0, "John Doe", "Undeclared", new ArrayList<>());
+                    RefactoredMain.currentStudent = new Student(1, "Guest", "Undeclared", new ArrayList<>());
                 }
             }
         } catch (SQLException e) {
