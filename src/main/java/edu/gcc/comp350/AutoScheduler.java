@@ -22,44 +22,40 @@ public class AutoScheduler {
     }
 
     protected Schedule generateSections(ArrayList<String> enteredCourses, RefactoredMain.Session session, int year) {
-//        System.out.println(enteredCourses);
-//        System.out.println(session);
-//        System.out.println(year);
-
-        // If courses are valid, add the courses to the schedule (excluding courses that are not in the entered session and year)
+        // Filter and group courses by session and year
         HashMap<String, ArrayList<Course>> courseSections = getCourseSections(enteredCourses, session, year);
 
-        if(courseSections.isEmpty()) {
+        if (courseSections.isEmpty()) {
             return null;
         }
-        // Then check the schedule for time conflicts
+
+        // Retain only valid courses in enteredCourses
+        enteredCourses.retainAll(courseSections.keySet());
+
+        // Resolve conflicts and generate a potential schedule
         Schedule potentialSchedule = resolveConflicts(courseSections, enteredCourses);
 
-        // Format for temporary string formatting
-        // Add all course codes from potential to new list then print
-        ArrayList<String> courseCodes = new ArrayList<>();
-        for (Course course : potentialSchedule.getCourses()) {
-            courseCodes.add(course.getCourseCode());
-        }
-        System.out.println(courseCodes);
+        // Print course codes for debugging
+        potentialSchedule.getCourses().stream()
+                .map(Course::getCourseCode)
+                .forEach(System.out::println);
+
         return potentialSchedule;
     }
 
     private Schedule resolveConflicts(HashMap<String, ArrayList<Course>> courseSections, ArrayList<String> orderOfPreference) {
-        // Go through courseSections in orderOfPreference and add one course at a time, keep doing so until there is a time conflict
-        // If there is a time conflict, backtrack
-        // Else all courses are added, return that combination
-        // If no valid combinations remove one course at a time from the end of the orderOfPreference and repeat
-        HashMap<String, ArrayList<Course>> result;
         Schedule schedule = new Schedule(RefactoredMain.currentStudent.getId());
-        do{
-            result = backtrack(courseSections, orderOfPreference, 0, schedule);
-            if(result == null) {
-                courseSections.remove(orderOfPreference.get(orderOfPreference.size()-1));
-                orderOfPreference.remove(orderOfPreference.size() - 1);
+        while (true) {
+            HashMap<String, ArrayList<Course>> result = backtrack(courseSections, orderOfPreference, 0, schedule);
+            if (result != null) {
+                return schedule;
             }
-        } while (result == null);
-        return schedule;
+            if (orderOfPreference.isEmpty()) {
+                return null; // No valid combinations found
+            }
+            String lastPreference = orderOfPreference.remove(orderOfPreference.size() - 1);
+            courseSections.remove(lastPreference);
+        }
     }
 
     private HashMap<String, ArrayList<Course>> backtrack(HashMap<String, ArrayList<Course>> courseSections, ArrayList<String> orderOfPreference, int next_var, Schedule newSchedule) {

@@ -9,6 +9,8 @@ const Results = () => {
   const location = useLocation();
   const [courses] = useState(location.state);
   const [ratings, setRatings] = useState({});
+  const [message, setMessage] = useState('');
+
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -35,6 +37,19 @@ const Results = () => {
 
     fetchRatings();
   }, [courses]);
+
+    const handleAddToSchedule = async (course) => {
+        console.log(course.target.value);
+      try {
+        const response = await axios.post('http://localhost:8080/api/register-course', {
+           Id: course.target.value
+       });
+        setMessage(response.data);
+      } catch (error) {
+        setMessage('Failed to add course to schedule. Please try again.');
+      }
+    };
+
 
   const renderStars = (score) => {
     if (score === null || score === undefined) return 'No rating yet';
@@ -103,11 +118,11 @@ const Results = () => {
                   </p>
                   <p style={infoStyle}><strong>Session:</strong> {course.session} {course.year}</p>
                   <p style={{ margin: '0.25rem 0', color: '#666' }}>
-                    <strong>Seats Available:</strong> {seatsAvailable}
                   </p>
-
+                    <p style={infoStyle} > {message} </p>
                   <button
-                    onClick={() => {}}
+                    value={course.id}
+                    onClick={handleAddToSchedule}
                     style={{
                       marginTop: '1rem',
                       backgroundColor: '#0070f3',
