@@ -501,15 +501,18 @@ public class Search {
 
         //code generated with the assistance of Github Copilot
         if (!filter.getCourse().contains(RefactoredMain.Days.BLANK)) {
-            filteredResults.removeIf(course -> !filter.getCourse().contains(course.getCourseDays()));
+            //remove all courses who have days that don't match the filter
+                filteredResults.removeIf(course -> !course.getCourseDays().containsAll(filter.getCourse()));
         }
+
         if (!filter.getStartTime().contains(Time.valueOf("00:00:00"))) {
-            filteredResults.removeIf(course -> !filter.getStartTime().contains(course.getStartTime()));
+            //remove all courses that don't start at the same time as any time in the filter list
+            filteredResults.removeIf(course -> !course.getStartTime().stream().anyMatch(filter.getStartTime() :: contains));
         }
 
 
         if (!filter.getEndTime().contains(Time.valueOf("00:00:00"))) {
-            filteredResults.removeIf(course -> !filter.getEndTime().contains(course.getEndTime()));
+            filteredResults.removeIf(course ->  !course.getEndTime().stream().anyMatch(filter.getEndTime() :: contains));
         }
 
 
@@ -535,9 +538,9 @@ public class Search {
 
         if (filteredResults.isEmpty()) {
             System.out.println("I'm sorry, we're unable to find anything related to your search. Try modifying your filters or query.");
+        } else {
+           searchResults = filteredResults;
         }
-
-
     }
 
 

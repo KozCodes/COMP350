@@ -36,7 +36,7 @@ public class Student {
 
         try (var stmt = RefactoredMain.db.conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-                this.id = rs.getInt("id");
+            this.id = rs.getInt("id");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -45,7 +45,6 @@ public class Student {
 
     }
 
-
     protected Student(int id, String name, String major, List<String> minors) {
         this.name = name;
         this.major = major;
@@ -53,6 +52,10 @@ public class Student {
         this.id = id;
 
         schedules = getSchedulesFromDatabase();
+        if (schedules.isEmpty()) {
+            Schedule schedule = new Schedule("New Schedule", this.id);
+            schedules.add(schedule);
+        }
     }
 
     /**
@@ -68,7 +71,7 @@ public class Student {
             while (rs.next()) {
                 int scheduleId = rs.getInt("id");
                 String scheduleTitle = rs.getString("scheduleTitle");
-                Schedule schedule = new Schedule(scheduleTitle, scheduleId);
+                Schedule schedule = new Schedule(scheduleTitle, scheduleId, this.id);
                 schedules.add(schedule);
             }
         } catch (SQLException e) {
@@ -79,7 +82,7 @@ public class Student {
     }
 
     protected int getId() {
-        return 1;
+        return id;
     }
 
     protected String getName() {
@@ -123,23 +126,5 @@ public class Student {
             return null;
         }
     }
-    protected void saveSchedule(Schedule schedule) {
-        String scheduleCourseSql = "DELETE FROM ScheduleCourses WHERE schedule = ?";
-                try (var pstmt = db.conn.prepareStatement(scheduleCourseSql)) {
-                    pstmt.setInt(1, schedule.getId());
-                    pstmt.executeUpdate();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
 
-        for (Course course : schedule.getCourses()) {
-            try (var pstmt = db.conn.prepareStatement("INSERT INTO ScheduleCourses (schedule, course) VALUES (?, ?)")) {
-                pstmt.setInt(1, schedule.getId());
-                pstmt.setInt(2, course.getID());
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
 }
