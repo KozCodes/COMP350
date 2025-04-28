@@ -51,7 +51,7 @@ public class AutoScheduler {
         // Else all courses are added, return that combination
         // If no valid combinations remove one course at a time from the end of the orderOfPreference and repeat
         HashMap<String, ArrayList<Course>> result;
-        Schedule schedule = new Schedule();
+        Schedule schedule = new Schedule(RefactoredMain.currentStudent.getId());
         do{
             result = backtrack(courseSections, orderOfPreference, 0, schedule);
             if(result == null) {

@@ -49,15 +49,15 @@ public class RefactoredMain {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 // If changes are made to the database structure, uncomment these lines and run once to reset the database
-       // db.connect();
-       // db.clearDatabase();
-       // db.createDatabase();
-      //  db.resetCoursesInDatabase();
-       // db.resetProfessorsInDatabase();
-       // db.populateProfessorsInDatabase();
-      //  db.setProfessorsInDatabase();
-      //  db.ProfRatings();
-      //  db.disconnect();
+        db.connect();
+        db.clearDatabase();
+        db.createDatabase();
+        db.resetCoursesInDatabase();
+        db.resetProfessorsInDatabase();
+        db.populateProfessorsInDatabase();
+        db.setProfessorsInDatabase();
+        db.ProfRatings();
+        db.disconnect();
 
         runFunction();
 
@@ -77,7 +77,7 @@ public class RefactoredMain {
                     ArrayList<String> minors = new ArrayList<>(List.of(rs.getString("minor").split(" ")));
                     RefactoredMain.currentStudent = new Student(id, name, major, minors);
                 } else {
-                    RefactoredMain.currentStudent = new Student(0, "John Doe", "Undeclared", new ArrayList<>());
+                    RefactoredMain.currentStudent = new Student(1, "Guest", "Undeclared", new ArrayList<>());
                 }
             }
         } catch (SQLException e) {
