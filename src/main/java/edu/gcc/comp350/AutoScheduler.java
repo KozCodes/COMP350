@@ -1,6 +1,5 @@
 package edu.gcc.comp350;
 
-import java.sql.Ref;
 import java.util.*;
 
 public class AutoScheduler {
