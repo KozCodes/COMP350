@@ -633,11 +633,21 @@ public class RESTController {
 
 
 
-    @RequestMapping("/register-course")
-  public ResponseEntity<String> registerForCourse(@RequestBody Map<String, Integer> request) {
-        int courseId = request.get("Id");
-           RefactoredMain.currentSchedule.addCourse(courseId);
+    @PostMapping("/register-course")
+    public ResponseEntity<String> registerForCourse(@RequestBody Map<String, Integer> request) {
+        try {
+            int courseId = request.get("Id");
 
-           return ResponseEntity.ok("Successfully registered for the course.");
-  }
+            if (RefactoredMain.currentSchedule == null) {
+                return ResponseEntity.status(500).body("Current schedule is not initialized.");
+            }
+
+            RefactoredMain.currentSchedule.addCourse(courseId);
+
+            return ResponseEntity.ok("Course registered successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Failed to register course: " + e.getMessage());
+        }
+    }
 }
