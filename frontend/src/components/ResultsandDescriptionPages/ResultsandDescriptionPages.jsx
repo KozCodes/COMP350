@@ -110,7 +110,7 @@ const Results = () => {
   };
 
 const handleAddToSchedule = async (e, course) => {
-  const courseId = parseInt(e.target.value);  // 🔥 FIX: make sure it's a number
+  const courseId = parseInt(e.target.value);
 
   const conflictingCourse = getConflictCourse(course);
   if (conflictingCourse) {
