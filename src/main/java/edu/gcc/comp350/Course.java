@@ -226,9 +226,7 @@ public class Course {
         ObjectMapper om = new ObjectMapper();
         String courseJSON = "";
         try {
-            System.out.println("Converting Course to JSON");
             courseJSON = om.writeValueAsString(this);
-            System.out.println(courseJSON);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             courseJSON = "ERROR";

@@ -10,7 +10,16 @@ const Results = () => {
   const [courses] = useState(location.state);
   const [ratings, setRatings] = useState({});
   const [message, setMessage] = useState('');
+  const [currentSchedule, setCurrentSchedule] = useState([]);
 
+  const fetchCurrentSchedule = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/currentSchedule');
+      setCurrentSchedule(response.data);
+    } catch (error) {
+      console.error('Error fetching current schedule:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -36,19 +45,21 @@ const Results = () => {
     };
 
     fetchRatings();
+    fetchCurrentSchedule();
   }, [courses]);
 
-    const handleAddToSchedule = async (course) => {
-        console.log(course.target.value);
-      try {
-        const response = await axios.post('http://localhost:8080/api/register-course', {
-           Id: course.target.value
-       });
-        setMessage(response.data);
-      } catch (error) {
-        setMessage('Failed to add course to schedule. Please try again.');
-      }
-    };
+  const handleAddToSchedule = async (course) => {
+    console.log(course.target.value);
+    try {
+      const response = await axios.post('http://localhost:8080/api/register-course', {
+       Id: course.target.value
+      });
+      setMessage(response.data);
+      fetchCurrentSchedule()
+    } catch (error) {
+      setMessage('Failed to add course to schedule. Please try again.');
+    }
+  };
 
 
   const renderStars = (score) => {
@@ -77,7 +88,7 @@ const Results = () => {
 
         {/* Sidebar */}
         <div style={{ display: 'flex' }}>
-          <Sidebar />
+          <Sidebar currentSchedule={currentSchedule} setCurrentSchedule={setCurrentSchedule} />
           <div style={{ marginLeft: '250px', flex: 1 }}>
             {/* Main content here */}
           </div>

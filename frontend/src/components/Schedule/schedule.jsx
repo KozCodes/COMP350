@@ -89,9 +89,11 @@ const Schedule = () => {
             }}>
                  <h2 style={{ fontSize: '1.5rem', color: '#990000', marginBottom: '1rem' }}>Courses</h2>
                  {schedule && schedule.classes ? (
-                     <ul style={{ listStyleType: 'none', padding: 0, position: 'relative' }}>
+                     <div style={{ listStyleType: 'none', padding: 0, position: 'relative' }}>
                          {schedule.classes.map((course, index) => (
-                             <li key={index} style={{
+                             <div key={index} style={{
+                                 display: 'flex',
+                                 position: 'relative',
                                  marginBottom: '1rem',
                                  padding: '0.5rem',
                                  backgroundColor: '#ffffff',
@@ -104,21 +106,24 @@ const Schedule = () => {
                                  onMouseOut={(e) => e.target.style.backgroundColor = '#ffffff'}
                                  onClick={() => handleCellClick(course)}
                              >
-                             <div style={{ flex: 1 }}>
-                                 <strong>{course.courseCode}</strong>
-                                 <p style={{ margin: 0 }}>{course.courseTitle}</p>
+                                 <div style={{ flex: 1 }}>
+                                     <strong>{course.courseCode}</strong>
+                                     <p style={{ margin: 0 }}>{course.courseTitle}</p>
+                                 </div>
+                                 <button
+                                     onClick={(e) => {
+                                            e.stopPropagation(); // Prevent triggering the parent card's click event
+                                            handleDeleteCourse(course.id);
+                                         }}
+                                      style={removeButtonStyle}
+                                     onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
+                                     onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
+                                 >
+                                     X
+                                 </button>
                              </div>
-                             <button
-                                 onClick={() => handleDeleteCourse(course.id)}
-                                  style={removeButtonStyle}
-                                 onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
-                                 onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
-                             >
-                                 X
-                             </button>
-                             </li>
                          ))}
-                     </ul>
+                     </div>
                  ) : <p>Loading courses...</p>}
             </div>
 
@@ -222,8 +227,9 @@ const removeButtonStyle = {
   width: '15px', // Set width for the button
   height: '15px', // Set height for the button
   position: 'absolute', // Position the button within the course item
-  top: '8px', // Position it in the top-right corner
+  top: '50%', // Position it in the top-right corner
   right: '8px',
+  transform: 'translateY(-50%)', // Adjust for vertical centering
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

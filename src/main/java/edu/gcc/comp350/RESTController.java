@@ -390,13 +390,14 @@ public class RESTController {
             }
         }
 
-        String sql = "DELETE FROM Courses WHERE id = ?";
+        // delete from schedule courses where courseid = courseid and schedule id = current schedule id
+        String sql = "DELETE FROM ScheduleCourses WHERE course = ? AND schedule = ?";
         try (PreparedStatement pstmt = RefactoredMain.db.conn.prepareStatement(sql)) {
             pstmt.setInt(1, courseid);
+            pstmt.setInt(2, scheduleid);
             pstmt.executeUpdate();
             return ResponseEntity.ok("Course deleted successfully.");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting course: " + e.getMessage());
         }
     }

@@ -1,22 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Sidebar = () => {
-  const [currentSchedule, setCurrentSchedule] = useState([]);
+const Sidebar = ({currentSchedule, setCurrentSchedule}) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchCurrentSchedule = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/currentSchedule');
-        setCurrentSchedule(response.data);
-      } catch (error) {
-        console.error('Error fetching current schedule:', error);
-      }
-    };
-    fetchCurrentSchedule();
-  }, []);
 
   const removeCourse = async (courseId) => {
     try {
@@ -54,7 +41,9 @@ const Sidebar = () => {
       )}
 
       <div style={buttonContainerStyle}>
-        <button onClick={() => navigate('/Home')} style={navButtonStyle}>See Schedule</button>
+        <button onClick={() => {
+            navigate(`/schedule/${currentSchedule.id}`);
+            }} style={navButtonStyle}>See Schedule</button>
         <button onClick={() => navigate('/search')} style={navButtonStyle}>Search Again</button>
       </div>
     </div>
@@ -95,7 +84,7 @@ const buttonContainerStyle = {
 
 const courseItemStyle = {
   marginBottom: '1rem',
-  padding: '0.5rem',
+  padding: '0.5rem 2rem 0.5rem 0.5rem', // Add right padding to avoid overlap
   backgroundColor: '#920000',
   borderRadius: '8px',
   position: 'relative', // Enable positioning for the remove button
@@ -111,8 +100,9 @@ const removeButtonStyle = {
   width: '15px', // Set width for the button
   height: '15px', // Set height for the button
   position: 'absolute', // Position the button within the course item
-  top: '8px', // Position it in the top-right corner
+  top: '50%', // Position it in the top-right corner
   right: '8px',
+  transform: 'translateY(-50%)', // Adjust for vertical centering
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
