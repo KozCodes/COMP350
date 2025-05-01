@@ -111,7 +111,10 @@ const Schedule = () => {
                                      <p style={{ margin: 0 }}>{course.courseTitle}</p>
                                  </div>
                                  <button
-                                     onClick={() => handleDeleteCourse(course.id)}
+                                     onClick={(e) => {
+                                            e.stopPropagation(); // Prevent triggering the parent card's click event
+                                            handleDeleteCourse(course.id);
+                                         }}
                                       style={removeButtonStyle}
                                      onMouseOver={(e) => e.target.style.backgroundColor = '#F0DEDF'}
                                      onMouseOut={(e) => e.target.style.backgroundColor = 'white'}

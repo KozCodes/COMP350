@@ -41,7 +41,9 @@ const Sidebar = ({currentSchedule, setCurrentSchedule}) => {
       )}
 
       <div style={buttonContainerStyle}>
-        <button onClick={() => navigate('/Home')} style={navButtonStyle}>See Schedule</button>
+        <button onClick={() => {
+            navigate(`/schedule/${currentSchedule.id}`);
+            }} style={navButtonStyle}>See Schedule</button>
         <button onClick={() => navigate('/search')} style={navButtonStyle}>Search Again</button>
       </div>
     </div>
